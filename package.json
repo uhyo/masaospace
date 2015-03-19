@@ -1,0 +1,20 @@
+{
+  "name": "masaospace",
+  "version": "0.0.1",
+  "description": "Masao posting system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "uhyo",
+  "license": "undetermined",
+  "dependencies": {
+    "config": "^1.12.0",
+    "express": "^4.12.3",
+    "js-yaml": "^3.2.7",
+    "log": "^1.4.0",
+    "mongodb": "^1.4.34",
+    "my-user-mongo": "^0.1.1",
+    "redis": "^0.12.1"
+  }
+}

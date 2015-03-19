@@ -1,0 +1,28 @@
+# DB Access
+mongodb:
+  host: localhost
+  port: 27017
+  db: masaospace
+  user: test
+  password: test
+
+  collection:
+    user: user
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+
+# web server config
+webserver:
+  port: 8080
+
+# logging
+log:
+  level: debug
+
+
+# users
+user:
+  # internal id length
+  idLength: 16
