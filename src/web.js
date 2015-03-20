@@ -7,6 +7,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var expressSession = require('express-session');
 var connectRedis = require('connect-redis');
+var csurf = require('csurf');
 var logger = require('./logger');
 var WebServer = (function () {
     function WebServer() {
@@ -33,6 +34,7 @@ var WebServer = (function () {
             })
         };
         this.app.use(expressSession(sessoption));
+        this.app.use(csurf());
         //error handling
         this.app.use(function (err, req, res, next) {
             if (req.xhr) {

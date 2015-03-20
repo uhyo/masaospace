@@ -10,6 +10,7 @@ import express=require('express');
 import bodyParser=require('body-parser');
 import expressSession=require('express-session');
 import connectRedis=require('connect-redis');
+import csurf=require('csurf');
 
 import logger=require('./logger');
 import db=require('./db');
@@ -40,6 +41,7 @@ export class WebServer{
             })
         };
         this.app.use(expressSession(sessoption));
+        this.app.use(csurf());
         //error handling
         this.app.use((err,req,res,next)=>{
             if(req.xhr){
@@ -47,7 +49,6 @@ export class WebServer{
                 logger.error(err);
                 res.status(500).json({error: String(err)});
             }else{
-
                 //normal error response
                 res.status(500).send(String(err));
             }

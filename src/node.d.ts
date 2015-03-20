@@ -814,6 +814,10 @@ declare module "express"{
             public url:string;
             public originalUrl:string;
             public method:string;
+
+            //extention
+            csrfToken():string;
+
         }
         class Response extends stream.Writable{
             status(code:number):Response;
