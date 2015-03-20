@@ -20,7 +20,7 @@ var System = (function () {
         //connect DB
         this.db.connect(d.intercept(function () {
             //web server
-            _this.srv.init(d.intercept(function () {
+            _this.srv.init(_this.db, d.intercept(function () {
                 logger.info("System is ready.");
                 callback(null);
             }));

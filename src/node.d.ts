@@ -781,6 +781,9 @@ declare module "express"{
             //なぜかnextを省略した関数も受け付ける。そういうものか?
             (req:Request,res:Response,next:Function):void;
         }
+        export interface ErrorHandler{
+            (err:any,req:Request,res:Response,next:Function):void;
+        }
         class Express{
             enable(name:string):void;
             disable(name:string):void;
@@ -790,7 +793,9 @@ declare module "express"{
             listen(port:number):void;
             post(path,...callback:RequestHandler[]):void;
             use(path,callback:RequestHandler):void;
-            use(callback:RequestHandler):void;
+            use(path,r:_Router):void;
+            use(callback:RequestHandler|ErrorHandler):void;
+            use(r:_Router):void;
 
             locals:any;
             socket:net.Socket;
@@ -841,6 +846,24 @@ declare module "express"{
             _redirect(url:string):void;
             _render(...templates:any[]):void;
         }
+        export function Router(options?:{
+            caseSensitive?:boolean;
+            mergeParams?:boolean;
+            strict?:boolean;
+        }):_Router;
+        export class _Router{
+            all(path:string,...callbacks:Array<RequestHandler>):void;
+            all(...callbacks:Array<RequestHandler>):void;
+            get(path:string,...callbacks:Array<RequestHandler>):void;
+            get(...callbacks:Array<RequestHandler>):void;
+            post(path:string,...callbacks:Array<RequestHandler>):void;
+            post(...callbacks:Array<RequestHandler>):void;
+            param(name:string,callback:(req:Request,res:Response,next:Function,id:string)=>void):void;
+
+            route(path:string):_Router;
+            use(path:string,...callbacks:Array<RequestHandler>):void;
+            use(...callbacks:Array<RequestHandler>):void;
+        }
     }
     export = _express;
 }
@@ -864,6 +887,56 @@ declare module "helmet"{
     function _m():any;
     export = _m;
 }
+declare module "csurf"{
+    function _m(options?:{
+        cookie?: boolean;
+        key?: string;
+        path?: string;
+        ignoreMethods?: string[];
+        value?:(req:any)=>string;
+    }):any;
+    export = _m;
+}
+declare module "express-session"{
+    export = _m;
+    function _m(option:{
+        cookie?: {
+            path?: string;
+            httpOnly?: boolean;
+            secure?: boolean;
+            maxAge?: number;
+        };
+        genid?:(req:any)=>string;
+        name?: string;
+        proxy?: boolean;
+        rolling?: boolean;
+        saveUninitialized?: boolean;
+        secret: string;
+        store?: any;
+        unset?: string;
+    }):any;
+}
+declare module "connect-redis"{
+    function _m(expressSession?:any):new(options:Options)=>RedisStore;
+    export = _m;
+    class RedisStore{
+        constructor(options:Options);
+    }
+    interface Options{
+        client?: any;
+        host?: string;
+        port?: number;
+        socket?: any;
+
+        ttl?: number;
+        disableTTL?: boolean;
+        db?: number;
+        pass?: string;
+        prefix?: string;
+        unref?: boolean;
+    }
+}
+
 declare module "config"{
     export function get(name:string):any;
     export function has(name:string):boolean;

@@ -16,6 +16,8 @@ redis:
 # web server config
 webserver:
   port: 8080
+  # connection is secure
+  secure: false
 
 # logging
 log:
@@ -26,3 +28,10 @@ log:
 user:
   # internal id length
   idLength: 16
+
+# sessions
+session:
+  # cookie secret
+  secret: test
+  # session TTL (in seconds)
+  life: 86400

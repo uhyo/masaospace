@@ -26,7 +26,7 @@ export class System{
         //connect DB
         this.db.connect(d.intercept(()=>{
             //web server
-            this.srv.init(d.intercept(()=>{
+            this.srv.init(this.db,d.intercept(()=>{
                 logger.info("System is ready.");
                 callback(null);
             }));
