@@ -9,15 +9,17 @@ var expressSession = require('express-session');
 var connectRedis = require('connect-redis');
 var csurf = require('csurf');
 var logger = require('./logger');
+var validator = require('./validator');
 var WebServer = (function () {
     function WebServer() {
     }
-    WebServer.prototype.init = function (db, callback) {
+    WebServer.prototype.init = function (c, callback) {
         //open web server
         this.app = express();
         this.app.use(bodyParser.urlencoded({
             extended: false
         }));
+        this.app.use(validator.makeExpressValidator());
         //session
         var sessoption = {
             secret: config.get("session.secret"),
@@ -27,7 +29,7 @@ var WebServer = (function () {
                 secure: config.get("webserver.secure")
             },
             store: new (connectRedis(expressSession))({
-                client: db.redis.getClient(),
+                client: c.getRedisClient(),
                 ttl: config.get("session.life"),
                 db: config.get("redis.db"),
                 prefix: "sess:"
@@ -47,13 +49,13 @@ var WebServer = (function () {
                 res.status(500).send(String(err));
             }
         });
-        this.route(db);
+        this.route(c);
         this.app.listen(config.get("webserver.port"));
         process.nextTick(function () {
             callback(null);
         });
     };
-    WebServer.prototype.route = function (db) {
+    WebServer.prototype.route = function (c) {
         var t = this;
         var apiroot = express.Router();
         // api/を全部読み込む
@@ -76,7 +78,7 @@ var WebServer = (function () {
                     var mod = require(filepath);
                     if ("function" === typeof mod) {
                         var subroute = router.route(files[i]);
-                        (new mod).route(subroute, db);
+                        (new mod).route(subroute, c);
                     }
                 }
             }

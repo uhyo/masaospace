@@ -1,7 +1,6 @@
 ///<reference path="./node.d.ts" />
 import mongodb=require('mongodb');
 import redis=require('redis');
-import mum=require('my-user-mongo');
 
 import config=require('config');
 import logger=require('./logger');
@@ -13,7 +12,6 @@ export import ObjectId=mongodb.ObjectId;
 export class DBAccess{
     public mongo:Mongo;
     public redis:Redis;
-    public user:mum.Manager;
     constructor(){
         this.mongo=new Mongo();
         this.redis=new Redis();
@@ -29,25 +27,7 @@ export class DBAccess{
                     callback(err);
                     return;
                 }
-                //init my-user-mongo
-                this.user=mum.manager({
-                    db: this.mongo.getClient(),
-                    collection: {
-                        user: config.get("mongodb.collection.user")
-                    },
-                    user: {
-                        userIdLength: config.get("user.idLength")
-                    }
-                });
-
-                this.user.init((err:any)=>{
-                    if(err){
-                        logger.emergency(err);
-                        callback(err);
-                        return;
-                    }
-                    callback(null);
-                });
+                callback(null);
             });
         });
     }

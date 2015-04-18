@@ -1,9 +1,7 @@
 ///<reference path="./node.d.ts" />
 var mongodb = require('mongodb');
 var redis = require('redis');
-var mum = require('my-user-mongo');
 var config = require('config');
-var logger = require('./logger');
 exports.Collection = mongodb.Collection;
 exports.ObjectId = mongodb.ObjectId;
 //DBアクセス
@@ -24,24 +22,7 @@ var DBAccess = (function () {
                     callback(err);
                     return;
                 }
-                //init my-user-mongo
-                _this.user = mum.manager({
-                    db: _this.mongo.getClient(),
-                    collection: {
-                        user: config.get("mongodb.collection.user")
-                    },
-                    user: {
-                        userIdLength: config.get("user.idLength")
-                    }
-                });
-                _this.user.init(function (err) {
-                    if (err) {
-                        logger.emergency(err);
-                        callback(err);
-                        return;
-                    }
-                    callback(null);
-                });
+                callback(null);
             });
         });
     };

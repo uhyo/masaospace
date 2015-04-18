@@ -3,10 +3,12 @@ var domain = require('domain');
 var logger = require('./logger');
 var db = require('./db');
 var web = require('./web');
+var Controller = require('./controllers/index');
 var System = (function () {
     function System() {
         this.db = new db.DBAccess();
         this.srv = new web.WebServer();
+        this.c = new Controller(this.db);
     }
     System.prototype.init = function (callback) {
         var _this = this;
@@ -19,10 +21,12 @@ var System = (function () {
         });
         //connect DB
         this.db.connect(d.intercept(function () {
-            //web server
-            _this.srv.init(_this.db, d.intercept(function () {
-                logger.info("System is ready.");
-                callback(null);
+            _this.c.init(d.intercept(function () {
+                //web server
+                _this.srv.init(_this.db, d.intercept(function () {
+                    logger.info("System is ready.");
+                    callback(null);
+                }));
             }));
         }));
     };

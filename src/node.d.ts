@@ -472,6 +472,21 @@ declare module "mongodb"{
             readPreference?:any;
         },callback:(error:any,result:number)=>void):void;
         count(query:any,callback:(error:any,result:number)=>void):void;
+        createIndex(fieldOrSpec:any,options:{
+            w?:any;
+            wtimeout?:number;
+            j?:boolean;
+            unique?:boolean;
+            sprase?:boolean;
+            background?:boolean;
+            dropDups?:boolean;
+            min?:number;
+            max?:number;
+            v?:number;
+            expireAfterSeconds?:number;
+            name?:any;  //???
+        },callback:(error:any,result:any)=>void):void;
+        createIndex(fieldOrSpec:any,callback:(error:any,result:any)=>void):void;
         deleteMany(filter:any,options:{
             w?:any;
             wtimeout?:number;
@@ -486,21 +501,6 @@ declare module "mongodb"{
         },callback:(error:any,result:Array<any>)=>void):void;
         distinct(key:string,query:any,callback:(error:any,result:Array<any>)=>void):void;
         distinct(key:string,callback:(error:any,result:Array<any>)=>void):void;
-        ensureIndex(fieldOrSpec:any,options:{
-            w?:any;
-            wtimeout?:number;
-            j?:boolean;
-            unique?:boolean;
-            sprase?:boolean;
-            background?:boolean;
-            dropDups?:boolean;
-            min?:number;
-            max?:number;
-            v?:number;
-            expireAfterSeconds?:number;
-            name?:any;  //???
-        },callback:(error:any,result:any)=>void):void;
-        ensureIndex(fieldOrSpec:any,callback:(error:any,result:any)=>void):void;
         find(query:any):Cursor;
         findOne(query:any,options:{
             limit?:number;
@@ -816,7 +816,16 @@ declare module "express"{
             public method:string;
 
             //extention
+            public body:any;
+            ////csurf
             csrfToken():string;
+            ////express-validator
+            checkBody(field:string,error:string):Validation;
+            checkParam(field:string,error:string):Validation;
+            checkQuery(field:string,error:string):Validation;
+            assert(field:string,error:string):Validation;
+            sanitize(field:string):Sanitize;
+            validationErrors(mapped?:boolean):any;
 
         }
         class Response extends stream.Writable{
@@ -867,6 +876,98 @@ declare module "express"{
             route(path:string):_Router;
             use(path:string,...callbacks:Array<RequestHandler>):void;
             use(...callbacks:Array<RequestHandler>):void;
+        }
+        //express-validator
+        interface Validation{
+            equals(comparision:string):Validation;
+            contains(seed:string):Validation;
+            matches(pattern:RegExp):Validation;
+            matches(pattern:string,modifiers?:string):Validation;
+            isEmail(options?:{
+                allow_display_name?: boolean;
+                allow_utf8_local_part?: boolean;
+            }):Validation;
+            isURL(options?:{
+                protocols?:Array<string>;
+                require_tld?:boolean;
+                host_blacklist?:boolean;
+                allow_trailing_dot?:boolean;
+                allow_protocol_relative_urls?:boolean;
+            }):Validation;
+            isFQDN(options?:{
+                require_tld?:boolean;
+                allow_underscored?:boolean;
+                allow_trailing_dot?:boolean;
+            }):Validation;
+            isIP(version?:number):Validation;
+            isAlpha():Validation;
+            isNumeric():Validation;
+            isAlphanumberic():Validation;
+            isBase64():Validation;
+            isHexadecimal():Validation;
+            isHexColor():Validation;
+            isLowercase():Validation;
+            isUppercase():Validation;
+            isInt():Validation;
+            isFloat():Validation;
+            isDivisibleBy(num:number):Validation;
+            isNull():Validation;
+            isLength(min:number,max?:number):Validation;
+            isByteLength(min:number,max?:number):Validation;
+            isUUID(version?:number):Validation;
+            isDate():Validation;
+            isAfter(date?:Date):Validation;
+            isBefore(date?:Date):Validation;
+            isIn(values:Array<string>):Validation;
+            isCreditCard():Validation;
+            isISIN():Validation;
+            isISBN(version?:number):Validation;
+            isMobilePhone(locale:string):Validation;
+            isJSON():Validation;
+            isMultibyte():Validation;
+            isAscii():Validation;
+            isFullWidth():Validation;
+            isHalfWidth():Validation;
+            isVariableWidth():Validation;
+            isSurrogatePair():Validation;
+            isMongoId():Validation;
+            isCurrency(options:{
+                symbol?:string;
+                require_symbol?:boolean;
+                allow_space_after_symbol?:boolean;
+                symbol_after_digits?:boolean;
+                allow_negative?:boolean;
+                parens_for_negatives?:boolean;
+                negative_sign_before_digits?:boolean;
+                negative_dign_after_digits?:boolean;
+                allow_negative_sign_placeholder?:boolean;
+                thousands_separator?:boolean;
+                decimal_separator?:boolean;
+                allow_space_after_digits?:boolean;
+            }):Validation;
+            optional():Validation;
+
+            //custom validator defined by ./validator.ts
+            isUserID():Validation;
+            isUserName():Validation;
+        }
+        interface Sanitize{
+            toString():Sanitize;
+            toDate():Sanitize;
+            toFloat():Sanitize;
+            toInt(radix?:number):Sanitize;
+            toBoolean(strict?:boolean):Sanitize;
+            trim(chars?:Array<string>):Sanitize;
+            ltrim(chars?:Array<string>):Sanitize;
+            rtrim(chars?:Array<string>):Sanitize;
+            escape():Sanitize;
+            stripLow(keep_new_lines?:boolean):Sanitize;
+            whitelist(chars:Array<string>):Sanitize;
+            blacklist(chars:Array<string>):Sanitize;
+            normalizeEmail(options?:{
+                lowercase?:boolean;
+            }):Sanitize;
+
         }
     }
     export = _express;
@@ -940,6 +1041,87 @@ declare module "connect-redis"{
         unref?: boolean;
     }
 }
+declare module "validator"{
+    export function equals(value:string,comparision:string):boolean;
+    export function contains(value:string,seed:string):boolean;
+    export function matches(value:string,pattern:RegExp):boolean;
+    export function matches(value:string,pattern:string,modifiers?:string):boolean;
+    export function isEmail(value:string,options?:{
+        allow_display_name?: boolean;
+        allow_utf8_local_part?: boolean;
+    }):boolean;
+    export function isURL(value:string,options?:{
+        protocols?:Array<string>;
+        require_tld?:boolean;
+        host_blacklist?:boolean;
+        allow_trailing_dot?:boolean;
+        allow_protocol_relative_urls?:boolean;
+    }):boolean;
+    export function isFQDN(value:string,options?:{
+        require_tld?:boolean;
+        allow_underscored?:boolean;
+        allow_trailing_dot?:boolean;
+    }):boolean;
+    export function isIP(value:string,version?:number):boolean;
+    export function isAlpha(value:string):boolean;
+    export function isNumeric(value:string):boolean;
+    export function isAlphanumberic(value:string):boolean;
+    export function isBase64(value:string):boolean;
+    export function isHexadecimal(value:string):boolean;
+    export function isHexColor(value:string):boolean;
+    export function isLowercase(value:string):boolean;
+    export function isUppercase(value:string):boolean;
+    export function isInt(value:string):boolean;
+    export function isFloat(value:string):boolean;
+    export function isDivisibleBy(value:string,num:number):boolean;
+    export function isNull(value:string):boolean;
+    export function isLength(value:string,min:number,max?:number):boolean;
+    export function isByteLength(value:string,min:number,max?:number):boolean;
+    export function isUUID(value:string,version?:number):boolean;
+    export function isDate(value:string):boolean;
+    export function isAfter(value:string,date?:Date):boolean;
+    export function isBefore(value:string,date?:Date):boolean;
+    export function isIn(value:string,values:Array<string>):boolean;
+    export function isCreditCard(value:string):boolean;
+    export function isISIN(value:string):boolean;
+    export function isISBN(value:string,version?:number):boolean;
+    export function isMobilePhone(value:string,locale:string):boolean;
+    export function isJSON(value:string):boolean;
+    export function isMultibyte(value:string):boolean;
+    export function isAscii(value:string):boolean;
+    export function isFullWidth(value:string):boolean;
+    export function isHalfWidth(value:string):boolean;
+    export function isVariableWidth(value:string):boolean;
+    export function isSurrogatePair(value:string):boolean;
+    export function isMongoId(value:string):boolean;
+    export function isCurrency(value:string,options:{
+        symbol?:string;
+        require_symbol?:boolean;
+        allow_space_after_symbol?:boolean;
+        symbol_after_digits?:boolean;
+        allow_negative?:boolean;
+        parens_for_negatives?:boolean;
+        negative_sign_before_digits?:boolean;
+        negative_dign_after_digits?:boolean;
+        allow_negative_sign_placeholder?:boolean;
+        thousands_separator?:boolean;
+        decimal_separator?:boolean;
+        allow_space_after_digits?:boolean;
+    }):boolean;
+}
+declare module "express-validator"{
+    export = _m;
+    function _m(option?:{
+        errorFormatter?:(param:string,msg:string,value:string)=>{
+            param:string;
+            msg:string;
+            value:string;
+        };
+        customValidators?:{
+            [name:string]:(value:string,...args:any[])=>boolean;
+        };
+    }):any;
+}
 
 declare module "config"{
     export function get(name:string):any;
@@ -960,6 +1142,15 @@ declare module "log"{
         info(...args:string[]):void;
         debug(...args:string[]):void;
     }
+}
+declare module "random-string"{
+    export = randomString;
+    function randomString(option?:{
+        length?:number;
+        numeric?:boolean;
+        letters?:boolean;
+        special?:boolean;
+    }):string;
 }
 
 // something useful for me

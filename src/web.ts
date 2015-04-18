@@ -14,17 +14,21 @@ import csurf=require('csurf');
 
 import logger=require('./logger');
 import db=require('./db');
+import validator=require('./validator');
+
+import Controller=require('./controllers/index');
 
 export class WebServer{
     private app:express.Express;
     constructor(){
     }
-    init(db:db.DBAccess,callback:Cont):void{
+    init(c:Controller,callback:Cont):void{
         //open web server
         this.app=express();
         this.app.use(bodyParser.urlencoded({
             extended: false
         }));
+        this.app.use(validator.makeExpressValidator());
         //session
         var sessoption={
             secret: config.get("session.secret"),
@@ -34,7 +38,7 @@ export class WebServer{
                 secure: config.get("webserver.secure")
             },
             store: new (connectRedis(expressSession))({
-                client: db.redis.getClient(),
+                client: c.getRedisClient(),
                 ttl: config.get("session.life"),
                 db: config.get("redis.db"),
                 prefix: "sess:"
@@ -54,14 +58,14 @@ export class WebServer{
             }
         });
 
-        this.route(db);
+        this.route(c);
 
         this.app.listen(config.get("webserver.port"));
         process.nextTick(()=>{
             callback(null);
         });
     }
-    route(db:db.DBAccess):void{
+    route(c:Controller):void{
         var t=this;
         var apiroot=express.Router();
         // api/を全部読み込む
@@ -85,7 +89,7 @@ export class WebServer{
                     var mod=require(filepath);
                     if("function"===typeof mod){
                         var subroute=router.route(files[i]);
-                        (new mod).route(subroute,db);
+                        (new mod).route(subroute,c);
                     }
                 }
 

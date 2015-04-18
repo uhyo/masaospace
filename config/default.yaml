@@ -5,9 +5,9 @@ mongodb:
   db: masaospace
   user: test
   password: test
-
   collection:
     user: user
+    ticket: ticket
 redis:
   host: localhost
   port: 6379
@@ -28,6 +28,15 @@ log:
 user:
   # internal id length
   idLength: 16
+  # screen name
+  screenName:
+    minLength: 4
+    maxLength: 15
+  # display name
+  name:
+    minLength: 1
+    maxLength: 64
+
 
 # sessions
 session:
@@ -35,3 +44,11 @@ session:
   secret: test
   # session TTL (in seconds)
   life: 86400
+
+# tickets
+ticket:
+  # ticket length
+  length: 16
+  # ticket life 8in seconds)
+  life:
+    setpassword: 86400
