@@ -1,6 +1,5 @@
 var logger = require('../logger');
 //User auth&session
-var b;
 var C = (function () {
     function C() {
     }
@@ -66,6 +65,91 @@ var C = (function () {
                         res.json({
                             screen_name: u.getData().screen_name,
                             ticket: t.token
+                        });
+                    });
+                });
+            });
+        });
+        //ユーザー登録（チケットチェック）
+        router.get("/entry/check", function (req, res) {
+            var token = req.query.token;
+            //トークンを探してあげる
+            c.ticket.findTicket(token, function (err, t) {
+                if (err) {
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                res.json({
+                    //チケットがあればtrue,なければfalse
+                    ticket: t != null
+                });
+            });
+        });
+        //パスワード設定
+        router.post("/entry/setpassword", function (req, res) {
+            var token = req.body.token, screen_name = req.body.screen_name;
+            req.checkBody("password", "パスワード");
+            if (req.validationErrors()) {
+                res.json({
+                    error: String(req.validationErrors())
+                });
+                return;
+            }
+            var password = req.body.password;
+            //トークンを探して
+            c.ticket.findTicket(token, function (err, t) {
+                if (err) {
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if (t == null) {
+                    //不正なトークンでは
+                    res.json({
+                        error: "トークンが不正です。"
+                    });
+                    return;
+                }
+                //ユーザーも探して
+                c.user.user.findOneUser({
+                    id: t.user
+                }, function (err, u) {
+                    if (err) {
+                        logger.error(err);
+                        res.json({
+                            error: String(err)
+                        });
+                        return;
+                    }
+                    //screen_name一致チェック
+                    var data = u.getData();
+                    if (data.screen_name !== screen_name) {
+                        res.json({
+                            error: "screen_nameが一致しません。"
+                        });
+                        return;
+                    }
+                    //パスワードをセット
+                    u.setData(data, password);
+                    //activate
+                    u.writeData({
+                        activated: true
+                    });
+                    //セーブ
+                    c.user.user.saveUser(u, function (err, result) {
+                        if (err) {
+                            logger.error(err);
+                            res.json({
+                                error: String(err)
+                            });
+                            return;
+                        }
+                        //成功した
+                        res.json({
+                            success: true
                         });
                     });
                 });

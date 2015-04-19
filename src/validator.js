@@ -12,6 +12,9 @@ function makeExpressValidator() {
             },
             isUserName: function (value) {
                 return validator.isLength(value, config.get("user.name.minLength"), config.get("user.name.maxLength"));
+            },
+            isPassword: function (value) {
+                return validator.matches(value, /^[\u0021-\u007e]+$/) && validator.isLength(config.get("user.password.minLength"), config.get("user.password.maxLength"));
             }
         }
     };

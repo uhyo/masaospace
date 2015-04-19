@@ -36,6 +36,11 @@ user:
   name:
     minLength: 1
     maxLength: 64
+  # password
+  password:
+    minLength: 6
+    maxLength: 64
+
 
 
 # sessions

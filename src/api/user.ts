@@ -10,8 +10,6 @@ import {User,UserData} from '../data';
 
 
 //User auth&session
-var b:Callback<string>;
-
 class C{
     route(router:express._Router,c:Controller):void{
         // 新規ユーザー登録
@@ -78,6 +76,93 @@ class C{
                         res.json({
                             screen_name:u.getData().screen_name,
                             ticket: t.token
+                        });
+                    });
+                });
+            });
+        });
+        //ユーザー登録（チケットチェック）
+        router.get("/entry/check",(req,res)=>{
+            var token:string=req.query.token;
+            //トークンを探してあげる
+            c.ticket.findTicket(token,(err,t)=>{
+                if(err){
+                    res.json({
+                        error:String(err)
+                    });
+                    return;
+                }
+                res.json({
+                    //チケットがあればtrue,なければfalse
+                    ticket: t!=null
+                });
+            });
+        });
+        //パスワード設定
+        router.post("/entry/setpassword",(req,res)=>{
+            var token:string=req.body.token, screen_name:string=req.body.screen_name;
+
+            req.checkBody("password","パスワード");
+            if(req.validationErrors()){
+                res.json({
+                    error:String(req.validationErrors())
+                });
+                return;
+            }
+
+            var password:string=req.body.password;
+            //トークンを探して
+            c.ticket.findTicket(token,(err,t)=>{
+                if(err){
+                    res.json({
+                        error:String(err)
+                    });
+                    return;
+                }
+                if(t==null){
+                    //不正なトークンでは
+                    res.json({
+                        error: "トークンが不正です。"
+                    });
+                    return;
+                }
+                //ユーザーも探して
+                c.user.user.findOneUser({
+                    id: t.user
+                },(err,u)=>{
+                    if(err){
+                        logger.error(err);
+                        res.json({
+                            error:String(err)
+                        });
+                        return;
+                    }
+                    //screen_name一致チェック
+                    var data:UserData=u.getData();
+                    if(data.screen_name!==screen_name){
+                        res.json({
+                            error:"screen_nameが一致しません。"
+                        });
+                        return;
+                    }
+                    //パスワードをセット
+                    u.setData(data,password);
+                    //activate
+                    u.writeData({
+                        activated: true
+                    });
+                    //セーブ
+                    c.user.user.saveUser(u,(err,result)=>{
+                        if(err){
+                            logger.error(err);
+                            res.json({
+                                error:String(err)
+                            });
+                            return;
+                        }
+                        //成功した
+                        res.json({
+                            success:true
                         });
                     });
                 });
