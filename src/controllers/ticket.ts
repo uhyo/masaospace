@@ -45,6 +45,7 @@ export default class TicketController{
             });
         });
     }
+    //新しいticketを発行
     newTicket(t:TicketData,callback:Callback<Ticket>):void{
         if(!this.checkTicket(t)){
             logger.error("Invalid ticket "+JSON.stringify(t));
@@ -90,6 +91,38 @@ export default class TicketController{
                     });
                 });
             }
+        });
+    }
+    //チケットがあるか調べる
+    findTicket(token:string,callback:Callback<Ticket>):void{
+        this.getCollection((err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            coll.findOne({token:token},(err,doc)=>{
+                if(err){
+                    logger.error(err);
+                    return;
+                }
+                callback(null,doc || null);
+            });
+        });
+    }
+    //チケットを消す
+    removeTicket(token:string,callback:Cont):void{
+        this.getCollection((err,coll)=>{
+            if(err){
+                callback(err);
+                return;
+            }
+            coll.deleteOne({token:token},(err,result)=>{
+                if(err){
+                    logger.error(err);
+                    return;
+                }
+                callback(null);
+            });
         });
     }
 

@@ -40,6 +40,7 @@ var TicketController = (function () {
             });
         });
     };
+    //新しいticketを発行
     TicketController.prototype.newTicket = function (t, callback) {
         if (!this.checkTicket(t)) {
             logger.error("Invalid ticket " + JSON.stringify(t));
@@ -84,6 +85,38 @@ var TicketController = (function () {
                     });
                 });
             }
+        });
+    };
+    //チケットがあるか調べる
+    TicketController.prototype.findTicket = function (token, callback) {
+        this.getCollection(function (err, coll) {
+            if (err) {
+                callback(err, null);
+                return;
+            }
+            coll.findOne({ token: token }, function (err, doc) {
+                if (err) {
+                    logger.error(err);
+                    return;
+                }
+                callback(null, doc || null);
+            });
+        });
+    };
+    //チケットを消す
+    TicketController.prototype.removeTicket = function (token, callback) {
+        this.getCollection(function (err, coll) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            coll.deleteOne({ token: token }, function (err, result) {
+                if (err) {
+                    logger.error(err);
+                    return;
+                }
+                callback(null);
+            });
         });
     };
     //コレクションを得る

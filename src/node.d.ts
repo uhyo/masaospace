@@ -493,6 +493,12 @@ declare module "mongodb"{
             j?:boolean;
         },callback:(error:any,result:WriteOpResult)=>void):void;
         deleteMany(filter:any,callback:(error:any,result:WriteOpResult)=>void):void;
+        deleteOne(filter:any,options:{
+            w?:any;
+            wtimeout?:number;
+            j?:boolean;
+        },callback:(error:any,result:WriteOpResult)=>void):void;
+        deleteOne(filter:any,callback:(error:any,result:WriteOpResult)=>void):void;
         distinct(key:string,query:any,options:{
             readPreference?:any;
         },callback:(error:any,result:Array<any>)=>void):void;
