@@ -19,6 +19,7 @@
     "express-validator": "^2.9.0",
     "js-yaml": "^3.2.7",
     "log": "^1.4.0",
+    "mkdirp": "^0.5.0",
     "mongodb": "^1.4.34",
     "my-user-mongo": "^0.1.1",
     "random-string": "^0.1.2",

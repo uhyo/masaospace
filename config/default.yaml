@@ -8,10 +8,15 @@ mongodb:
   collection:
     user: user
     ticket: ticket
+    file: file
 redis:
   host: localhost
   port: 6379
   db: 0
+# file access
+file:
+  # path to store user-uploaded files
+  path: /home/no/masaopost/data
 
 # web server config
 webserver:

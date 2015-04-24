@@ -1158,6 +1158,13 @@ declare module "random-string"{
         special?:boolean;
     }):string;
 }
+declare module "mkdirp"{
+    export = mkdirp;
+    function mkdirp(dir:string,opts:number|{
+        mode:number;
+    },cb:Cont):void;
+    function mkdirp(dir:string,cb:Cont):void;
+}
 
 // something useful for me
 interface Callback<T>{

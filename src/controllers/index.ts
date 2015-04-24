@@ -1,3 +1,5 @@
+import domain=require('domain');
+
 import config=require('config');
 import logger=require('../logger');
 
@@ -25,16 +27,42 @@ class Controller{
         this.ticket=new TicketController(db);
     }
     init(callback:Cont):void{
-        this.user.init((err:any)=>{
-            if(err){
-                logger.emergency(err);
-                callback(err);
-                return;
-            }
-            this.ticket.init((err:any)=>{
-                callback(null);
-            });
+        var d=domain.create();
+        d.on("error",(err:any)=>{
+            callback(err);
         });
+
+        this.user.init(d.intercept(()=>{
+            this.initUser(d.intercept(()=>{
+                this.ticket.init((err:any)=>{
+                    callback(null);
+                });
+            }));
+        }));
+    }
+    //ユーザー関連のコレクションの初期化
+    private initUser(callback:Cont):void{
+        var d=domain.create();
+        d.on("error",(err)=>{
+            logger.critical(err);
+            callback(err);
+        });
+        this.db.mongo.collection(config.get("mongodb.collection.user"),d.intercept((coll)=>{
+            //インデックスを
+            coll.createIndex({
+                id:1
+            },{
+                unique:true
+            },d.intercept((result)=>{
+                coll.createIndex({
+                    "data.screen_name":1
+                },{
+                    unique:true
+                },d.intercept((result)=>{
+                    callback(null);
+                }));
+            }));
+        }));
     }
 
     getMongoClient(){

@@ -1,3 +1,4 @@
+var domain = require('domain');
 var config = require('config');
 var logger = require('../logger');
 var ticket_1 = require('./ticket');
@@ -20,16 +21,41 @@ var Controller = (function () {
     }
     Controller.prototype.init = function (callback) {
         var _this = this;
-        this.user.init(function (err) {
-            if (err) {
-                logger.emergency(err);
-                callback(err);
-                return;
-            }
-            _this.ticket.init(function (err) {
-                callback(null);
-            });
+        var d = domain.create();
+        d.on("error", function (err) {
+            callback(err);
         });
+        this.user.init(d.intercept(function () {
+            _this.initUser(d.intercept(function () {
+                _this.ticket.init(function (err) {
+                    callback(null);
+                });
+            }));
+        }));
+    };
+    //ユーザー関連のコレクションの初期化
+    Controller.prototype.initUser = function (callback) {
+        var d = domain.create();
+        d.on("error", function (err) {
+            logger.critical(err);
+            callback(err);
+        });
+        this.db.mongo.collection(config.get("mongodb.collection.user"), d.intercept(function (coll) {
+            //インデックスを
+            coll.createIndex({
+                id: 1
+            }, {
+                unique: true
+            }, d.intercept(function (result) {
+                coll.createIndex({
+                    "data.screen_name": 1
+                }, {
+                    unique: true
+                }, d.intercept(function (result) {
+                    callback(null);
+                }));
+            }));
+        }));
     };
     Controller.prototype.getMongoClient = function () {
         return this.db.mongo.getClient();

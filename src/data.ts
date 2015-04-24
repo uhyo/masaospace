@@ -34,3 +34,16 @@ export interface Ticket extends TicketData{
     //created time
     created:Date;
 }
+
+//ファイル
+export interface File{
+    id:string;
+    //ファイルタイプ（MIME）
+    type:string;
+    //どのユーザーがアップロードしたか
+    owner:string;
+    //もともとのファイル名
+    name:string;
+    //アップロード日時
+    created:Date;
+}
