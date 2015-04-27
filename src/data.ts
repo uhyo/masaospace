@@ -36,8 +36,7 @@ export interface Ticket extends TicketData{
 }
 
 //ファイル
-export interface File{
-    id:string;
+export interface FileData{
     //ファイルタイプ（MIME）
     type:string;
     //どのユーザーがアップロードしたか
@@ -46,4 +45,7 @@ export interface File{
     name:string;
     //アップロード日時
     created:Date;
+}
+export interface File extends FileData{
+    id:string;
 }

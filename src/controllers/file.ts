@@ -4,13 +4,16 @@ import fs=require('fs');
 import path=require('path');
 
 import mkdirp=require('mkdirp');
+import mime=require('mime');
 
 import config=require('config');
 import logger=require('../logger');
 
 import db=require('../db');
 
-import {File} from '../data';
+import {File,FileData} from '../data';
+
+import {uniqueToken} from '../util';
 
 export default class FileController{
     constructor(private db:db.DBAccess){
@@ -49,6 +52,50 @@ export default class FileController{
                             return;
                         }
                         callback(null);
+                    });
+                });
+            });
+        });
+    }
+    private addFile(f:FileData,filepath:string,callback:Callback<File>):void{
+        //add file to db
+        this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            var baseid=uniqueToken(config.get("file.idLength"));
+            //新しいファイル名をつくる
+            var id=baseid+"."+mime.extension(fi.type);
+            var fi:File={
+                id:id,
+                type: f.type,
+                owner: f.owner,
+                name: f.name,
+                created: f.created
+            };
+            //directory to place file
+            var dir:string=path.join(config.get("file.path"),fi.owner);
+            mkdirp(dir,(err)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                    return;
+                }
+                fs.rename(filepath,path.join(dir,id),(err)=>{
+                    if(err){
+                        logger.error(err);
+                        callback(err,null);
+                        return;
+                    }
+                    coll.insertOne(fi,(err,result)=>{
+                        if(err){
+                            logger.error(err);
+                            callback(err,null);
+                            return;
+                        }
+                        //入った
+                        callback(null,fi);
                     });
                 });
             });

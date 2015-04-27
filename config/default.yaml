@@ -17,6 +17,8 @@ redis:
 file:
   # path to store user-uploaded files
   path: /home/no/masaopost/data
+  # file id length
+  idLength: 16
 
 # web server config
 webserver:

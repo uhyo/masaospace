@@ -1165,6 +1165,18 @@ declare module "mkdirp"{
     },cb:Cont):void;
     function mkdirp(dir:string,cb:Cont):void;
 }
+declare module "mime"{
+    export function lookup(path:string):string;
+    export var default_type:string;
+    export function extension(type:string):string;
+    export function define(obj:{
+        [mime:string]:Array<string>;
+    }):void;
+    export function load(filepath:string):void;
+    export module charsets{
+        export function lookup(type:string):string;
+    }
+}
 
 // something useful for me
 interface Callback<T>{

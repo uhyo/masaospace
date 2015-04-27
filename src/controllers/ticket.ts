@@ -1,9 +1,9 @@
 ///<reference path="../node.d.ts" />
-import randomString=require('random-string');
-
 import db=require('../db');
 import config=require('config');
 import logger=require('../logger');
+
+import {uniqueToken} from '../util';
 
 
 import {TicketData, Ticket} from '../data';
@@ -58,39 +58,23 @@ export default class TicketController{
                 return;
             }
             //まずticket tokenを決定
-            decideToken();
-
-            function decideToken():void{
-                var token=randomString({length: config.get("ticket.length")});
-                coll.count({token: token},(err,count)=>{
-                    if(err){
-                        logger.error(err);
-                        callback(err,null);
-                        return;
-                    }
-                    //万が一重複したら再考
-                    if(count>0){
-                        decideToken();
-                        return;
-                    }
-                    //重複なしを確認したら（これ以降はuniqueで止める）
-                    var ti:Ticket={
-                        token: token,
-                        type: t.type,
-                        user: t.user,
-                        created:new Date()
-                    };
-                    coll.insertOne(ti,(err,result)=>{
-                        if(err){
-                            logger.error(err);
-                            callback(err,null);
-                            return;
-                        }
-                        //成功した
-                        callback(null,ti);
-                    });
-                });
-            }
+            var token=uniqueToken(config.get("ticket.length"));
+            //Ticketを作る
+            var ti:Ticket={
+                token: token,
+                type: t.type,
+                user: t.user,
+                created:new Date()
+            };
+            coll.insertOne(ti,(err,result)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                    return;
+                }
+                //成功した
+                callback(null,ti);
+            });
         });
     }
     //チケットがあるか調べる
