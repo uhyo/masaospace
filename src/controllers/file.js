@@ -72,13 +72,28 @@ var FileController = (function () {
             mkdirp(dir, function (err) {
                 if (err) {
                     logger.error(err);
-                    callback(err, null);
+                    //入力ファイルの処理を試みる
+                    fs.unlink(filepath, function (err2) {
+                        if (err2) {
+                            logger.error(err2);
+                            callback(err2, null);
+                            return;
+                        }
+                        callback(err, null);
+                    });
                     return;
                 }
                 fs.rename(filepath, path.join(dir, id), function (err) {
                     if (err) {
                         logger.error(err);
-                        callback(err, null);
+                        fs.unlink(filepath, function (err2) {
+                            if (err2) {
+                                logger.error(err2);
+                                callback(err2, null);
+                                return;
+                            }
+                            callback(err, null);
+                        });
                         return;
                     }
                     coll.insertOne(fi, function (err, result) {

@@ -79,13 +79,28 @@ export default class FileController{
             mkdirp(dir,(err)=>{
                 if(err){
                     logger.error(err);
-                    callback(err,null);
+                    //入力ファイルの処理を試みる
+                    fs.unlink(filepath,(err2)=>{
+                        if(err2){
+                            logger.error(err2);
+                            callback(err2,null);
+                            return;
+                        }
+                        callback(err,null);
+                    });
                     return;
                 }
                 fs.rename(filepath,path.join(dir,id),(err)=>{
                     if(err){
                         logger.error(err);
-                        callback(err,null);
+                        fs.unlink(filepath,(err2)=>{
+                            if(err2){
+                                logger.error(err2);
+                                callback(err2,null);
+                                return;
+                            }
+                            callback(err,null);
+                        });
                         return;
                     }
                     coll.insertOne(fi,(err,result)=>{
