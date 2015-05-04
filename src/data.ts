@@ -27,6 +27,22 @@ export interface UserOneQuery{
     mail?:string;
 }
 
+//セッション
+export interface Session{
+    //user id
+    user:string;
+    //screen name
+    screen_name:string;
+    //user name
+    name:string;
+
+    //methods provided by express-session
+    regenerate(callback:Cont):void;
+    destroy(callback:Cont):void;
+    reload(callback:Cont):void;
+    save(callback:Cont):void;
+}
+
 
 //チケット
 export interface TicketData{

@@ -3,7 +3,7 @@
 import db=require('../db');
 import logger=require('../logger');
 
-import {User, UserOneQuery} from '../data';
+import {User, UserOneQuery, Session} from '../data';
 import mum=require('my-user-mongo');
 
 export default class SessionController{
@@ -13,7 +13,7 @@ export default class SessionController{
         callback(null);
     }
     //ユーザーがログインを試みる
-    login(u:UserOneQuery,password:string,callback:Callback<boolean>):void{
+    login(session:Session, u:UserOneQuery,password:string,callback:Callback<boolean>):void{
         //trueならログイン成功
         var query:any={}, flag=false;
         if(u.screen_name_lower!=null){
@@ -41,7 +41,25 @@ export default class SessionController{
                 return;
             }
             //got user
-            callback(null,u.auth(password));
+            var result=u.auth(password);
+            if(result===false){
+                //login fails
+                callback(null,false);
+                return;
+            }
+            var d=u.getData();
+            //succeed!
+            session.user=u.id;
+            session.screen_name=d.screen_name;
+            session.name=d.name;
+            session.save((err)=>{
+                if(err){
+                    logger.error(err);
+                    callback(null,false);
+                    return;
+                }
+                callback(null,true);
+            });
         });
     }
 }

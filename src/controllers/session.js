@@ -9,7 +9,7 @@ var SessionController = (function () {
         callback(null);
     };
     //ユーザーがログインを試みる
-    SessionController.prototype.login = function (u, password, callback) {
+    SessionController.prototype.login = function (session, u, password, callback) {
         //trueならログイン成功
         var query = {}, flag = false;
         if (u.screen_name_lower != null) {
@@ -37,7 +37,25 @@ var SessionController = (function () {
                 return;
             }
             //got user
-            callback(null, u.auth(password));
+            var result = u.auth(password);
+            if (result === false) {
+                //login fails
+                callback(null, false);
+                return;
+            }
+            var d = u.getData();
+            //succeed!
+            session.user = u.id;
+            session.screen_name = d.screen_name;
+            session.name = d.name;
+            session.save(function (err) {
+                if (err) {
+                    logger.error(err);
+                    callback(null, false);
+                    return;
+                }
+                callback(null, true);
+            });
         });
     };
     return SessionController;
