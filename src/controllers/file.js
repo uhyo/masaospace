@@ -109,6 +109,22 @@ var FileController = (function () {
             });
         });
     };
+    FileController.prototype.getFiles = function (q, callback) {
+        this.db.mongo.collection(config.get("mongo.collection.file"), function (err, coll) {
+            if (err) {
+                callback(err, null);
+                return;
+            }
+            coll.find(q).toArray(function (err, docs) {
+                if (err) {
+                    logger.error(err);
+                    callback(err, []);
+                    return;
+                }
+                callback(null, docs);
+            });
+        });
+    };
     return FileController;
 })();
 exports.default = FileController;

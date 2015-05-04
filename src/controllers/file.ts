@@ -11,7 +11,7 @@ import logger=require('../logger');
 
 import db=require('../db');
 
-import {File,FileData} from '../data';
+import {File,FileData,FileQuery} from '../data';
 
 import {uniqueToken} from '../util';
 
@@ -57,7 +57,7 @@ export default class FileController{
             });
         });
     }
-    private addFile(f:FileData,filepath:string,callback:Callback<File>):void{
+    addFile(f:FileData,filepath:string,callback:Callback<File>):void{
         //add file to db
         this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
             if(err){
@@ -116,4 +116,21 @@ export default class FileController{
             });
         });
     }
+    getFiles(q:FileQuery,callback:Callback<Array<File>>):void{
+        this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            coll.find(q).toArray((err,docs)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,[]);
+                    return;
+                }
+                callback(null,docs);
+            });
+        });
+    }
+
 }

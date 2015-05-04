@@ -49,3 +49,8 @@ export interface FileData{
 export interface File extends FileData{
     id:string;
 }
+//ファイルを探すクエリ
+export interface FileQuery{
+    id?:string;
+    owner?:string;
+}
