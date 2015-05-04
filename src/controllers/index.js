@@ -2,6 +2,8 @@ var domain = require('domain');
 var config = require('config');
 var logger = require('../logger');
 var ticket_1 = require('./ticket');
+var file_1 = require('./file');
+var session_1 = require('./session');
 var mum = require('my-user-mongo');
 // 各種の操作
 var Controller = (function () {
@@ -18,6 +20,8 @@ var Controller = (function () {
             }
         });
         this.ticket = new ticket_1.default(db);
+        this.file = new file_1.default(db);
+        this.session = new session_1.default(db, this.user);
     }
     Controller.prototype.init = function (callback) {
         var _this = this;
@@ -48,11 +52,17 @@ var Controller = (function () {
                 unique: true
             }, d.intercept(function (result) {
                 coll.createIndex({
-                    "data.screen_name": 1
+                    "data.screen_name_lower": 1
                 }, {
                     unique: true
                 }, d.intercept(function (result) {
-                    callback(null);
+                    coll.createIndex({
+                        "data.mail": 1
+                    }, {
+                        unique: true
+                    }, d.intercept(function (result) {
+                        callback(null);
+                    }));
                 }));
             }));
         }));

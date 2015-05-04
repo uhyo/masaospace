@@ -823,6 +823,7 @@ declare module "express"{
 
             //extention
             public body:any;
+            public session:any;
             ////csurf
             csrfToken():string;
             ////express-validator

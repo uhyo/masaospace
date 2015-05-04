@@ -6,12 +6,16 @@ import logger=require('../logger');
 import db=require('../db');
 
 import TicketController from './ticket';
+import FileController from './file';
+import SessionController from './session';
 import mum=require('my-user-mongo');
 
 // 各種の操作
 class Controller{
     public user:mum.Manager;
     public ticket:TicketController;
+    public file:FileController;
+    public session:SessionController;
 
     constructor(private db:db.DBAccess){
         //初期化
@@ -25,6 +29,8 @@ class Controller{
             }
         });
         this.ticket=new TicketController(db);
+        this.file  =new FileController(db);
+        this.session= new SessionController(db,this.user);
     }
     init(callback:Cont):void{
         var d=domain.create();
@@ -55,11 +61,17 @@ class Controller{
                 unique:true
             },d.intercept((result)=>{
                 coll.createIndex({
-                    "data.screen_name":1
+                    "data.screen_name_lower":1
                 },{
                     unique:true
                 },d.intercept((result)=>{
-                    callback(null);
+                    coll.createIndex({
+                        "data.mail":1
+                    },{
+                        unique:true
+                    },d.intercept((result)=>{
+                        callback(null);
+                    }));
                 }));
             }));
         }));

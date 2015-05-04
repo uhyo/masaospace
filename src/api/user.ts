@@ -39,7 +39,7 @@ class C{
             };
             //既存のユーザーとの重複をチェック
             c.user.user.findOneUser({
-                screen_name_lower:data.screen_name_lower
+                "data.screen_name_lower":data.screen_name_lower
             },(err,user)=>{
                 if(err){
                     throw err;

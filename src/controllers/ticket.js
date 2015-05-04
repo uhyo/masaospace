@@ -1,7 +1,6 @@
-///<reference path="../node.d.ts" />
-var randomString = require('random-string');
 var config = require('config');
 var logger = require('../logger');
+var util_1 = require('../util');
 //ticket controller
 var TicketController = (function () {
     function TicketController(db) {
@@ -53,38 +52,23 @@ var TicketController = (function () {
                 return;
             }
             //まずticket tokenを決定
-            decideToken();
-            function decideToken() {
-                var token = randomString({ length: config.get("ticket.length") });
-                coll.count({ token: token }, function (err, count) {
-                    if (err) {
-                        logger.error(err);
-                        callback(err, null);
-                        return;
-                    }
-                    //万が一重複したら再考
-                    if (count > 0) {
-                        decideToken();
-                        return;
-                    }
-                    //重複なしを確認したら（これ以降はuniqueで止める）
-                    var ti = {
-                        token: token,
-                        type: t.type,
-                        user: t.user,
-                        created: new Date()
-                    };
-                    coll.insertOne(ti, function (err, result) {
-                        if (err) {
-                            logger.error(err);
-                            callback(err, null);
-                            return;
-                        }
-                        //成功した
-                        callback(null, ti);
-                    });
-                });
-            }
+            var token = util_1.uniqueToken(config.get("ticket.length"));
+            //Ticketを作る
+            var ti = {
+                token: token,
+                type: t.type,
+                user: t.user,
+                created: new Date()
+            };
+            coll.insertOne(ti, function (err, result) {
+                if (err) {
+                    logger.error(err);
+                    callback(err, null);
+                    return;
+                }
+                //成功した
+                callback(null, ti);
+            });
         });
     };
     //チケットがあるか調べる

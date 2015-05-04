@@ -21,6 +21,11 @@ export interface UserData{
     //作成日時
     created:Date;
 }
+//ひとつのユーザーを指定
+export interface UserOneQuery{
+    screen_name_lower?:string;
+    mail?:string;
+}
 
 
 //チケット
