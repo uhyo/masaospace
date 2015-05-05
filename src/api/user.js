@@ -155,6 +155,56 @@ var C = (function () {
                 });
             });
         });
+        //session
+        router.post("/login", function (req, res) {
+            var id = req.body.user, password = req.body.password;
+            var uq;
+            if (id.indexOf("@") >= 0) {
+                //mail address
+                uq = {
+                    mail: id
+                };
+            }
+            else {
+                //user id
+                uq = {
+                    id: id
+                };
+            }
+            //login
+            c.session.login(req.session, uq, password, function (err, result) {
+                if (err) {
+                    res.json({
+                        error: String(err)
+                    });
+                }
+                else if (result !== true) {
+                    res.json({
+                        error: "ユーザー名またはパスワードが間違っています。"
+                    });
+                }
+                else {
+                    //success
+                    res.json({
+                        error: null
+                    });
+                }
+            });
+        });
+        router.post("/logout", function (req, res) {
+            c.session.logout(req.session, function (err) {
+                if (err) {
+                    res.json({
+                        error: String(err)
+                    });
+                }
+                else {
+                    res.json({
+                        error: null
+                    });
+                }
+            });
+        });
     };
     return C;
 })();

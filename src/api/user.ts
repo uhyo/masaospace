@@ -6,7 +6,7 @@ import logger=require('../logger');
 
 import config=require('config');
 
-import {User,UserData} from '../data';
+import {User,UserData, UserOneQuery} from '../data';
 
 
 //User auth&session
@@ -166,6 +166,53 @@ class C{
                         });
                     });
                 });
+            });
+        });
+
+        //session
+        router.post("/login",(req,res)=>{
+            var id:string=req.body.user, password:string=req.body.password;
+            var uq:UserOneQuery;
+            if(id.indexOf("@")>=0){
+                //mail address
+                uq={
+                    mail:id
+                };
+            }else{
+                //user id
+                uq={
+                    id:id
+                };
+            }
+            //login
+            c.session.login(req.session,uq,password,(err,result)=>{
+                if(err){
+                    res.json({
+                        error:String(err)
+                    });
+                }else if(result!==true){
+                    res.json({
+                        error:"ユーザー名またはパスワードが間違っています。"
+                    });
+                }else{
+                    //success
+                    res.json({
+                        error:null
+                    });
+                }
+            });
+        });
+        router.post("/logout",(req,res)=>{
+            c.session.logout(req.session,(err)=>{
+                if(err){
+                    res.json({
+                        error:String(err)
+                    });
+                }else{
+                    res.json({
+                        error:null
+                    });
+                }
             });
         });
     }
