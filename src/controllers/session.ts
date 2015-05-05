@@ -62,4 +62,16 @@ export default class SessionController{
             });
         });
     }
+    logout(session:Session,callback:Cont):void{
+        //log out!!!!!!!!!
+        session.user=null;
+        session.screen_name=null;
+        session.name=null;
+        session.save((err)=>{
+            if(err){
+                logger.error(err);
+            }
+            callback(err);
+        });
+    }
 }

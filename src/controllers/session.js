@@ -58,6 +58,18 @@ var SessionController = (function () {
             });
         });
     };
+    SessionController.prototype.logout = function (session, callback) {
+        //log out!!!!!!!!!
+        session.user = null;
+        session.screen_name = null;
+        session.name = null;
+        session.save(function (err) {
+            if (err) {
+                logger.error(err);
+            }
+            callback(err);
+        });
+    };
     return SessionController;
 })();
 exports.default = SessionController;
