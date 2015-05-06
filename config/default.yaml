@@ -9,6 +9,8 @@ mongodb:
     user: user
     ticket: ticket
     file: file
+    gamemetadata: gamemetadata
+    gamedata: gamedata
 redis:
   host: localhost
   port: 6379

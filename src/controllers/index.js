@@ -4,6 +4,7 @@ var logger = require('../logger');
 var ticket_1 = require('./ticket');
 var file_1 = require('./file');
 var session_1 = require('./session');
+var game_1 = require('./game');
 var mum = require('my-user-mongo');
 // 各種の操作
 var Controller = (function () {
@@ -22,6 +23,7 @@ var Controller = (function () {
         this.ticket = new ticket_1.default(db);
         this.file = new file_1.default(db);
         this.session = new session_1.default(db, this.user);
+        this.game = new game_1.default(db);
     }
     Controller.prototype.init = function (callback) {
         var _this = this;
@@ -31,9 +33,13 @@ var Controller = (function () {
         });
         this.user.init(d.intercept(function () {
             _this.initUser(d.intercept(function () {
-                _this.ticket.init(function (err) {
-                    callback(null);
-                });
+                _this.ticket.init(d.intercept(function () {
+                    _this.session.init(d.intercept(function () {
+                        _this.game.init(d.intercept(function () {
+                            callback(null);
+                        }));
+                    }));
+                }));
             }));
         }));
     };

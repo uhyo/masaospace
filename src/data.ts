@@ -75,3 +75,30 @@ export interface FileQuery{
     id?:string;
     owner?:string;
 }
+
+//正男（各種メタデータ）
+export interface GameMetadata{
+    //ゲームID
+    id:number;
+    //オーナーユーザーID
+    owner:string;
+    //タイトル
+    title:string;
+    //作成日時
+    created:Date;
+    //更新日時
+    updated:Date;
+}
+//ゲーム本体データ
+export interface GameData{
+    //ゲームID
+    id:number;
+    //ここにいろいろ入ってる
+    params:any;
+    //リソース（使用ファイル）
+    resources:Array<{
+        owner:string;
+        id:string;
+    }>;
+}
+

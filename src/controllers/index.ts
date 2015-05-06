@@ -8,6 +8,7 @@ import db=require('../db');
 import TicketController from './ticket';
 import FileController from './file';
 import SessionController from './session';
+import GameController from './game';
 import mum=require('my-user-mongo');
 
 // 各種の操作
@@ -16,6 +17,7 @@ class Controller{
     public ticket:TicketController;
     public file:FileController;
     public session:SessionController;
+    public game:GameController;
 
     constructor(private db:db.DBAccess){
         //初期化
@@ -31,6 +33,7 @@ class Controller{
         this.ticket=new TicketController(db);
         this.file  =new FileController(db);
         this.session= new SessionController(db,this.user);
+        this.game  =new GameController(db);
     }
     init(callback:Cont):void{
         var d=domain.create();
@@ -40,9 +43,13 @@ class Controller{
 
         this.user.init(d.intercept(()=>{
             this.initUser(d.intercept(()=>{
-                this.ticket.init((err:any)=>{
-                    callback(null);
-                });
+                this.ticket.init(d.intercept(()=>{
+                    this.session.init(d.intercept(()=>{
+                        this.game.init(d.intercept(()=>{
+                            callback(null);
+                        }));
+                    }));
+                }));
             }));
         }));
     }
