@@ -84,6 +84,8 @@ export interface GameMetadata{
     owner:string;
     //タイトル
     title:string;
+    //難易度
+    level:number;
     //作成日時
     created:Date;
     //更新日時

@@ -66,3 +66,8 @@ ticket:
   # ticket life 8in seconds)
   life:
     setpassword: 86400
+# games
+games:
+  level:
+    min: 0
+    max: 10
