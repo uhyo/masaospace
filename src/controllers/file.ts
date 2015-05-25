@@ -74,12 +74,10 @@ export default class FileController{
                 name: f.name,
                 created: f.created
             };
-            //directory to place file
-            var dir:string=path.join(config.get("file.path"),fi.owner);
-            mkdirp(dir,(err)=>{
+            var newpath = path.join(config.get("file.path"),id);
+            fs.rename(filepath,newpath,(err)=>{
                 if(err){
                     logger.error(err);
-                    //入力ファイルの処理を試みる
                     fs.unlink(filepath,(err2)=>{
                         if(err2){
                             logger.error(err2);
@@ -90,10 +88,10 @@ export default class FileController{
                     });
                     return;
                 }
-                fs.rename(filepath,path.join(dir,id),(err)=>{
+                coll.insertOne(fi,(err,result)=>{
                     if(err){
                         logger.error(err);
-                        fs.unlink(filepath,(err2)=>{
+                        fs.unlink(newpath,(err2)=>{
                             if(err2){
                                 logger.error(err2);
                                 callback(err2,null);
@@ -101,17 +99,11 @@ export default class FileController{
                             }
                             callback(err,null);
                         });
+                        callback(err,null);
                         return;
                     }
-                    coll.insertOne(fi,(err,result)=>{
-                        if(err){
-                            logger.error(err);
-                            callback(err,null);
-                            return;
-                        }
-                        //入った
-                        callback(null,fi);
-                    });
+                    //入った
+                    callback(null,fi);
                 });
             });
         });

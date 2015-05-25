@@ -67,12 +67,10 @@ var FileController = (function () {
                 name: f.name,
                 created: f.created
             };
-            //directory to place file
-            var dir = path.join(config.get("file.path"), fi.owner);
-            mkdirp(dir, function (err) {
+            var newpath = path.join(config.get("file.path"), id);
+            fs.rename(filepath, newpath, function (err) {
                 if (err) {
                     logger.error(err);
-                    //入力ファイルの処理を試みる
                     fs.unlink(filepath, function (err2) {
                         if (err2) {
                             logger.error(err2);
@@ -83,10 +81,10 @@ var FileController = (function () {
                     });
                     return;
                 }
-                fs.rename(filepath, path.join(dir, id), function (err) {
+                coll.insertOne(fi, function (err, result) {
                     if (err) {
                         logger.error(err);
-                        fs.unlink(filepath, function (err2) {
+                        fs.unlink(newpath, function (err2) {
                             if (err2) {
                                 logger.error(err2);
                                 callback(err2, null);
@@ -94,17 +92,11 @@ var FileController = (function () {
                             }
                             callback(err, null);
                         });
+                        callback(err, null);
                         return;
                     }
-                    coll.insertOne(fi, function (err, result) {
-                        if (err) {
-                            logger.error(err);
-                            callback(err, null);
-                            return;
-                        }
-                        //入った
-                        callback(null, fi);
-                    });
+                    //入った
+                    callback(null, fi);
                 });
             });
         });
@@ -127,4 +119,4 @@ var FileController = (function () {
     };
     return FileController;
 })();
-exports.default = FileController;
+exports["default"] = FileController;
