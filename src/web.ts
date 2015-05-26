@@ -28,12 +28,14 @@ export class WebServer{
         //open web server
         this.app=express();
         //rendering engine
+        var views=path.resolve(__dirname,"..","client","views");
         var ectRenderer=ect({
-            root:path.resolve(__dirname,"..","client","templates"),
+            root:views,
             ext:".ect"
         });
+        this.app.set("views",views);
         this.app.set("view engine","ect");
-        this.app.engine("ect",ectRenderer.renderer);
+        this.app.engine("ect",ectRenderer.render);
         // bodyparser
         this.app.use(bodyParser.urlencoded({
             extended: false
@@ -107,7 +109,8 @@ export class WebServer{
                     //js file
                     var mod=require(filepath);
                     if("function"===typeof mod){
-                        var subroute=router.route(files[i]);
+                        var subroute=express.Router();
+                        (<any>router).use("/"+files[i],subroute);
                         (new mod).route(subroute,c);
                     }
                 }
@@ -119,7 +122,7 @@ export class WebServer{
     front(c:Controller):void{
         // TODO
         this.app.get("/",(req,res)=>{
-            res.render("index",{
+            res.render("index.ect",{
                 title: "foo",
                 content: "<p>bar</p>"
             });

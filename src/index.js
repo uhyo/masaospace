@@ -21,9 +21,11 @@ var System = (function () {
         });
         //connect DB
         this.db.connect(d.intercept(function () {
+            logger.info("DB connection complete.");
             _this.c.init(d.intercept(function () {
                 //web server
-                _this.srv.init(_this.db, d.intercept(function () {
+                logger.info("Controller initialization complete.");
+                _this.srv.init(_this.c, d.intercept(function () {
                     logger.info("System is ready.");
                     callback(null);
                 }));

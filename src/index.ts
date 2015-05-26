@@ -29,9 +29,11 @@ export class System{
 
         //connect DB
         this.db.connect(d.intercept(()=>{
+            logger.info("DB connection complete.");
             this.c.init(d.intercept(()=>{
                 //web server
-                this.srv.init(this.db,d.intercept(()=>{
+                logger.info("Controller initialization complete.");
+                this.srv.init(this.c,d.intercept(()=>{
                     logger.info("System is ready.");
                     callback(null);
                 }));

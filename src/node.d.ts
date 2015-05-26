@@ -799,6 +799,7 @@ declare module "express"{
             get(path,...callback:RequestHandler[]):void;
             listen(port:number):void;
             post(path,...callback:RequestHandler[]):void;
+            route(path):_Router;
             use(path,callback:RequestHandler):void;
             use(path,r:_Router):void;
             use(callback:RequestHandler|ErrorHandler):void;
@@ -1224,7 +1225,7 @@ declare module "ect"{
         open?:string;
         close?:string;
     }):{
-        renderer:any;
+        render:any;
     };
 }
 

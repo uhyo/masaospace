@@ -20,6 +20,14 @@ class Controller{
     public game:GameController;
 
     constructor(private db:db.DBAccess){
+    }
+    init(callback:Cont):void{
+        var db=this.db;
+        var d=domain.create();
+        d.on("error",(err:any)=>{
+            callback(err);
+        });
+
         //初期化
         this.user=mum.manager({
             db:db.mongo.getClient(),
@@ -34,18 +42,17 @@ class Controller{
         this.file  =new FileController(db);
         this.session= new SessionController(db,this.user);
         this.game  =new GameController(db);
-    }
-    init(callback:Cont):void{
-        var d=domain.create();
-        d.on("error",(err:any)=>{
-            callback(err);
-        });
 
+        logger.debug("Controller: initialization start.");
         this.user.init(d.intercept(()=>{
             this.initUser(d.intercept(()=>{
+                logger.debug("Controller.user initialized.");
                 this.ticket.init(d.intercept(()=>{
+                    logger.debug("Controller.ticket initialized.");
                     this.session.init(d.intercept(()=>{
+                        logger.debug("Controller.session initialized.");
                         this.game.init(d.intercept(()=>{
+                            logger.debug("Controller.game initialized.");
                             callback(null);
                         }));
                     }));

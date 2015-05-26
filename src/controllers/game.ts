@@ -18,7 +18,7 @@ export default class GameController{
         });
 
         //indexes
-        this.db.mongo.collection(config.get("mongodb.collection.gamematadata"),d.intercept((coll)=>{
+        this.db.mongo.collection(config.get("mongodb.collection.gamemetadata"),d.intercept((coll)=>{
             coll.createIndex({
                 id:1
             },{

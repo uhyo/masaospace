@@ -10,6 +10,14 @@ var mum = require('my-user-mongo');
 var Controller = (function () {
     function Controller(db) {
         this.db = db;
+    }
+    Controller.prototype.init = function (callback) {
+        var _this = this;
+        var db = this.db;
+        var d = domain.create();
+        d.on("error", function (err) {
+            callback(err);
+        });
         //初期化
         this.user = mum.manager({
             db: db.mongo.getClient(),
@@ -24,18 +32,16 @@ var Controller = (function () {
         this.file = new file_1["default"](db);
         this.session = new session_1["default"](db, this.user);
         this.game = new game_1["default"](db);
-    }
-    Controller.prototype.init = function (callback) {
-        var _this = this;
-        var d = domain.create();
-        d.on("error", function (err) {
-            callback(err);
-        });
+        logger.debug("Controller: initialization start.");
         this.user.init(d.intercept(function () {
             _this.initUser(d.intercept(function () {
+                logger.debug("Controller.user initialized.");
                 _this.ticket.init(d.intercept(function () {
+                    logger.debug("Controller.ticket initialized.");
                     _this.session.init(d.intercept(function () {
+                        logger.debug("Controller.session initialized.");
                         _this.game.init(d.intercept(function () {
+                            logger.debug("Controller.game initialized.");
                             callback(null);
                         }));
                     }));

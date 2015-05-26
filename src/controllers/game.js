@@ -14,7 +14,7 @@ var GameController = (function () {
             callback(err);
         });
         //indexes
-        this.db.mongo.collection(config.get("mongodb.collection.gamematadata"), d.intercept(function (coll) {
+        this.db.mongo.collection(config.get("mongodb.collection.gamemetadata"), d.intercept(function (coll) {
             coll.createIndex({
                 id: 1
             }, {
