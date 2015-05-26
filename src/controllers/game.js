@@ -44,4 +44,4 @@ var GameController = (function () {
     };
     return GameController;
 })();
-exports.default = GameController;
+exports["default"] = GameController;

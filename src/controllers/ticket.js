@@ -124,4 +124,4 @@ var TicketController = (function () {
     };
     return TicketController;
 })();
-exports.default = TicketController;
+exports["default"] = TicketController;

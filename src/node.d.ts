@@ -794,6 +794,7 @@ declare module "express"{
             enable(name:string):void;
             disable(name:string):void;
             set(key:string,value:string):void;
+            engine(name:string,engine:any):void;
 
             get(path,...callback:RequestHandler[]):void;
             listen(port:number):void;
@@ -1177,6 +1178,54 @@ declare module "mime"{
     export module charsets{
         export function lookup(type:string):string;
     }
+}
+declare module "st"{
+    export = st;
+    function st(path:string):any;
+    function st(options?:{
+        path?:string;
+        url?:string;
+        passthrough?:boolean;
+        cache?:boolean|{
+            fd?:{
+                max?:number;
+                maxAge?:number;
+            };
+            stat?:{
+                max?:number;
+                maxAge?:number;
+            };
+            content?:{
+                max?:number;
+                maxAge?:number;
+                cacheControl?:string;
+            };
+            index?:{
+                max?:number;
+                maxAge?:number;
+            };
+            readdir?:{
+                max?:number;
+                maxAge?:number;
+            };
+        };
+        index?:boolean|string;
+        dot?:boolean;
+        gzip?:boolean;
+    }):any;
+}
+declare module "ect"{
+    export = ECT;
+    function ECT(option?:{
+        root?:any;
+        ext?:string;
+        cache?:boolean;
+        watch?:boolean;
+        open?:string;
+        close?:string;
+    }):{
+        renderer:any;
+    };
 }
 
 // something useful for me

@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var expressSession = require('express-session');
 var connectRedis = require('connect-redis');
 var csurf = require('csurf');
+var st = require('st');
+var ect = require('ect');
 var logger = require('./logger');
 var validator = require('./validator');
 var WebServer = (function () {
@@ -16,9 +18,24 @@ var WebServer = (function () {
     WebServer.prototype.init = function (c, callback) {
         //open web server
         this.app = express();
+        //rendering engine
+        var ectRenderer = ect({
+            root: path.resolve(__dirname, "..", "client", "templates"),
+            ext: ".ect"
+        });
+        this.app.set("view engine", "ect");
+        this.app.engine("ect", ectRenderer.renderer);
+        // bodyparser
         this.app.use(bodyParser.urlencoded({
             extended: false
         }));
+        //static files
+        this.app.use(st({
+            path: path.resolve(__dirname, "..", "client", "static"),
+            url: "/static",
+            index: false
+        }));
+        //validator
         this.app.use(validator.makeExpressValidator());
         //session
         var sessoption = {
@@ -50,11 +67,13 @@ var WebServer = (function () {
             }
         });
         this.route(c);
+        this.front(c);
         this.app.listen(config.get("webserver.port"));
         process.nextTick(function () {
             callback(null);
         });
     };
+    //route apis
     WebServer.prototype.route = function (c) {
         var t = this;
         var apiroot = express.Router();
@@ -83,6 +102,16 @@ var WebServer = (function () {
                 }
             }
         }
+    };
+    //front pages
+    WebServer.prototype.front = function (c) {
+        // TODO
+        this.app.get("/", function (req, res) {
+            res.render("index", {
+                title: "foo",
+                content: "<p>bar</p>"
+            });
+        });
     };
     return WebServer;
 })();

@@ -20,10 +20,10 @@ var Controller = (function () {
                 userIdLength: config.get("user.idLength")
             }
         });
-        this.ticket = new ticket_1.default(db);
-        this.file = new file_1.default(db);
-        this.session = new session_1.default(db, this.user);
-        this.game = new game_1.default(db);
+        this.ticket = new ticket_1["default"](db);
+        this.file = new file_1["default"](db);
+        this.session = new session_1["default"](db, this.user);
+        this.game = new game_1["default"](db);
     }
     Controller.prototype.init = function (callback) {
         var _this = this;

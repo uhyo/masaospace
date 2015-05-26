@@ -72,4 +72,4 @@ var SessionController = (function () {
     };
     return SessionController;
 })();
-exports.default = SessionController;
+exports["default"] = SessionController;

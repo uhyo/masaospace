@@ -11,6 +11,8 @@ import bodyParser=require('body-parser');
 import expressSession=require('express-session');
 import connectRedis=require('connect-redis');
 import csurf=require('csurf');
+import st=require('st');
+import ect=require('ect');
 
 import logger=require('./logger');
 import db=require('./db');
@@ -25,9 +27,24 @@ export class WebServer{
     init(c:Controller,callback:Cont):void{
         //open web server
         this.app=express();
+        //rendering engine
+        var ectRenderer=ect({
+            root:path.resolve(__dirname,"..","client","templates"),
+            ext:".ect"
+        });
+        this.app.set("view engine","ect");
+        this.app.engine("ect",ectRenderer.renderer);
+        // bodyparser
         this.app.use(bodyParser.urlencoded({
             extended: false
         }));
+        //static files
+        this.app.use(st({
+            path:path.resolve(__dirname,"..","client","static"),
+            url:"/static",
+            index:false
+        }));
+        //validator
         this.app.use(validator.makeExpressValidator());
         //session
         var sessoption={
@@ -59,12 +76,14 @@ export class WebServer{
         });
 
         this.route(c);
+        this.front(c);
 
         this.app.listen(config.get("webserver.port"));
         process.nextTick(()=>{
             callback(null);
         });
     }
+    //route apis
     route(c:Controller):void{
         var t=this;
         var apiroot=express.Router();
@@ -95,5 +114,15 @@ export class WebServer{
 
             }
         }
+    }
+    //front pages
+    front(c:Controller):void{
+        // TODO
+        this.app.get("/",(req,res)=>{
+            res.render("index",{
+                title: "foo",
+                content: "<p>bar</p>"
+            });
+        });
     }
 }
