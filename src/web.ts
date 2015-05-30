@@ -14,11 +14,20 @@ import csurf=require('csurf');
 import st=require('st');
 import ect=require('ect');
 
+import React=require('react');
+import nodejsx=require('node-jsx');
+
 import logger=require('./logger');
 import db=require('./db');
 import validator=require('./validator');
 
 import Controller=require('./controllers/index');
+
+nodejsx.install({
+    harmony:true
+});
+
+var Top=require('../client/jsx/top.jsx');
 
 export class WebServer{
     private app:express.Express;
@@ -124,7 +133,7 @@ export class WebServer{
         this.app.get("/",(req,res)=>{
             res.render("index.ect",{
                 title: "foo",
-                content: "<p>bar</p>"
+                content: React.renderToString(React.createElement(Top,{}))
             });
         });
     }

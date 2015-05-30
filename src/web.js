@@ -10,8 +10,14 @@ var connectRedis = require('connect-redis');
 var csurf = require('csurf');
 var st = require('st');
 var ect = require('ect');
+var React = require('react');
+var nodejsx = require('node-jsx');
 var logger = require('./logger');
 var validator = require('./validator');
+nodejsx.install({
+    harmony: true
+});
+var Top = require('../client/jsx/top.jsx');
 var WebServer = (function () {
     function WebServer() {
     }
@@ -112,7 +118,7 @@ var WebServer = (function () {
         this.app.get("/", function (req, res) {
             res.render("index.ect", {
                 title: "foo",
-                content: "<p>bar</p>"
+                content: React.renderToString(React.createElement(Top, {}))
             });
         });
     };

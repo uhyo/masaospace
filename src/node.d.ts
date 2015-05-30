@@ -1228,6 +1228,17 @@ declare module "ect"{
         render:any;
     };
 }
+declare module "react"{
+    export function renderToString(componeny:any):string;
+    export function createElement(elm:any,data?:any):any;
+}
+declare module "node-jsx"{
+    export function install(option?:{
+        extension?:string;
+        additionalTransform?:(string)=>string;
+        harmony?:boolean;
+    }):void;
+}
 
 // something useful for me
 interface Callback<T>{
