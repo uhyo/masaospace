@@ -5,6 +5,8 @@
     <title><%= @title %></title>
   </head>
   <body>
-    <%- @content %>
+    <div id="app"><%- @content %></div>
+    <script type="text/plain" id="initial-data" data-data="<%= JSON.stringify @initial %>"></script>
+    <script type="text/javascript" src="/static/components.js"></script>
   </body>
 </html>

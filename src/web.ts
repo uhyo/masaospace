@@ -131,9 +131,11 @@ export class WebServer{
     front(c:Controller):void{
         // TODO
         this.app.get("/",(req,res)=>{
+            var initialData={"foo":"</script>aaaaa<script>"};
             res.render("index.ect",{
                 title: "foo",
-                content: React.renderToString(React.createElement(Top,{}))
+                initial: initialData,
+                content: React.renderToString(React.createElement(Top,null))
             });
         });
     }

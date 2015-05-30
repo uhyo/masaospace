@@ -116,9 +116,11 @@ var WebServer = (function () {
     WebServer.prototype.front = function (c) {
         // TODO
         this.app.get("/", function (req, res) {
+            var initialData = { "foo": "</script>aaaaa<script>" };
             res.render("index.ect", {
                 title: "foo",
-                content: React.renderToString(React.createElement(Top, {}))
+                initial: initialData,
+                content: React.renderToString(React.createElement(Top, null))
             });
         });
     };
