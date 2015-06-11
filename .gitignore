@@ -1,6 +1,14 @@
+# node modules
 node_modules
-dist
+
+# build results
+js/
+dist/
 client/static/components.js
 
+#temprary files
+src/**/*.js
+
+#editor temporary files
 *.swp
 *.swo

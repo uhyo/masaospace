@@ -1,5 +1,5 @@
 //Starter
-var index = require('./src/index');
+var index = require('./js/index');
 var system = new index.System();
 system.init(function (err) {
     if (err) {

@@ -4,6 +4,21 @@ var browserify=require('browserify');
 var source=require('vinyl-source-stream');
 var reactify=require('reactify');
 var globule=require('globule');
+var shell=require('gulp-shell');
+
+var tscOptions = "--module commonjs --target es5";
+
+gulp.task('tsc',function(){
+    return gulp.src(["src/index.ts","src/api/*.ts"],{read:false})
+    .pipe(shell([
+        "node_modules/typescript/bin/tsc "+tscOptions+" --rootDir <%= rootdir %> --outDir <%= outdir %> <%= file.path %>"
+    ],{
+        templateData:{
+            rootdir:path.join(__dirname,"src"),
+            outdir:path.join(__dirname,"js")
+        }
+    }));
+});
 
 gulp.task('jsx',function(){
     var files=globule.find("client/jsx/*.jsx").concat("client/entrypoint.jsx").map(function(p){
@@ -21,4 +36,4 @@ gulp.task('jsx',function(){
     .pipe(gulp.dest("client/static"));
 });
 
-gulp.task('default',['jsx']);
+gulp.task('default',['tsc','jsx']);
