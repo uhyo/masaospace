@@ -5,6 +5,7 @@ var source=require('vinyl-source-stream');
 var reactify=require('reactify');
 var globule=require('globule');
 var typescript=require('gulp-typescript');
+var del=require('del');
 
 gulp.task('tsc',function(){
     return gulp.src("src/**/*.ts")
@@ -31,6 +32,17 @@ gulp.task('jsx',function(){
     .pipe(source("components.js"))
     .pipe(gulp.dest("dist"))
     .pipe(gulp.dest("client/static"));
+});
+
+gulp.task('clean',function(cb){
+    del([
+        //tsc
+        "js",
+        "src/**/*.js",
+        //jsx
+        "dist",
+        "client/static/components.js"
+    ],cb);
 });
 
 gulp.task('default',['tsc','jsx']);
