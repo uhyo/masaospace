@@ -33,6 +33,7 @@
     "mime": "^1.3.4",
     "mkdirp": "^0.5.0",
     "mongodb": "^1.4.34",
+    "my-router": "^1.0.0",
     "my-user-mongo": "^0.1.1",
     "node-jsx": "^0.13.3",
     "random-string": "^0.1.2",
@@ -45,7 +46,7 @@
     "browserify": "^10.2.3",
     "globule": "^0.2.0",
     "gulp": "^3.8.11",
-    "gulp-shell": "^0.4.2",
+    "gulp-typescript": "^2.7.6",
     "reactify": "^1.1.1",
     "typescript": "^1.5.0-beta",
     "vinyl-source-stream": "^1.1.0"

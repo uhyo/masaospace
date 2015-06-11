@@ -4,20 +4,17 @@ var browserify=require('browserify');
 var source=require('vinyl-source-stream');
 var reactify=require('reactify');
 var globule=require('globule');
-var shell=require('gulp-shell');
-
-var tscOptions = "--module commonjs --target es5";
+var typescript=require('gulp-typescript');
 
 gulp.task('tsc',function(){
-    return gulp.src(["src/index.ts","src/api/*.ts"],{read:false})
-    .pipe(shell([
-        "node_modules/typescript/bin/tsc "+tscOptions+" --rootDir <%= rootdir %> --outDir <%= outdir %> <%= file.path %>"
-    ],{
-        templateData:{
-            rootdir:path.join(__dirname,"src"),
-            outdir:path.join(__dirname,"js")
-        }
-    }));
+    return gulp.src("src/**/*.ts")
+    .pipe(typescript({
+        module:"commonjs",
+        target:"es5",
+        typescript:require('typescript')
+    }))
+    .js
+    .pipe(gulp.dest("js/"));
 });
 
 gulp.task('jsx',function(){
