@@ -17,6 +17,8 @@ import ect=require('ect');
 import React=require('react');
 import nodejsx=require('node-jsx');
 
+import Router=require('my-router');
+
 import logger=require('./logger');
 import db=require('./db');
 import validator=require('./validator');
@@ -129,13 +131,38 @@ export class WebServer{
     }
     //front pages
     front(c:Controller):void{
-        // TODO
-        this.app.get("/",(req,res)=>{
-            var initialData={"foo":"</script>aaaaa<script>"};
-            res.render("index.ect",{
-                title: "foo",
-                initial: initialData,
-                content: React.renderToString(React.createElement(Top,null))
+        var r=new Router<(callback:Callback<any>)=>void>();
+        r.add("/",(callback)=>{
+            callback(null,{
+                message: "Top"
+            });
+        });
+        r.add("/foo",(callback)=>{
+            callback(null,{
+                message: "Foo"
+            });
+        });
+        this.app.get("*",(req,res)=>{
+            var re=r.route(req.path);
+            var func = re ? re.result : null;
+            if(func==null){
+                /* 404 */
+                res.status(404);
+                func=(callback)=>{
+                    callback(null,{
+                        message: "404"
+                    });
+                };
+            }
+            func((err,initialData)=>{
+                if(err){
+                    throw err;
+                }
+                res.render("index.ect",{
+                    title: "foo",
+                    initial: initialData,
+                    content: React.renderToString(React.createElement(Top,initialData))
+                });
             });
         });
     }

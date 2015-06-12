@@ -1,4 +1,5 @@
 ///<reference path="../node_modules/my-user-mongo/lib.d.ts" />
+///<reference path="../node_modules/my-router/lib.d.ts" />
 //node declaration
 
 declare function require(path:string):any;
@@ -822,6 +823,7 @@ declare module "express"{
             public url:string;
             public originalUrl:string;
             public method:string;
+            public path:string;
 
             //extention
             public body:any;

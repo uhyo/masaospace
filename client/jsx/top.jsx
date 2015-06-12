@@ -2,7 +2,7 @@ var React=require('react');
 
 class Top extends React.Component{
     render(){
-        return <div>Top</div>;
+        return <div>{this.props.message}</div>;
     }
 }
 
