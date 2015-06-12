@@ -6,10 +6,13 @@ import config=require('config');
 export default function(c:Controller,r:_Router):void{
     //top view
     r.add("/",(callback:Callback<View>)=>{
+        var title=config.get("service.name");
         callback(null,{
-            title:config.get("service.name"),
+            title:title,
             page:"top",
-            data:{}
+            data:{
+                title:title,
+            }
         });
     });
 }

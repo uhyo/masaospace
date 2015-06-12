@@ -1,10 +1,14 @@
 var React=require('react');
 
+var LoginForm=require('./commons/login-form.jsx');
+
 class Top extends React.Component{
     render(){
-        return (<div>
-            <p>Hello, I am a top page.</p>
-        </div>);
+        return (
+            <section>
+                <h1>{this.props.title}</h1>
+                <LoginForm />
+            </section>);
     }
 }
 
