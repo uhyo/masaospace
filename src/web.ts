@@ -75,6 +75,9 @@ export class WebServer{
             })
         };
         this.app.use(expressSession(sessoption));
+        this.app.use((req,res,next)=>{
+            next();
+        });
         this.app.use(csurf());
         //error handling
         this.app.use((err,req,res,next)=>{
@@ -121,7 +124,7 @@ export class WebServer{
                     var mod=require(filepath);
                     if("function"===typeof mod){
                         var subroute=express.Router();
-                        (<any>router).use("/"+files[i],subroute);
+                        (<any>router).use("/"+path.basename(files[i],".js"),subroute);
                         (new mod).route(subroute,c);
                     }
                 }
@@ -154,6 +157,7 @@ export class WebServer{
                 }
                 var initialData={
                     page: view.page,
+                    csrfToken: req.csrfToken(),
                     data: view.data
                 };
                 res.render("index.ect",{

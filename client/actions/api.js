@@ -1,5 +1,5 @@
 //Server-side API call
-
+//
 module.exports = api;
 
 //returns Promise!
@@ -8,15 +8,17 @@ function api(path,params){
     if(params == null){
         params = {};
     }
-    var d=new FormData();
+    var ps=[];
+    ps.push("_csrf="+encodeURIComponent(_g_csrfToken));
     for(var key in params){
-        d.append(key,params[key]);
+        ps.push(encodeURIComponent(key)+"="+encodeURIComponent(params[key]));
     }
     var xhr=new XMLHttpRequest();
     xhr.open("POST",path);
-    xhr.send(d);
+    xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    xhr.send(ps.join("&"));
 
-    console.log("API call! ",path,params);
+    console.log("API call! ",path,params,ps.join("&"));
 
     var p=new Promise(function(resolve,reject){
         xhr.addEventListener("load",function(e){

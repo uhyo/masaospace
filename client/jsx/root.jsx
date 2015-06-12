@@ -5,17 +5,17 @@ var Footer=require('./footer.jsx');
 
 var Top=require('./top.jsx');
 
-class Root extends React.Component{
-    render(){
+var Root = React.createClass({
+    displayName:"Root",
+    render:function(){
         var page=this.getPage();
         return (<div>
             <Header />
             {page}
             <Footer />
-        </div>)
-    }
-
-    getPage(){
+        </div>);
+    },
+    getPage:function(){
         var page=this.props.page;
         switch(page){
             case "top":
@@ -23,6 +23,6 @@ class Root extends React.Component{
                 return React.createElement(Top,this.props.data);
         }
     }
-}
+});
 
 module.exports = Root;
