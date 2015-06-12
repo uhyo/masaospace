@@ -19,11 +19,8 @@ gulp.task('tsc',function(){
 });
 
 gulp.task('jsx',function(){
-    var files=globule.find("client/jsx/*.jsx").concat("client/entrypoint.jsx").map(function(p){
-        return path.join(__dirname,p);
-    });
     return browserify({
-        entries:files,
+        entries:[path.join(__dirname,"client/entrypoint.jsx")],
         transform:[reactify],
         extensions:['.js','.jsx'],
         basedir:__dirname
