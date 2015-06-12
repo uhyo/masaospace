@@ -53,7 +53,7 @@ export class WebServer{
         }));
         //static files
         this.app.use(st({
-            path:path.resolve(__dirname,"..","client","static"),
+            path:path.resolve(__dirname,"..","dist"),
             url:"/static",
             index:false
         }));

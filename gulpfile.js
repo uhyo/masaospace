@@ -30,8 +30,7 @@ gulp.task('jsx',function(){
     })
     .bundle()
     .pipe(source("components.js"))
-    .pipe(gulp.dest("dist"))
-    .pipe(gulp.dest("client/static"));
+    .pipe(gulp.dest("dist"));
 });
 
 gulp.task('clean',function(cb){
@@ -41,7 +40,6 @@ gulp.task('clean',function(cb){
         "src/**/*.js",
         //jsx
         "dist",
-        "client/static/components.js"
     ],cb);
 });
 

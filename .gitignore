@@ -4,7 +4,6 @@ node_modules
 # build results
 js/
 dist/
-client/static/components.js
 
 #temprary files
 src/**/*.js
