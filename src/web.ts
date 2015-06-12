@@ -17,7 +17,7 @@ import ect=require('ect');
 import React=require('react');
 import nodejsx=require('node-jsx');
 
-import Router=require('my-router');
+import {makeFrontRouter} from './front/index';
 
 import logger=require('./logger');
 import db=require('./db');
@@ -131,17 +131,8 @@ export class WebServer{
     }
     //front pages
     front(c:Controller):void{
-        var r=new Router<(callback:Callback<any>)=>void>();
-        r.add("/",(callback)=>{
-            callback(null,{
-                message: "Top"
-            });
-        });
-        r.add("/foo",(callback)=>{
-            callback(null,{
-                message: "Foo"
-            });
-        });
+        var r=makeFrontRouter(c);
+
         this.app.get("*",(req,res)=>{
             var re=r.route(req.path);
             var func = re ? re.result : null;
@@ -150,16 +141,23 @@ export class WebServer{
                 res.status(404);
                 func=(callback)=>{
                     callback(null,{
-                        message: "404"
+                        //TODO
+                        title: "Page not found",
+                        page: "404",
+                        data:{}
                     });
                 };
             }
-            func((err,initialData)=>{
+            func((err,view)=>{
                 if(err){
                     throw err;
                 }
+                var initialData={
+                    page: view.page,
+                    data: view.data
+                };
                 res.render("index.ect",{
-                    title: "foo",
+                    title: view.title,
                     initial: initialData,
                     content: React.renderToString(React.createElement(Top,initialData))
                 });

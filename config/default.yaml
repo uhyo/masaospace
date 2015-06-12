@@ -28,6 +28,10 @@ webserver:
   # connection is secure
   secure: false
 
+# service
+service:
+  name: MasaoPost
+
 # logging
 log:
   level: debug
