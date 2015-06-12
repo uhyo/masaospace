@@ -33,6 +33,7 @@
     "mongodb": "^1.4.34",
     "my-router": "^1.0.0",
     "my-user-mongo": "^0.1.1",
+    "native-promise-only": "^0.8.0-a",
     "node-jsx": "^0.13.3",
     "random-string": "^0.1.2",
     "react": "^0.13.3",

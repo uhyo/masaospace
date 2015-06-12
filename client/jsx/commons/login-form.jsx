@@ -1,5 +1,7 @@
 var React=require('react');
 
+var userActions=require('../../actions/user');
+
 //Login Form
 
 module.exports = React.createClass({
@@ -22,6 +24,11 @@ module.exports = React.createClass({
     },
     handleSubmit: function(e){
         e.preventDefault();
+        //login request
+        userActions.login({
+            userid: this.state.id,
+            password: this.state.password
+        });
     },
     render: function(){
         return (
