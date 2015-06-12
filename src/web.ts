@@ -29,7 +29,7 @@ nodejsx.install({
     harmony:true
 });
 
-var Top=require('../client/jsx/top.jsx');
+var Root=require('../client/jsx/root.jsx');
 
 export class WebServer{
     private app:express.Express;
@@ -159,7 +159,7 @@ export class WebServer{
                 res.render("index.ect",{
                     title: view.title,
                     initial: initialData,
-                    content: React.renderToString(React.createElement(Top,initialData))
+                    content: React.renderToString(React.createElement(Root,initialData))
                 });
             });
         });

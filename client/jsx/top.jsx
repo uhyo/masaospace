@@ -2,7 +2,9 @@ var React=require('react');
 
 class Top extends React.Component{
     render(){
-        return <div>{this.props.message}</div>;
+        return (<div>
+            <p>Hello, I am a top page.</p>
+        </div>);
     }
 }
 
