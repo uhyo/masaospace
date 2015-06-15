@@ -5,12 +5,13 @@ var api=require('./api');
 /* login action
  *
  * login({
- *   userid: <userid>
+ *   userid: <userid>,
  *   password: <password>
  * });
  *
  * login.completed({
- *
+ *   screen_name: <string>,
+ *   name: <string>
  * });
  * login.failed(error message);
  */

@@ -197,7 +197,10 @@ class C{
                 }else{
                     //success
                     res.json({
-                        error:null
+                        error:null,
+                        //user info
+                        screen_name:req.session.screen_name,
+                        name:req.session.name
                     });
                 }
             });

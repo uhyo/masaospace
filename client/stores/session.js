@@ -1,20 +1,35 @@
 var Reflux=require('reflux');
 
-var userAction=require('../action/user');
+var userAction=require('../actions/user');
 
+/*
+ * sessionStore {
+ *   loggedin: <boolean>,
+ *   screen_name: <string>,
+ *   name: <string>
+ * }
+ */
 var sessionStore=Reflux.createStore({
     listenables:{
         "login":userAction.login.completed
     },
     init:function(){
-        this.data={
+    },
+    getInitialState:function(){
+        return {
             loggedin: false,
-            userid: null
+            screen_name: null,
+            name: null
         };
     },
     onLogin:function(loginresult){
+        this.trigger({
+            loggedin: true,
+            screen_name: loginresult.screen_name,
+            name: loginresult.name
+        });
     }
 });
 
 
-exports.sessionStore = sessionStore;
+module.exports = sessionStore;
