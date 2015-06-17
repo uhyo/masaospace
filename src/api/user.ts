@@ -83,8 +83,8 @@ class C{
             });
         });
         //ユーザー登録（チケットチェック）
-        router.get("/entry/check",(req,res)=>{
-            var token:string=req.query.token;
+        router.post("/entry/check",(req,res)=>{
+            var token:string=req.body.token;
             //トークンを探してあげる
             c.ticket.findTicket(token,(err,t)=>{
                 if(err){
