@@ -21,7 +21,7 @@ class C{
 
             if(req.validationErrors()){
                 res.json({
-                    error:String(req.validationErrors())
+                    error:JSON.stringify(req.validationErrors())
                 });
                 return;
             }
@@ -75,6 +75,7 @@ class C{
                         //user entry success
                         res.json({
                             screen_name:u.getData().screen_name,
+                            //TODO
                             ticket: t.token
                         });
                     });

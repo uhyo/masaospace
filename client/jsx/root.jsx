@@ -7,6 +7,7 @@ var Header=require('./header.jsx');
 var Footer=require('./footer.jsx');
 
 var Top=require('./top.jsx');
+var Entry=require('./user/entry.jsx');
 
 var Root = React.createClass({
     displayName:"Root",
@@ -25,6 +26,9 @@ var Root = React.createClass({
             case "top":
                 //top page
                 return React.createElement(Top,page.data);
+            case "user.entry":
+                //entry page
+                return React.createElement(Entry,page.data);
         }
     }
 });

@@ -7,12 +7,14 @@ import Router=require('my-router');
 
 //parts
 import top from './top';
+import user from './user';
 
 export function makeFrontRouter(c:Controller):Router<(callback:Callback<View>)=>void>{
     var r=new Router<(callback:Callback<View>)=>void>();
 
     // parts
     top(c,r);
+    user(c,r);
 
     return r;
 }
