@@ -1,7 +1,7 @@
 //Starter
 var index;
 try{
-    index = require('./ts/index');
+    index = require('./src/index');
 }catch(e){
     index = require('./js/index');
 }

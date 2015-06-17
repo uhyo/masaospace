@@ -22,18 +22,21 @@ function api(path,params){
 
     var p=new Promise(function(resolve,reject){
         xhr.addEventListener("load",function(e){
-            if(e.statusCode!==200){
+            if(xhr.status!==200){
+                console.error(xhr.status,xhr.responseText);
                 reject(xhr.responseText);
                 return;
             }
             var obj;
             try{
-                obj=JSON.parse(e.response);
+                obj=JSON.parse(xhr.response);
             }catch(e){
+                console.error(xhr.response);
                 reject(String(e));
                 return;
             }
             if(obj.error!=null){
+                console.error(obj.error);
                 reject(String(obj.error));
                 return;
             }

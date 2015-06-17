@@ -32,10 +32,13 @@ module.exports = React.createClass({
     },
     render: function(){
         return (
-            <form onSubmit={this.handleSubmit}>
-                <p>User ID: <input name="id" onChange={this.handleChange} value={this.state.id} /></p>
-                <p>Password: <input name="password" type="password" onChange={this.handleChange} value={this.state.password} /></p>
-                <p><input type="submit" value="ログイン" /></p>
-            </form>);
+            <div>
+                <form onSubmit={this.handleSubmit}>
+                    <p>User ID: <input name="id" onChange={this.handleChange} value={this.state.id} /></p>
+                    <p>Password: <input name="password" type="password" onChange={this.handleChange} value={this.state.password} /></p>
+                    <p><input type="submit" value="ログイン" /></p>
+                </form>
+                <p><a href="/entry">新規登録</a></p>
+            </div>);
     }
 });

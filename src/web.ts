@@ -136,6 +136,31 @@ export class WebServer{
     front(c:Controller):void{
         var r=makeFrontRouter(c);
 
+        // pathに対応するページのデータをあげる
+        this.app.post("/api/front",(req,res)=>{
+            if("string"!==typeof req.body.path){
+                res.json({
+                    error: "undefined path"
+                });
+                return;
+            }
+            var re=r.route(req.body.path);
+            if(re==null){
+                res.json({
+                    error: "page does not exist"
+                });
+                return;
+            }
+            re.result((err,view)=>{
+                if(err){
+                    throw err;
+                }
+                res.json({
+                    page: view.page,
+                    data: view.data
+                });
+            });
+        });
         this.app.get("*",(req,res)=>{
             var re=r.route(req.path);
             var func = re ? re.result : null;

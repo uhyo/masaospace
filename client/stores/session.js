@@ -13,8 +13,6 @@ var sessionStore=Reflux.createStore({
     listenables:{
         "login":userAction.login.completed
     },
-    init:function(){
-    },
     getInitialState:function(){
         return {
             loggedin: false,
