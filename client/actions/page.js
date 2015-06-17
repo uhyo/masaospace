@@ -27,11 +27,17 @@ load.listen(function(path){
          *   data: <object>
          * }
          */
-        return {
-            page: obj.page,
+
+        var result={
             path: path,
+            page: obj.page,
             data: obj.data
         };
+        // add history
+        if("undefined"!==typeof history && history.pushState){
+            history.pushState(result, null, path);
+        }
+        return result;
     }));
 });
 

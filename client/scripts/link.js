@@ -18,5 +18,20 @@ function handleEvents(root){
             }
         }
     },false);
+    //history event
+    window.addEventListener("popstate",function(ev){
+        var state=ev.state;
+        if(state){
+            //some cheating
+            pageAction.load.completed({
+                path: state.path,
+                page: state.page,
+                data: state.data
+            });
+        }else{
+            //load
+            pageAction.load(location.pathname);
+        }
+    },false);
 }
 
