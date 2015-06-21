@@ -189,6 +189,9 @@ class C{
         router.post("/login",(req,res)=>{
             var id:string=req.body.user, password:string=req.body.password;
             var uq:UserOneQuery;
+            if("string"!==typeof id){
+                id="";
+            }
             if(id.indexOf("@")>=0){
                 //mail address
                 uq={
@@ -197,7 +200,7 @@ class C{
             }else{
                 //user id
                 uq={
-                    id:id
+                    screen_name_lower:id.toLowerCase();
                 };
             }
             //login
