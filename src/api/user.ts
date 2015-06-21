@@ -175,6 +175,11 @@ class C{
                         res.json({
                             success:true
                         });
+                        c.ticket.removeTicket(token,(err)=>{
+                            if(err){
+                                logger.error(err);
+                            }
+                        });
                     });
                 });
             });
