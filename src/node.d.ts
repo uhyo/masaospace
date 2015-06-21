@@ -808,6 +808,8 @@ declare module "express"{
 
             locals:any;
             socket:net.Socket;
+            request:Request;
+            response:Response;
         }
         class Request{
             accepts(str:string):string;
@@ -828,6 +830,7 @@ declare module "express"{
             //extention
             public body:any;
             public session:any;
+            validationErrorResponse(res:Response):boolean;
             ////csurf
             csrfToken():string;
             ////express-validator
@@ -961,6 +964,7 @@ declare module "express"{
             //custom validator defined by ./validator.ts
             isUserID():Validation;
             isUserName():Validation;
+            isPassword():Validation;
         }
         interface Sanitize{
             toString():Sanitize;

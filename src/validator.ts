@@ -16,7 +16,7 @@ export function makeExpressValidator():any{
                 return validator.isLength(value,config.get("user.name.minLength"), config.get("user.name.maxLength"));
             },
             isPassword:(value:string)=>{
-                return validator.matches(value,/^[\u0021-\u007e]+$/) && validator.isLength(config.get("user.password.minLength"), config.get("user.password.maxLength"));
+                return validator.matches(value,/^[\u0021-\u007e]+$/) && validator.isLength(value,config.get("user.password.minLength"), config.get("user.password.maxLength"));
             },
         }
     };

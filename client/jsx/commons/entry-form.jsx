@@ -62,6 +62,7 @@ module.exports = React.createClass({
                 </div>
             );
         }else{
+            //TODO
             return (
                 <div>
                     <p><b>{this.state.mail}</b>にメールを送信しました。（してない）</p>

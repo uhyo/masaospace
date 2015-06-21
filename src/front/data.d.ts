@@ -5,5 +5,6 @@ interface View{
 }
 
 interface _Router{
-    add(path:string,value:Callback<View>):void;
+    add(path:string,value:(obj:any,callback:Callback<View>)=>void):void;
+    addPattern(seg:string,pattern:RegExp):void;
 }

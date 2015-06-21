@@ -38,6 +38,18 @@ export class WebServer{
     init(c:Controller,callback:Cont):void{
         //open web server
         this.app=express();
+        // set some methods
+        this.app.request.validationErrorResponse=function(res){
+            /* response with validation errors */
+            var e=this.validationErrors();
+            if(e){
+                res.json({
+                    error:JSON.stringify(e)
+                });
+                return true;
+            }
+            return false;
+        };
         //rendering engine
         var views=path.resolve(__dirname,"..","client","views");
         var ectRenderer=ect({
@@ -75,9 +87,6 @@ export class WebServer{
             })
         };
         this.app.use(expressSession(sessoption));
-        this.app.use((req,res,next)=>{
-            next();
-        });
         this.app.use(csurf());
         //error handling
         this.app.use((err,req,res,next)=>{
@@ -151,7 +160,7 @@ export class WebServer{
                 });
                 return;
             }
-            re.result((err,view)=>{
+            re.result(re.params,(err,view)=>{
                 if(err){
                     throw err;
                 }
@@ -164,10 +173,11 @@ export class WebServer{
         this.app.get("*",(req,res)=>{
             var re=r.route(req.path);
             var func = re ? re.result : null;
+            var params = re ? re.params : {};
             if(func==null){
                 /* 404 */
                 res.status(404);
-                func=(callback)=>{
+                func=(obj,callback)=>{
                     callback(null,{
                         //TODO
                         title: "Page not found",
@@ -176,7 +186,7 @@ export class WebServer{
                     });
                 };
             }
-            func((err,view)=>{
+            func(params,(err,view)=>{
                 if(err){
                     throw err;
                 }

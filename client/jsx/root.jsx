@@ -6,17 +6,15 @@ var pageStore = require('../stores/page');
 var Header=require('./header.jsx');
 var Footer=require('./footer.jsx');
 
-var Top=require('./top.jsx');
-var Entry=require('./user/entry.jsx');
-
 var Root = React.createClass({
     displayName:"Root",
     mixins: [Reflux.connect(pageStore,"page")],
     render:function(){
+        var sp=this.state.page || this.props;
         var page=this.getPage();
         return (<div>
             <Header />
-            {page}
+            {React.createElement(page,sp.data)}
             <Footer />
         </div>);
     },
@@ -25,10 +23,13 @@ var Root = React.createClass({
         switch(page.page){
             case "top":
                 //top page
-                return React.createElement(Top,page.data);
+                return require('./top.jsx');
             case "user.entry":
                 //entry page
-                return React.createElement(Entry,page.data);
+                return require('./user/entry.jsx');
+            case "user.ticket":
+                //ticket confirmation page
+                return require('./user/ticket.jsx');
         }
     }
 });

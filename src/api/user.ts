@@ -39,16 +39,29 @@ class C{
             };
             //既存のユーザーとの重複をチェック
             c.user.user.findOneUser({
-                "data.screen_name_lower":data.screen_name_lower
+                $or:[
+                    {
+                        "data.screen_name_lower":data.screen_name_lower
+                    },{
+                        "data.mail":data.mail
+                    }
+                ]
             },(err,user)=>{
                 if(err){
                     throw err;
                 }
                 if(user!=null){
                     //ユーザーすでに存在
-                    res.json({
-                        error:"そのユーザーIDは使用されています。"
-                    });
+                    let d=user.getData();
+                    if(d.screen_name_lower===data.screen_name_lower){
+                        res.json({
+                            error:"そのユーザーIDは使用されています。"
+                        });
+                    }else{
+                        res.json({
+                            error:"そのメールアドレスは既に登録されています。"
+                        });
+                    }
                     return;
                 }
                 //ユーザーを登録
@@ -103,11 +116,8 @@ class C{
         router.post("/entry/setpassword",(req,res)=>{
             var token:string=req.body.token, screen_name:string=req.body.screen_name;
 
-            req.checkBody("password","パスワード");
-            if(req.validationErrors()){
-                res.json({
-                    error:String(req.validationErrors())
-                });
+            req.checkBody("password","パスワード").isPassword();
+            if(req.validationErrorResponse(res)){
                 return;
             }
 
