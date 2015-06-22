@@ -30,6 +30,14 @@ login.listen(function(params){
 
 exports.login = login;
 
+/* logout action
+ *
+ * logout();
+ *
+ * logout.completed({});
+ * logout.failed(error message)
+ */
+
 var logout = Reflux.createAction({
     asyncResult:true
 });
@@ -40,3 +48,19 @@ logout.listen(function(params){
 });
 
 exports.logout = logout;
+
+/* init action
+ *
+ * //logged in
+ * init({
+ *   screen_name: <string>,
+ *   name: <string>
+ * });
+ *
+ * //logged out
+ * init(null);
+ */
+
+var init = Reflux.createAction();
+
+exports.init = init;

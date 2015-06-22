@@ -190,9 +190,14 @@ export class WebServer{
                 if(err){
                     throw err;
                 }
+                var session = req.session.user!=null ? {
+                    screen_name: req.session.screen_name,
+                    name: req.session.name
+                } : null;
                 var initialData={
                     page: view.page,
                     csrfToken: req.csrfToken(),
+                    session:session,
                     data: view.data
                 };
                 res.render("index.ect",{

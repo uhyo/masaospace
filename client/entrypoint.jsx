@@ -1,6 +1,7 @@
 /* entry point! */
 var React=require('react');
 var Root=require('./jsx/root');
+var userAction=require('./actions/user');
 
 //init view
 var app=document.getElementById('app');
@@ -10,6 +11,8 @@ var data=JSON.parse(document.getElementById('initial-data').getAttribute('data-d
 //global something
 _g_csrfToken = data.csrfToken;
 
+//session
+userAction.init(data.session);
 
 var root = React.createElement(Root,data);
 
@@ -17,3 +20,4 @@ React.render(root,app);
 
 //link events
 require('./scripts/link')(root);
+

@@ -11,6 +11,7 @@ var userAction=require('../actions/user');
  */
 var sessionStore=Reflux.createStore({
     listenables:{
+        "init":userAction.init,
         "login":userAction.login.completed,
         "logout":userAction.logout.completed
     },
@@ -20,6 +21,21 @@ var sessionStore=Reflux.createStore({
             screen_name: null,
             name: null
         };
+    },
+    onInit:function(init){
+        if(init==null){
+            this.trigger({
+                loggedin: false,
+                screen_name: null,
+                name: null
+            });
+        }else{
+            this.trigger({
+                loggedin: true,
+                screen_name: init.screen_name,
+                name: init.name
+            });
+        }
     },
     onLogin:function(loginresult){
         this.trigger({
