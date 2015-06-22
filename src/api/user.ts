@@ -200,7 +200,7 @@ class C{
             }else{
                 //user id
                 uq={
-                    screen_name_lower:id.toLowerCase();
+                    screen_name_lower:id.toLowerCase()
                 };
             }
             //login

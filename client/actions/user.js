@@ -30,3 +30,13 @@ login.listen(function(params){
 
 exports.login = login;
 
+var logout = Reflux.createAction({
+    asyncResult:true
+});
+
+logout.listen(function(params){
+    logout.promise(api("/api/user/logout",{
+    }));
+});
+
+exports.logout = logout;
