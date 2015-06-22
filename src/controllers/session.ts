@@ -15,7 +15,9 @@ export default class SessionController{
     //ユーザーがログインを試みる
     login(session:Session, u:UserOneQuery,password:string,callback:Callback<boolean>):void{
         //trueならログイン成功
-        var query:any={}, flag=false;
+        var query:any={
+            "data.activated":true
+        }, flag=false;
         if(u.screen_name_lower!=null){
             query["data.screen_name_lower"]=u.screen_name_lower;
             flag=true;
