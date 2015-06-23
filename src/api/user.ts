@@ -6,7 +6,7 @@ import logger=require('../logger');
 
 import config=require('config');
 
-import {User,UserData, UserOneQuery} from '../data';
+import {User,UserData, UserOneQuery, Session} from '../data';
 
 
 //User auth&session
@@ -19,10 +19,7 @@ class C{
             req.checkBody("name","ユーザー名").isUserName();
             req.checkBody("mail","メールアドレス").isEmail();
 
-            if(req.validationErrors()){
-                res.json({
-                    error:JSON.stringify(req.validationErrors())
-                });
+            if(req.validationErrorResponse(res)){
                 return;
             }
 
@@ -184,6 +181,54 @@ class C{
                 });
             });
         });
+        //ユーザー情報
+        router.post("/update",(req,res)=>{
+            req.checkBody("name","ユーザー名").isUserName();
+
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+
+            if(req.session.user==null){
+                res.json({
+                    error: "ログインしていません。"
+                });
+                return;
+            }
+
+            //ユーザー情報をupdateする
+            c.user.user.findOneUser({
+                id:req.session.user
+            },(err,user)=>{
+                if(err){
+                    throw err;
+                }
+                if(user==null){
+                    res.json({
+                        error:"ログインしていません。"
+                    });
+                    return;
+                }
+                user.writeData({
+                    name:req.body.name
+                });
+                c.user.user.saveUser(user,(err,result)=>{
+                    if(err){
+                        logger.error(err);
+                        throw err;
+                    }
+                    req.session.name = req.body.name;
+                    req.session.save((err)=>{
+                        if(err){
+                            throw err;
+                        }
+                        res.json(writeUserInfo(req.session,{
+                            success:true
+                        }));
+                    });
+                });
+            });
+        });
 
         //session
         router.post("/login",(req,res)=>{
@@ -215,12 +260,9 @@ class C{
                     });
                 }else{
                     //success
-                    res.json({
+                    res.json(writeUserInfo(req.session,{
                         error:null,
-                        //user info
-                        screen_name:req.session.screen_name,
-                        name:req.session.name
-                    });
+                    }));
                 }
             });
         });
@@ -240,3 +282,14 @@ class C{
     }
 }
 export = C;
+
+//extract user info from session
+function writeUserInfo(session:Session,obj:any):any{
+    if(obj==null){
+        obj={};
+    }
+    obj.user=session.user;
+    obj.screen_name=session.screen_name;
+    obj.name=session.name;
+    return obj;
+}

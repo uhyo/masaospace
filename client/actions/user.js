@@ -64,3 +64,31 @@ exports.logout = logout;
 var init = Reflux.createAction();
 
 exports.init = init;
+
+/* update action
+ *
+ * update({
+ *   name: <string>
+ * });
+ *
+ * update.completed({
+ *   name: <string>
+ * });
+ * update.failed(error message);
+ */
+
+var update = Reflux.createAction({
+    asyncResult:true
+});
+
+update.listen(function(params){
+    update.promise(api("/api/user/update",{
+        name: params.name
+    }).then(function(result){
+        return {
+            name: result.name
+        };
+    }));
+});
+
+exports.update = update;

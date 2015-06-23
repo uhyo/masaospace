@@ -1,7 +1,9 @@
 var React=require('react');
 var Reflux=require('reflux');
 
+var userAction=require('../../actions/user');
 var sessionStore=require('../../stores/session');
+var api=require('../../actions/api');
 
 var Account=React.createClass({
     displayName:"Account",
@@ -29,6 +31,9 @@ var Account=React.createClass({
     handleSubmit:function(e){
         e.preventDefault();
         console.log(this.state.name);
+        userAction.update({
+            name: this.state.name
+        });
     },
     render:function(){
         return (
