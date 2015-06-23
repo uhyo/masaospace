@@ -33,6 +33,9 @@ var Root = React.createClass({
             case "user.my":
                 //mypage
                 return require('./user/my.jsx');
+            case "user.account":
+                //account settings
+                return require('./user/account.jsx');
         }
     }
 });

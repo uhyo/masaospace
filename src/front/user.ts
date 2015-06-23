@@ -38,4 +38,13 @@ export default function(c:Controller,r:_Router):void{
             }
         });
     });
+    //account setting
+    r.add("/my/account",(obj,callback:Callback<View>)=>{
+        callback(null,{
+            title:"アカウント設定",
+            page:"user.account",
+            data:{
+            }
+        });
+    });
 }
