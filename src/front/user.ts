@@ -28,4 +28,14 @@ export default function(c:Controller,r:_Router):void{
             }
         });
     });
+
+    //my page
+    r.add("/my",(obj,callback:Callback<View>)=>{
+        callback(null,{
+            title: "マイページ",
+            page:"user.my",
+            data:{
+            }
+        });
+    });
 }

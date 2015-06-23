@@ -7,7 +7,6 @@ var sessionStore=require('../stores/session');
 var Header = React.createClass({
     mixins: [Reflux.connect(sessionStore,"session")],
     onClick:function(e){
-        console.log(e);
         e.preventDefault();
         userAction.logout();
     },
