@@ -36,6 +36,9 @@ var Root = React.createClass({
             case "user.account":
                 //account settings
                 return require('./user/account.jsx');
+            default:
+                //"404"とか
+                return require('./notfound.jsx');
         }
     }
 });
