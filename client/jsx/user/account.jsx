@@ -5,6 +5,8 @@ var userAction=require('../../actions/user');
 var sessionStore=require('../../stores/session');
 var api=require('../../actions/api');
 
+var ChangePasswordForm = require('../commons/changepassword-form.jsx');
+
 var Account=React.createClass({
     displayName:"Account",
     mixins: [Reflux.listenTo(sessionStore,"onSessionChange")],
@@ -17,6 +19,7 @@ var Account=React.createClass({
     makeStateFromSession:function(session){
         return {
             session: session,
+            changePassword: false,
             //user data form
             name: session ? session.name : ""
         };
@@ -33,6 +36,11 @@ var Account=React.createClass({
         console.log(this.state.name);
         userAction.update({
             name: this.state.name
+        });
+    },
+    openChangePassword:function(e){
+        this.setState({
+            changePassword:true
         });
     },
     render:function(){
@@ -52,9 +60,16 @@ var Account=React.createClass({
                     <p>ユーザー名: <input type="text" name="name" value={this.state.name} onChange={this.handleChange} /></p>
                     <p><input type="submit" value="変更を保存" /></p>
                 </form>
+                <hr/>
+                {!this.state.changePassword ? 
+                    (<p>
+                        <input type="button" value="パスワードを変更" onClick={this.openChangePassword} />
+                    </p>) :
+                        (<ChangePasswordForm/>)
+                }
             </div>
         );
-    }
+    },
 });
 
 module.exports = Account;

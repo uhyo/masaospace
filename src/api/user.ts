@@ -229,6 +229,46 @@ class C{
                 });
             });
         });
+        router.post("/changepassword",(req,res)=>{
+            if(req.session.user==null){
+                res.json({
+                    error: "ログインしていません。"
+                });
+                return;
+            }
+
+            req.checkBody("password","パスワードが正しくありません。").isPassword();
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+            //TODO: 古いパスワードをチェック
+            c.user.user.findOneUser({
+                id: req.session.user
+            },(err,u)=>{
+                if(err){
+                    logger.error(err);
+                    res.json({
+                        error:String(err)
+                    });
+                    return;
+                }
+                //新しいパスワードをセット
+                u.setData(u.getData(),req.body.password);
+                c.user.user.saveUser(u,(err,result)=>{
+                    if(err){
+                        logger.error(err);
+                        res.json({
+                            error:String(err)
+                        });
+                        return;
+                    }
+                    //成功した
+                    res.json({
+                        success:true
+                    });
+                });
+            });
+        });
 
         //session
         router.post("/login",(req,res)=>{
