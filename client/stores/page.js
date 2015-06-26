@@ -10,8 +10,9 @@ var pageStore=Reflux.createStore({
     getInitialState:function(){
         return null;
     },
-    onLoad:function({page, path, data}){
+    onLoad:function({title, page, path, data}){
         this.trigger({
+            title: title,
             page: page,
             data: data
         });

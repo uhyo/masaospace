@@ -6,6 +6,7 @@ var api=require('./api');
  * load(path);
  *
  * load.completed({
+ *   title: <string>,
  *   page: page,
  *   path: path,
  *   data: <object>
@@ -23,12 +24,14 @@ load.listen(function(path){
     })
     .then(function(obj){
         /* obj: {
+         *   title: <string>
          *   page: <string>
          *   data: <object>
          * }
          */
 
         var result={
+            title: obj.title,
             path: path,
             page: obj.page,
             data: obj.data

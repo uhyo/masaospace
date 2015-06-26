@@ -165,6 +165,7 @@ export class WebServer{
                     throw err;
                 }
                 res.json({
+                    title: view.title,
                     page: view.page,
                     data: view.data
                 });

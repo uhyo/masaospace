@@ -1,6 +1,7 @@
 //handle links
 
 var pageAction=require('../actions/page');
+var pageStore=require('../stores/page');
 
 module.exports = handleEvents;
 
@@ -24,6 +25,7 @@ function handleEvents(root){
         if(state){
             //some cheating
             pageAction.load.completed({
+                title: state.title,
                 path: state.path,
                 page: state.page,
                 data: state.data
@@ -33,5 +35,10 @@ function handleEvents(root){
             pageAction.load(location.pathname);
         }
     },false);
+    //page title
+    pageStore.listen(function(state){
+        console.log(state);
+        document.title=state.title;
+    });
 }
 
