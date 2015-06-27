@@ -68,6 +68,7 @@ export interface FileData{
     created:Date;
 }
 export interface File extends FileData{
+    //ファイルID
     id:string;
 }
 //ファイルを探すクエリ
@@ -95,11 +96,16 @@ export interface GameMetadata{
 export interface GameData{
     //ゲームID
     id:number;
+    //ゲームのバージョン
+    //"2.8", "fx"
+    version:string;
     //ここにいろいろ入ってる
     params:any;
     //リソース（使用ファイル）
     resources:Array<{
-        owner:string;
+        //何のparamに対応させるか（あれば）
+        target:string;
+        //ファイルのID
         id:string;
     }>;
 }

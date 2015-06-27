@@ -1,6 +1,5 @@
 var React=require('react');
 var Reflux=require('reflux');
-
 var pageStore = require('../stores/page');
 
 var Header=require('./header.jsx');
@@ -24,6 +23,7 @@ var Root = React.createClass({
             case "top":
                 //top page
                 return require('./top.jsx');
+            ///// user
             case "user.entry":
                 //entry page
                 return require('./user/entry.jsx');
@@ -36,6 +36,9 @@ var Root = React.createClass({
             case "user.account":
                 //account settings
                 return require('./user/account.jsx');
+            ///// game
+            case "game.new":
+                return require('./game/new.jsx');
             default:
                 //"404"とか
                 return require('./notfound.jsx');

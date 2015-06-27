@@ -8,6 +8,7 @@ import Router=require('my-router');
 //parts
 import top from './top';
 import user from './user';
+import game from './game';
 
 export function makeFrontRouter(c:Controller):Router<(obj:any,callback:Callback<View>)=>void>{
     var r=new Router<(obj:any,callback:Callback<View>)=>void>();
@@ -15,6 +16,7 @@ export function makeFrontRouter(c:Controller):Router<(obj:any,callback:Callback<
     // parts
     top(c,r);
     user(c,r);
+    game(c,r);
 
     return r;
 }
