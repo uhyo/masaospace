@@ -44,6 +44,7 @@
     "validator": "^3.40.0"
   },
   "devDependencies": {
+    "babelify": "^6.1.2",
     "browserify": "^10.2.3",
     "del": "^1.2.0",
     "globule": "^0.2.0",

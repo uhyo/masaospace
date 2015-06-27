@@ -3,6 +3,7 @@ var gulp=require('gulp');
 var browserify=require('browserify');
 var source=require('vinyl-source-stream');
 var reactify=require('reactify');
+var babelify=require('babelify');
 var globule=require('globule');
 var typescript=require('gulp-typescript');
 var del=require('del');
@@ -21,7 +22,7 @@ gulp.task('tsc',function(){
 gulp.task('jsx',function(){
     return browserify({
         entries:[path.join(__dirname,"client/entrypoint.jsx")],
-        transform:[reactify],
+        transform:[babelify,reactify],
         extensions:['.js','.jsx'],
         basedir:__dirname
     })

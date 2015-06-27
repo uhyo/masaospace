@@ -100,7 +100,7 @@ module.exports = React.createClass({
         var version, params;
         var found=false;
         for(var i=0,l=applets.length;i < l && !found;i++){
-            let a=applets[i];
+            var a=applets[i];
 
             version=null;
             params={};
@@ -108,9 +108,9 @@ module.exports = React.createClass({
                 //IT IS A OBSOLETE ELEMENT!!!!!!
                 if(a.code==="MasaoConstruction"){
                     //ふつうの正男を見つけた
-                    let ps=a.getElementsByTagName("param");
+                    var ps=a.getElementsByTagName("param");
                     //paramsを読み込む
-                    for(let j=0,m=ps.length;j < m;j++){
+                    for(var j=0,m=ps.length;j < m;j++){
                         params[ps[j].name]=ps[j].value;
                     }
                     //正男のバージョン判定
@@ -123,11 +123,11 @@ module.exports = React.createClass({
                 }
             }else if(a.tagName==="OBJECT"){
                 if(/^application\/x-java-applet$/i.test(a.type)){
-                    let ps=a.getElementsByTagName("param");
-                    for(let j=0,m=ps.length;j < m;j++){
-                        let p=ps[j];
+                    var ps=a.getElementsByTagName("param");
+                    for(var j=0,m=ps.length;j < m;j++){
+                        var p=ps[j];
                         if(/^classid$/i.test(p.name)){
-                            let re=p.value.match(/^java:(.+)$/);
+                            var re=p.value.match(/^java:(.+)$/);
                             if(re){
                                 if(re[1]==="MasaoConstruction.class"){
                                     found=true;

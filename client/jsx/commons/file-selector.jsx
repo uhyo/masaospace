@@ -12,7 +12,15 @@ module.exports = React.createClass({
     },
     handleDragOver:function(e){
         e.preventDefault();
-        if(e.dataTransfer.files[0]==null){
+        var ts=e.dataTransfer.types;
+        var flg=false;
+        for(var i=0;i < ts.length; i++){
+            if(ts[i]==="Files"){
+                flg=true;
+                break;
+            }
+        }
+        if(flg===false){
             //ファイルがきてないよ
             e.dataTransfer.dropEffect="none";
         }else{

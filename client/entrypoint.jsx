@@ -9,7 +9,9 @@ console.log(document.getElementById('initial-data').getAttribute('data-data'));
 var data=JSON.parse(document.getElementById('initial-data').getAttribute('data-data'));
 
 //global something
-_g_csrfToken = data.csrfToken;
+if("undefined"!==typeof window){
+    window._g_csrfToken = data.csrfToken;
+}
 
 //session
 userAction.init(data.session);
