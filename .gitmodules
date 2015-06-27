@@ -1,0 +1,3 @@
+[submodule "mc_canvas"]
+	path = mc_canvas
+	url = https://github.com/uhyo/mc_canvas

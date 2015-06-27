@@ -30,6 +30,11 @@ gulp.task('jsx',function(){
     .pipe(gulp.dest("dist"));
 });
 
+gulp.task('mc_canvas',function(){
+    return gulp.src("mc_canvas/Outputs/CanvasMasao.js")
+    .pipe(gulp.dest("dist/"));
+});
+
 gulp.task('clean',function(cb){
     del([
         //tsc
@@ -40,4 +45,4 @@ gulp.task('clean',function(cb){
     ],cb);
 });
 
-gulp.task('default',['tsc','jsx']);
+gulp.task('default',['tsc','jsx','mc_canvas']);
