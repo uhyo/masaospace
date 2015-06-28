@@ -32,7 +32,7 @@ gulp.task('jsx',function(){
 });
 
 gulp.task('mc_canvas',function(){
-    return gulp.src("mc_canvas/Outputs/CanvasMasao.js")
+    return gulp.src(["mc_canvas/Outputs/CanvasMasao.js","mc_canvas/Samples/*.gif"])
     .pipe(gulp.dest("dist/"));
 });
 

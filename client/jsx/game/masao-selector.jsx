@@ -166,10 +166,11 @@ module.exports = React.createClass({
     },
     render:function(){
         return (
-            <div>
+            <section>
+                <h1>正男プレビュー</h1>
                 <FileSelector onSelect={this.fileSelected} accept="*.htm; *.html" />
                 { this.state.game ? <GameView game={this.state.game} /> : null}
-            </div>
+            </section>
         );
     }
 });

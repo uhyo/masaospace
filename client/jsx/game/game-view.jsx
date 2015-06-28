@@ -1,4 +1,5 @@
 //ゲームをアレする
+var deepExtend=require('deep-extend');
 var React=require('react');
 
 module.exports = React.createClass({
@@ -16,7 +17,14 @@ module.exports = React.createClass({
         });
     },
     componentDidMount:function(){
-        this.game=new CanvasMasao.Game(this.props.game.params,this.state.gameid);
+        var p=deepExtend({},this.props.game.params);
+        /* set images */
+        //TODO: custom images
+        p["filename_title"]="/static/title.gif";
+        p["filename_ending"]="/static/ending.gif";
+        p["filename_gameover"]="/static/gameover.gif";
+        p["filename_pattern"]="/static/pattern.gif";
+        this.game=new CanvasMasao.Game(p,this.state.gameid);
     },
     componentWiiiUnMount:function(){
         this.game.__mc.stop();
