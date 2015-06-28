@@ -154,22 +154,35 @@ module.exports = React.createClass({
             });
             return;
         }
-        this.setState({
-            game: {
-                id: null,
-                version: version,
-                params: params,
-                resources: []
-            }
+        this.setGame({
+            id: null,
+            version: version,
+            params: params,
+            resources: []
         });
 
     },
+    setGame:function(game){
+        this.setState({
+            game:game
+        });
+        if("function"===typeof this.props.onSelect){
+            this.props.onSelect(game);
+        }
+    },
     render:function(){
+        return (
+            <div>
+                <FileSelector onSelect={this.fileSelected} accept="*.htm; *.html" />
+                { this.state.game ? this.preview() : null}
+            </div>
+        );
+    },
+    preview:function(){
         return (
             <section>
                 <h1>正男プレビュー</h1>
-                <FileSelector onSelect={this.fileSelected} accept="*.htm; *.html" />
-                { this.state.game ? <GameView game={this.state.game} /> : null}
+                <GameView game={this.state.game} />
             </section>
         );
     }
