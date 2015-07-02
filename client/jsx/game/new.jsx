@@ -3,10 +3,13 @@ var React = require('react');
 var MasaoSelector = require('./masao-selector.jsx');
 var GameMetadataForm = require('./game-metadata-form.jsx');
 
+var api=require('../../actions/api');
+
 module.exports = React.createClass({
     displayName:"New",
     getInitialState:function(){
         return {
+            error:null,
             game:null,
             metadata:null
         };
@@ -21,6 +24,10 @@ module.exports = React.createClass({
             metadata: metadata
         });
     },
+    handleSubmit:function(){
+        //正男を投稿
+
+    },
     render:function(){
         return (
             <section>
@@ -32,6 +39,11 @@ module.exports = React.createClass({
     },
     form:function(){
         //正男メタデータを入力するフォーム
-        return <GameMetadataForm onChange={this.handleMetadata} />;
+        return (
+            <div>
+                <GameMetadataForm onChange={this.handleMetadata} />
+                <p><input type="button" value="投稿する" onClick={this.handleSubmit} /></p>
+            </div>
+        );
     }
 });

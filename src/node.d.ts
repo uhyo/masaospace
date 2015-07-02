@@ -965,6 +965,9 @@ declare module "express"{
             isUserID():Validation;
             isUserName():Validation;
             isPassword():Validation;
+            isGameTitle():Validation;
+            isGameLevel():Validation;
+            isGameDescription():Validation;
         }
         interface Sanitize{
             toString():Sanitize;
@@ -1086,7 +1089,10 @@ declare module "validator"{
     export function isHexColor(value:string):boolean;
     export function isLowercase(value:string):boolean;
     export function isUppercase(value:string):boolean;
-    export function isInt(value:string):boolean;
+    export function isInt(value:string,options?:{
+        max?: number;
+        min?: number;
+    }):boolean;
     export function isFloat(value:string):boolean;
     export function isDivisibleBy(value:string,num:number):boolean;
     export function isNull(value:string):boolean;

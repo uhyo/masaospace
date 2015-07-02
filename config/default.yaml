@@ -70,8 +70,14 @@ ticket:
   # ticket life 8in seconds)
   life:
     setpassword: 86400
+
 # games
 games:
+  title:
+    maxLength: 30
   level:
     min: 0
     max: 10
+  description:
+    maxLength: 300
+
