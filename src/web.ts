@@ -41,9 +41,10 @@ export class WebServer{
         // set some methods
         this.app.request.validationErrorResponse=function(res){
             /* response with validation errors */
-            var e=this.validationErrors();
-            if(e){
+            var e=this._validationErrors;
+            if(e.length>0){
                 res.json({
+                    //TODO
                     error:JSON.stringify(e)
                 });
                 return true;
@@ -70,7 +71,7 @@ export class WebServer{
             index:false
         }));
         //validator
-        this.app.use(validator.makeExpressValidator());
+        this.app.use(validator.forExpress);
         //session
         var sessoption={
             secret: config.get("session.secret"),

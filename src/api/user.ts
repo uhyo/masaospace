@@ -15,9 +15,9 @@ class C{
         // 新規ユーザー登録
         router.post("/entry",(req,res)=>{
             //バリデーション
-            req.checkBody("screen_name","ユーザーID").isUserID();
-            req.checkBody("name","ユーザー名").isUserName();
-            req.checkBody("mail","メールアドレス").isEmail();
+            req.validateBody("screen_name").isUserID();
+            req.validateBody("name").isUserName();
+            req.validateBody("mail").isEmail();
 
             if(req.validationErrorResponse(res)){
                 return;
@@ -113,7 +113,7 @@ class C{
         router.post("/entry/setpassword",(req,res)=>{
             var token:string=req.body.token, screen_name:string=req.body.screen_name;
 
-            req.checkBody("password","パスワード").isPassword();
+            req.validateBody("password").isPassword();
             if(req.validationErrorResponse(res)){
                 return;
             }
@@ -183,7 +183,7 @@ class C{
         });
         //ユーザー情報
         router.post("/update",(req,res)=>{
-            req.checkBody("name","ユーザー名").isUserName();
+            req.validateBody("name").isUserName();
 
             if(req.validationErrorResponse(res)){
                 return;
@@ -237,7 +237,7 @@ class C{
                 return;
             }
 
-            req.checkBody("password","パスワードが正しくありません。").isPassword();
+            req.validateBody("password").isPassword();
             if(req.validationErrorResponse(res)){
                 return;
             }
