@@ -28,7 +28,6 @@
     "ect": "^0.5.9",
     "express": "^4.12.3",
     "express-session": "^1.10.4",
-    "express-validator": "^2.9.0",
     "extend": "^2.0.1",
     "js-yaml": "^3.2.7",
     "log": "^1.4.0",
@@ -42,8 +41,7 @@
     "react": "^0.13.3",
     "redis": "^0.12.1",
     "reflux": "^0.2.8",
-    "st": "^0.5.4",
-    "validator": "^3.40.0"
+    "st": "^0.5.4"
   },
   "devDependencies": {
     "babelify": "^6.1.2",
