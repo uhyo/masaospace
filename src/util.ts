@@ -10,3 +10,18 @@ export function uniqueToken(length:number):string{
         return randomString({length: length-8})+Date.now().toString(36).slice(-8);
     }
 }
+
+// api middleware
+export module apim{
+    export function useUser(req,res,next){
+        //ログインしていなかったらエラー
+        if(req.session.user==null){
+            res.json({
+                error: "ログインしていません。"
+            });
+            return;
+        }else{
+            next();
+        }
+    }
+}

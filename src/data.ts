@@ -29,7 +29,7 @@ export interface UserOneQuery{
 
 //セッション
 export interface Session{
-    //user id
+    //user id. ログインしていなかったらnull
     user:string;
     //screen name
     screen_name:string;

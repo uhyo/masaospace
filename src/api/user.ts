@@ -6,6 +6,8 @@ import logger=require('../logger');
 
 import config=require('config');
 
+import util=require('../util');
+
 import {User,UserData, UserOneQuery, Session} from '../data';
 
 
@@ -182,17 +184,10 @@ class C{
             });
         });
         //ユーザー情報
-        router.post("/update",(req,res)=>{
+        router.post("/update",util.apim.useUser,(req,res)=>{
             req.validateBody("name").isUserName();
 
             if(req.validationErrorResponse(res)){
-                return;
-            }
-
-            if(req.session.user==null){
-                res.json({
-                    error: "ログインしていません。"
-                });
                 return;
             }
 
@@ -229,13 +224,7 @@ class C{
                 });
             });
         });
-        router.post("/changepassword",(req,res)=>{
-            if(req.session.user==null){
-                res.json({
-                    error: "ログインしていません。"
-                });
-                return;
-            }
+        router.post("/changepassword",util.apim.useUser,(req,res)=>{
 
             req.validateBody("password").isPassword();
             if(req.validationErrorResponse(res)){

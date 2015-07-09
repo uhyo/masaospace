@@ -740,8 +740,10 @@ declare module "redis"{
         sdiff(...args:Array<any>):void;
         sdiffstore(...args:Array<any>):void;
         select(index:number,callback?:(error:any,result:string)=>void):void;
-        set(key:string,value:string,nxxx?:string,callback?:(error:any,result:string)=>void):void;
-        set(key:string,value:string,ex:string,seconds:number,nxxx?:string,callback?:(error:any,result:string)=>void):void;
+        set(key:string,value:string,callback?:(error:any,result:string)=>void):void;
+        set(key:string,value:string,nxxx:string,callback?:(error:any,result:string)=>void):void;
+        set(key:string,value:string,ex:string,seconds:number,callback?:(error:any,result:string)=>void):void;
+        set(key:string,value:string,ex:string,seconds:number,nxxx:string,callback?:(error:any,result:string)=>void):void;
         setex(key:string,milliseconds:number,value:string,callback?:(error:any,result:string)=>void):void;
         setnx(key:string,value:string,callback?:(error:any,result:string)=>void):void;
         setrange(key:string,offset:number,value:string,callback?:(error:any,result:number)=>void):void;
