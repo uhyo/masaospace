@@ -20,6 +20,7 @@ module.exports = React.createClass({
         });
     },
     handleMetadata:function(metadata){
+        console.log(metadata);
         this.setState({
             metadata: metadata
         });

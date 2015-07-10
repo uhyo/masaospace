@@ -15,14 +15,15 @@ module.exports = React.createClass({
         if(t.name==="title" || t.name==="level" || t.name==="description"){
             this.setState({
                 [t.name]: t.value
+            },function(){
+                if("function"===typeof this.props.onChange){
+                    this.props.onChange({
+                        title: this.state.title,
+                        level: this.state.level,
+                        description: this.state.description
+                    });
+                }
             });
-            if("function"===typeof this.props.onChange){
-                this.props.onChange({
-                    title: this.state.title,
-                    level: this.state.level,
-                    description: this.state.description
-                });
-            }
         }
     },
     handleSubmit:function(e){
@@ -33,9 +34,9 @@ module.exports = React.createClass({
             <section>
                 <h1>正男情報</h1>
                 <form onSubmit={this.handleSubmit}>
-                    <p>タイトル: <input type="text" name="title" onChange={this.handleChange} /></p>
-                    <p>難易度: <input type="number" name="level" min="0" step="1" onChange={this.handleChange} /></p>
-                    <p>説明: <textarea name="description" onChange={this.handleChange} /></p>
+                    <p>タイトル: <input type="text" name="title" onChange={this.handleChange} value={this.state.title} /></p>
+                    <p>難易度: <input type="number" name="level" min="0" step="1" onChange={this.handleChange} value={this.state.level} /></p>
+                    <p>説明: <textarea name="description" onChange={this.handleChange} value={this.state.description} /></p>
                 </form>
             </section>
         );
