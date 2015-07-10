@@ -26,6 +26,19 @@ module.exports = React.createClass({
     },
     handleSubmit:function(){
         //正男を投稿
+        var _this=this;
+        api("/api/game/new",{
+            game: JSON.stringify(this.state.game),
+            metadata: JSON.stringify(this.state.metadata)
+        }).then(function(result){
+            //TODO
+            console.log(result);
+        }).catch(function(e){
+            console.log("eeeeee",e);
+            _this.setState({
+                error: String(e)
+            });
+        });
 
     },
     render:function(){
@@ -42,8 +55,17 @@ module.exports = React.createClass({
         return (
             <div>
                 <GameMetadataForm onChange={this.handleMetadata} />
-                <p><input type="button" value="投稿する" onClick={this.handleSubmit} /></p>
+                <p><input type="button" value="投稿する" disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
             </div>
         );
+    },
+    //入力が完了してたら送信できる
+    isSubmitDisabled:function(){
+        if(this.state.game==null)return true;
+        var metadata=this.state.metadata;
+        if(metadata==null)return true;
+
+        if(metadata.title && metadata.description && metadata.level)return false;
+        return true;
     }
 });

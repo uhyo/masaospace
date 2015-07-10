@@ -14,7 +14,7 @@ class C{
     route(router:express._Router,c:Controller):void{
         // ゲームを投稿する
         // IN game: ゲームのJSON表現
-        // IN metadata: メタデータのJSON表現
+        // IN metadata: メタデータのJSON表現(title,level,description)
         // OUT id: 新しいゲームのid
         router.post("/new",util.apim.useUser,(req,res)=>{
             var game, metadata;
@@ -29,6 +29,10 @@ class C{
                 return;
             }
             //TODO: ゲームをバリデートする
+            //メタ情報を付加
+            metadata.level=parseInt(metadata.level);
+            metadata.owner=req.session.user;
+            metadata.created=metadata.updated=new Date();
             c.game.newGame(game,metadata,(err,newid:number)=>{
                 if(err){
                     res.json({

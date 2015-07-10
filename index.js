@@ -2,6 +2,7 @@
 var index;
 try{
     index = require('./src/index');
+    console.log("using debug build");
 }catch(e){
     index = require('./js/index');
 }
