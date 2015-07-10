@@ -3,6 +3,7 @@ var React = require('react');
 
 var FileSelector = require('../commons/file-selector.jsx');
 
+var ErrorMessage = require('../commons/error.jsx');
 var GameView = require('./game-view.jsx');
 
 module.exports = React.createClass({
@@ -173,6 +174,7 @@ module.exports = React.createClass({
     render:function(){
         return (
             <div>
+                <ErrorMessage>{this.state.error}</ErrorMessage>
                 <FileSelector onSelect={this.fileSelected} accept="*.htm; *.html" />
                 { this.state.game ? this.preview() : null}
             </div>

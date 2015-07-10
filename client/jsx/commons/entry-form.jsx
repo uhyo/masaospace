@@ -3,6 +3,8 @@ var Reflux=require('reflux');
 
 var api=require('../../actions/api');
 
+var ErrorMessage=require('./error.jsx');
+
 
 module.exports = React.createClass({
     displayName: "EntryForm",
@@ -51,8 +53,7 @@ module.exports = React.createClass({
         if(this.state.form){
             return (
                 <div>
-                    {this.state.error!=null ?
-                        <p className="error-message">{this.state.error}</p> : ""}
+                    <ErrorMessage>{this.state.error}</ErrorMessage>
                     <form onSubmit={this.handleSubmit}>
                         <p>User ID: <input name="screen_name" onChange={this.handleChange} value={this.state.screen_name} /></p>
                         <p>User name: <input name="name" onChange={this.handleChange} value={this.state.name} /></p>

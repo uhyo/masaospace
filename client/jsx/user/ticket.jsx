@@ -2,7 +2,6 @@ var React=require('react');
 
 var api=require('../../actions/api');
 
-
 var Ticket = React.createClass({
     displayName:"Ticket",
     getInitialState:function(){

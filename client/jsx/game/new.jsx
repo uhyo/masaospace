@@ -46,6 +46,7 @@ module.exports = React.createClass({
         return (
             <section>
                 <h1>新しい正男を投稿</h1>
+                <ErrorMessage>{this.state.error}</ErrorMessage>
                 <MasaoSelector onSelect={this.masaoSelected} />
                 {this.state.game!=null ? this.form() : null}
             </section>
