@@ -190,7 +190,9 @@ export class WebServer{
             }
             func(params,(err,view)=>{
                 if(err){
-                    throw err;
+                    //throw err;
+                    res.send(String(err));
+                    return;
                 }
                 var session = req.session.user!=null ? {
                     screen_name: req.session.screen_name,

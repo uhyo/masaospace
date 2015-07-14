@@ -28,7 +28,7 @@ gulp.task('jsx',function(){
     })
     .bundle()
     .pipe(source("components.js"))
-    .pipe(gulp.dest("dist"));
+    .pipe(gulp.dest("dist/"));
 });
 
 gulp.task('mc_canvas',function(){

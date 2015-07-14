@@ -11,7 +11,11 @@ import user from './user';
 import game from './game';
 
 export function makeFrontRouter(c:Controller):Router<(obj:any,callback:Callback<View>)=>void>{
-    var r=new Router<(obj:any,callback:Callback<View>)=>void>();
+    var r=new Router<(obj:any,callback:Callback<View>)=>void>({
+        patterns:{
+            ":number": /^\d+$/
+        }
+    });
 
     // parts
     top(c,r);

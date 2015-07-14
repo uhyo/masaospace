@@ -2,6 +2,7 @@ var React = require('react');
 
 var MasaoSelector = require('./masao-selector.jsx');
 var GameMetadataForm = require('./game-metadata-form.jsx');
+var ErrorMessage = require('../commons/error.jsx');
 
 var api=require('../../actions/api');
 

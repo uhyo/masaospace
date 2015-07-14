@@ -90,6 +90,62 @@ export default class GameController{
             });
         });
     }
+    //ゲームをロードする
+    //そのゲームが存在しない場合はnull
+    getGame(id:number,callback:Callback<{game:GameData; metadata:GameMetadata}>):void{
+        var _this, game:GameData, metadata:GameMetadata, errend=false;
+        //並列な感じで読み込む
+        this.getMetadataCollection((err,collm)=>{
+            if(err){
+                if(!errend){
+                    errend=true;
+                    callback(err,null);
+                }
+                return;
+            }
+            collm.findOne({id:1},(err,doc)=>{
+                if(doc==null){
+                    //ゲームがない
+                    if(!errend){
+                        errend=true;
+                        callback(null,null);
+                    }
+                    return;
+                }
+                metadata=doc;
+                next();
+            });
+        });
+        this.getGameCollection((err,collg)=>{
+            if(err && !errend){
+                errend=true;
+                callback(err,null);
+                return;
+            }
+            collg.findOne({id:1},(err,doc)=>{
+                if(doc==null){
+                    //ゲームがない
+                    if(!errend){
+                        errend=true;
+                        callback(null,null);
+                    }
+                    return;
+                }
+                game=doc;
+                next();
+            });
+        });
+
+        function next():void{
+            if(errend){
+                return;
+            }
+            if(game!=null && metadata!=null){
+                //データ揃った
+                callback(null,{game,metadata});
+            }
+        }
+    }
     //新しいゲームを作成(callbackでゲームIDを返す）
     newGame(game:GameData,metadata:GameMetadata,callback:Callback<number>):void{
         this.getGameCollection((err,collg)=>{

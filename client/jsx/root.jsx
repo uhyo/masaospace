@@ -39,6 +39,8 @@ var Root = React.createClass({
             ///// game
             case "game.new":
                 return require('./game/new.jsx');
+            case "game.play":
+                return require('./game/play.jsx');
             default:
                 //"404"とか
                 return require('./notfound.jsx');
