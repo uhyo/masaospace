@@ -30,6 +30,8 @@ var Root = React.createClass({
             case "user.ticket":
                 //ticket confirmation page
                 return require('./user/ticket.jsx');
+            case "user.page":
+                return require('./user/page.jsx');
             case "user.my":
                 //mypage
                 return require('./user/my.jsx');

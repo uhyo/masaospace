@@ -7,7 +7,7 @@ export default function(c:Controller,r:_Router):void{
     //about user
 
     //new entry
-    r.add("/entry",(obj,callback:Callback<View>)=>{
+    r.add("/entry/page",(obj,callback:Callback<View>)=>{
         callback(null,{
             title: "新規登録",
             page:"user.entry",
@@ -34,6 +34,16 @@ export default function(c:Controller,r:_Router):void{
         callback(null,{
             title: "マイページ",
             page:"user.my",
+            data:{
+            }
+        });
+    });
+    //user page
+    r.add("/:userid",(obj,callback:Callback<View>)=>{
+        callback(null,{
+            //TODO
+            title: "ユーザーページ",
+            page:"user.page",
             data:{
             }
         });
