@@ -19,6 +19,8 @@ import ect=require('ect');
 import React=require('react');
 import nodejsx=require('node-jsx');
 
+import {writeUserInfo} from './util';
+
 import {makeFrontRouter} from './front/index';
 
 import logger=require('./logger');
@@ -199,10 +201,7 @@ export class WebServer{
                     res.send(String(err));
                     return;
                 }
-                var session = req.session.user!=null ? {
-                    screen_name: req.session.screen_name,
-                    name: req.session.name
-                } : null;
+                var session = req.session.user!=null ? writeUserInfo(req.session) : null;
                 var initialData={
                     page: view.page,
                     csrfToken: req.csrfToken(),

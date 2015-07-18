@@ -217,7 +217,7 @@ class C{
                         if(err){
                             throw err;
                         }
-                        res.json(writeUserInfo(req.session,{
+                        res.json(util.writeUserInfo(req.session,{
                             success:true
                         }));
                     });
@@ -289,7 +289,7 @@ class C{
                     });
                 }else{
                     //success
-                    res.json(writeUserInfo(req.session,{
+                    res.json(util.writeUserInfo(req.session,{
                         error:null,
                     }));
                 }
@@ -311,14 +311,3 @@ class C{
     }
 }
 export = C;
-
-//extract user info from session
-function writeUserInfo(session:Session,obj:any):any{
-    if(obj==null){
-        obj={};
-    }
-    obj.user=session.user;
-    obj.screen_name=session.screen_name;
-    obj.name=session.name;
-    return obj;
-}

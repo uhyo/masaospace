@@ -13,7 +13,7 @@ function handleEvents(root){
                 //internal link?
                 if(t.origin===location.origin){
                     ev.preventDefault();
-                    pageAction.load(t.pathname);
+                    pageAction.load(t.pathname+t.search);
                     break;
                 }
             }

@@ -6,6 +6,7 @@ var userAction=require('../actions/user');
 /*
  * sessionStore {
  *   loggedin: <boolean>,
+ *   user: <string>,
  *   screen_name: <string>,
  *   name: <string>
  * }
@@ -20,6 +21,7 @@ var sessionStore=Reflux.createStore({
     init:function(){
         this.state={
             loggedin: false,
+            user: null,
             screen_name: null,
             name: null
         };
@@ -31,12 +33,14 @@ var sessionStore=Reflux.createStore({
         if(init==null){
             this.trigger(this.state={
                 loggedin: false,
+                user: null,
                 screen_name: null,
                 name: null
             });
         }else{
             this.trigger(this.state={
                 loggedin: true,
+                user: init.user,
                 screen_name: init.screen_name,
                 name: init.name
             });
@@ -45,6 +49,7 @@ var sessionStore=Reflux.createStore({
     onLogin:function(loginresult){
         this.trigger(this.state={
             loggedin: true,
+            user: loginresult.user,
             screen_name: loginresult.screen_name,
             name: loginresult.name
         });
@@ -52,6 +57,7 @@ var sessionStore=Reflux.createStore({
     onLogout:function(){
         this.trigger(this.state={
             loggedin: false,
+            user: null,
             screen_name: null,
             name: null
         });

@@ -10,6 +10,7 @@ var api=require('./api');
  * });
  *
  * login.completed({
+ *   user: <string>,
  *   screen_name: <string>,
  *   name: <string>
  * });
@@ -53,6 +54,7 @@ exports.logout = logout;
  *
  * //logged in
  * init({
+ *   user: <string>,
  *   screen_name: <string>,
  *   name: <string>
  * });

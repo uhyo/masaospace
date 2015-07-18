@@ -2,6 +2,8 @@
 import randomString=require('random-string');
 //some utils
 
+import {Session} from './data';
+
 export function uniqueToken(length:number):string{
     //2057年くらいまではDate.now().toString(36)は8桁
     if(length<=8){
@@ -9,6 +11,17 @@ export function uniqueToken(length:number):string{
     }else{
         return randomString({length: length-8})+Date.now().toString(36).slice(-8);
     }
+}
+
+//extract user info from session
+export function writeUserInfo(session:Session,obj?:any):any{
+    if(obj==null){
+        obj={};
+    }
+    obj.user=session.user;
+    obj.screen_name=session.screen_name;
+    obj.name=session.name;
+    return obj;
 }
 
 // api middleware

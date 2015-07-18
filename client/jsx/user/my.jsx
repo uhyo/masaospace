@@ -24,6 +24,7 @@ var MyPage=React.createClass({
             return (
                 <div>
                     <p><b>{session.name}</b> ({session.screen_name})</p>
+                    <p><a href={`/game/list?owner=${session.user}`}>マイ正男</a></p>
                 </div>
             );
         }else{

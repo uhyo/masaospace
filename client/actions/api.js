@@ -40,6 +40,7 @@ function api(path,params){
                 reject(String(obj.error));
                 return;
             }
+            console.log(obj);
             resolve(obj);
         });
     });
