@@ -4,6 +4,7 @@ import config=require('config');
 
 import fs=require('fs');
 import path=require('path');
+import url=require('url');
 import https=require('https');
 import express=require('express');
 import extend=require('extend');
@@ -155,14 +156,16 @@ export class WebServer{
                 });
                 return;
             }
-            var re=r.route(req.body.path);
+            var u=url.parse(req.body.path,true);
+            //?があるかも
+            var re=r.route(u.pathname);
             if(re==null){
                 res.json({
                     error: "page does not exist"
                 });
                 return;
             }
-            re.result(re.params,(err,view)=>{
+            re.result(extend(u.query,re.params),(err,view)=>{
                 if(err){
                     throw err;
                 }

@@ -172,6 +172,27 @@ declare module "path"{
     export var sep:string;
     export var delimiter:string;
 }
+declare module "url"{
+    export function parse(urlstr:string, parseQueryString?:boolean, slashesDenoteHost?:boolean):URLObject;
+    export function format(urlObj:URLObject):string;
+
+    export function reslove(from:string, to:string):string;
+
+    class URLObject{
+        href:string;
+        protocol:string;
+        slashes:boolean;
+        host:string;
+        auth:string;
+        hostname:string;
+        port:string;
+        pathname:string;
+        search:string;
+        path:string;
+        query:any;
+        hash:string;
+    }
+}
 declare module "fs"{
     export function readdir(path:string,callback:(err:any,files:string[])=>void):void;
     export function readdirSync(path:string):string[];
