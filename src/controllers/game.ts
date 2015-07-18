@@ -5,7 +5,7 @@ import db=require('../db');
 import logger=require('../logger');
 import config=require('config');
 
-import {GameMetadata, GameData} from '../data';
+import {GameMetadata, GameData, GameQuery} from '../data';
 
 //constants
 const redis_nextid_key:string = "game:nextid";
@@ -205,6 +205,28 @@ export default class GameController{
                         });
                     });
                 });
+            });
+        });
+    }
+    //ゲームを見つける
+    findGames(query:GameQuery,callback:Callback<Array<GameMetadata>>):void{
+        this.getMetadataCollection((err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            var q:any={}, flag=false;
+            if(query.owner!=null){
+                flag=true;
+                q.owner=query.owner;
+            }
+            if(flag===false){
+                //検索条件がない
+                callback("No search query.",null);
+                return;
+            }
+            coll.find(q).skip(query.skip).limit(query.limit).sort(query.sort).toArray((err,docs)=>{
+                callback(err,docs);
             });
         });
     }

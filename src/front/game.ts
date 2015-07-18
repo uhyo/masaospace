@@ -28,6 +28,17 @@ export default function(c:Controller,r:_Router):void{
             });
         });
     });
+    /////list
+    r.add("/game/list",(obj,callback:Callback<View>)=>{
+        //検索条件をアレする
+        callback(null,{
+            title: "検索結果",
+            page: "game.list",
+            data:{
+                owner: obj.owner
+            }
+        });
+    });
 
     /////game管理
     r.add("/game/new",(obj,callback:Callback<View>)=>{

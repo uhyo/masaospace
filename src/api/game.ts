@@ -8,7 +8,7 @@ import config=require('config');
 
 import util=require('../util');
 
-import {GameMetadata, GameData} from '../data';
+import {GameMetadata, GameData, GameQuery} from '../data';
 
 class C{
     route(router:express._Router,c:Controller):void{
@@ -45,6 +45,47 @@ class C{
                     id: newid
                 });
             });
+        });
+
+        //ゲームを探す
+        router.post("/find",(req,res)=>{
+            req.validateBody("page").isInteger().optional();
+            req.validateBody("limit").isInteger().optional();
+
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+            var skip=parseInt(req.body.skip) || 0,
+                limit=parseInt(req.body.limit) || 50;
+            if(limit>100){
+                limit=100;
+            }
+
+
+            var qu:GameQuery={
+                skip:skip,
+                limit:limit,
+                sort:{id:-1}
+            };
+
+            if(req.body.owner!=null){
+                qu.owner=req.body.owner;
+            }
+
+            c.game.findGames(qu,(err,docs)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                console.log(docs);
+                res.json({
+                    metadatas: docs
+                });
+            });
+
+
         });
     }
 }

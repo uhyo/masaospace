@@ -111,4 +111,11 @@ export interface GameData{
         id:string;
     }>;
 }
+//ゲームを探すクエリ
+export interface GameQuery{
+    owner?:string;
 
+    skip:number;
+    limit:number;
+    sort:any;
+}

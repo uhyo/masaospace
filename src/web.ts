@@ -6,6 +6,7 @@ import fs=require('fs');
 import path=require('path');
 import https=require('https');
 import express=require('express');
+import extend=require('extend');
 
 import bodyParser=require('body-parser');
 import expressSession=require('express-session');
@@ -176,6 +177,7 @@ export class WebServer{
             var re=r.route(req.path);
             var func = re ? re.result : null;
             var params = re ? re.params : {};
+            params=extend(req.query,params);
             if(func==null){
                 /* 404 */
                 res.status(404);

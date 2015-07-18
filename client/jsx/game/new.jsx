@@ -5,6 +5,7 @@ var GameMetadataForm = require('./game-metadata-form.jsx');
 var ErrorMessage = require('../commons/error.jsx');
 
 var api=require('../../actions/api');
+var pageActions=require('../../actions/page');
 
 module.exports = React.createClass({
     displayName:"New",
@@ -33,8 +34,8 @@ module.exports = React.createClass({
             game: JSON.stringify(this.state.game),
             metadata: JSON.stringify(this.state.metadata)
         }).then(function(result){
-            //TODO
-            console.log(result);
+            //投稿結果ページに移動
+            pageActions.load("/play/"+result.id);
         }).catch(function(e){
             console.log("eeeeee",e);
             _this.setState({
