@@ -1,6 +1,9 @@
 # node modules
 node_modules
 
+# non-code files
+client/images/
+
 # build results
 js/
 dist/

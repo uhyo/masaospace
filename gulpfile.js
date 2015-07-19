@@ -7,9 +7,13 @@ var babelify=require('babelify');
 var globule=require('globule');
 var typescript=require('gulp-typescript');
 var del=require('del');
+var changed=require('gulp-changed');
+var sass=require('gulp-sass');
+var concat=require('gulp-concat');
 
 gulp.task('tsc',function(){
     return gulp.src("src/**/*.ts")
+    .pipe(changed("js/"))
     .pipe(typescript({
         module:"commonjs",
         target:"es5",
@@ -33,6 +37,22 @@ gulp.task('jsx',function(){
 
 gulp.task('mc_canvas',function(){
     return gulp.src(["mc_canvas/Outputs/CanvasMasao.js","mc_canvas/Samples/*.gif"])
+    .pipe(changed("dist/"))
+    .pipe(gulp.dest("dist/"));
+});
+
+gulp.task('static',function(){
+    return gulp.src(["client/images/**/*"],{
+        base:"client/images"
+    })
+    .pipe(changed("dist/images/"))
+    .pipe(gulp.dest("dist/images/"));
+});
+
+gulp.task('css',function(){
+    return gulp.src(["client/css/*.sass"])
+    .pipe(sass({outputStyle:"compressed"}).on("error",sass.logError))
+    .pipe(concat("css.css"))
     .pipe(gulp.dest("dist/"));
 });
 
@@ -46,4 +66,4 @@ gulp.task('clean',function(cb){
     ],cb);
 });
 
-gulp.task('default',['tsc','jsx','mc_canvas']);
+gulp.task('default',['tsc','jsx','css','mc_canvas','static']);
