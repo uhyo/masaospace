@@ -2,6 +2,9 @@
 import Controller=require('../controllers/index');
 
 import config=require('config');
+import logger=require('../logger');
+
+import {outUserData} from '../util';
 
 export default function(c:Controller,r:_Router):void{
     //about game
@@ -18,13 +21,26 @@ export default function(c:Controller,r:_Router):void{
                 callback("お探しの正男は見つかりませんでした。",null);
                 return;
             }
-            callback(null,{
-                title: obj.metadata.title,
-                page: "game.play",
-                data:{
-                    game: obj.game,
-                    metadata: obj.metadata,
+            //ownerの情報も得る
+            c.user.user.findOneUser({
+                id:obj.metadata.owner
+            },(err,usr)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                    return;
                 }
+                var data=outUserData(usr.getData());
+                data.id=usr.id;
+                callback(null,{
+                    title: obj.metadata.title,
+                    page: "game.play",
+                    data:{
+                        game: obj.game,
+                        metadata: obj.metadata,
+                        owner: data
+                    }
+                });
             });
         });
     });
