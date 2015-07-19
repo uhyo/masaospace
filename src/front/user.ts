@@ -2,6 +2,7 @@
 import Controller=require('../controllers/index');
 
 import config=require('config');
+import logger=require('../logger');
 
 export default function(c:Controller,r:_Router):void{
     //about user
@@ -40,12 +41,23 @@ export default function(c:Controller,r:_Router):void{
     });
     //user page
     r.add("/:userid",(obj,callback:Callback<View>)=>{
-        callback(null,{
-            //TODO
-            title: "ユーザーページ",
-            page:"user.page",
-            data:{
+        c.user.user.findOneUser({
+            "data.screen_name_lower":obj[":userid"].toLowerCase()
+        },(err,user)=>{
+            if(err){
+                logger.error(err);
+                callback(err,null);
+                return;
             }
+            callback(null,{
+                //TODO
+                title: "ユーザーページ",
+                page:"user.page",
+                data:{
+                    userid: user.id,
+                    data: user.getData()
+                }
+            });
         });
     });
     //account setting

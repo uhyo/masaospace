@@ -79,7 +79,6 @@ class C{
                     });
                     return;
                 }
-                console.log(docs);
                 res.json({
                     metadatas: docs
                 });
