@@ -3,6 +3,11 @@ var React=require('react');
 
 module.exports = React.createClass({
     displayName:"GameMetadataForm",
+    propTypes:{
+        title: React.PropTypes.string,
+        level: React.PropTypes.string,
+        description: React.PropTypes.string
+    },
     getInitialState:function(){
         return {
             title: this.props.title || "",

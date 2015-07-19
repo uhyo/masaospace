@@ -27,7 +27,7 @@ module.exports = React.createClass({
         if("undefined"===typeof TextDecoder){
             // read as UTF-8
             fr.onload=function(e){
-                _this.fileRead(fr.result);
+                _this.fileRead(file.name,fr.result);
             };
             fr.readAsText(file);
             return;
@@ -63,11 +63,22 @@ module.exports = React.createClass({
                     }
                 }
             }
-            _this.fileRead(resultString);
+            _this.fileRead(file.name,resultString);
         };
     },
-    fileRead:function(text){
+    fileRead:function(name,text){
         //now file is read as text
+
+        //種類を判定
+        if(/\.html?$/i.test(name)){
+            //HTMLファイルなのでJavaアプレットの正男を探す
+            this.readHTMLFile(name,text);
+        }else if(/\.json$/i.test(name)){
+            //JSONファイルなので中身が正男になっていることを期待
+            this.readJSONFile(name,text);
+        }
+    },
+    readHTMLFile:function(name,text){
         if("undefined"===typeof DOMParser){
             this.setState({
                 error: "ブラウザがHTMLファイルの読み込みに対応していません。"
@@ -155,20 +166,46 @@ module.exports = React.createClass({
             });
             return;
         }
+        //タイトルを検出する
+        var te=htmldoc.querySelector("title");
+        var title = te ? te.textContent : "";
         this.setGame({
             id: null,
             version: version,
             params: params,
             resources: []
+        },{
+            title: title
         });
 
     },
-    setGame:function(game){
+    readJSONFile:function(name,text){
+        var obj;
+        try{
+            obj=JSON.parse(text);
+        }catch(e){
+            this.setState({
+                error: "ファイルを読み込めませんでした。JSONフォーマットになっているか確認してください。"
+            });
+            return;
+        }
+        //objがゲームオブジェクトっぽい
+        //TODO
+        this.setGame({
+            id: null,
+            version: "fx",
+            params: obj,
+            resources: []
+        },{
+            title: ""
+        });
+    },
+    setGame:function(game,metadata){
         this.setState({
             game:game
         });
         if("function"===typeof this.props.onSelect){
-            this.props.onSelect(game);
+            this.props.onSelect(game,metadata);
         }
     },
     render:function(){

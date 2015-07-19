@@ -16,13 +16,18 @@ module.exports = React.createClass({
             metadata:null
         };
     },
-    masaoSelected:function(game){
+    masaoSelected:function(game,metadata){
+        if(metadata==null){
+            metadata={};
+        }
         this.setState({
             game:game,
+            metadata: {
+                title: metadata.title,
+            }
         });
     },
     handleMetadata:function(metadata){
-        console.log(metadata);
         this.setState({
             metadata: metadata
         });
@@ -37,7 +42,6 @@ module.exports = React.createClass({
             //投稿結果ページに移動
             pageActions.load("/play/"+result.id);
         }).catch(function(e){
-            console.log("eeeeee",e);
             _this.setState({
                 error: String(e)
             });
@@ -56,9 +60,10 @@ module.exports = React.createClass({
     },
     form:function(){
         //正男メタデータを入力するフォーム
+        var m = this.state.metadata || {};
         return (
             <div>
-                <GameMetadataForm onChange={this.handleMetadata} />
+                <GameMetadataForm onChange={this.handleMetadata} title={m.title} />
                 <p><input type="button" value="投稿する" disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
             </div>
         );

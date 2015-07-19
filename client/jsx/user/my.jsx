@@ -25,6 +25,7 @@ var MyPage=React.createClass({
                 <div>
                     <p><b>{session.name}</b> ({session.screen_name})</p>
                     <p><a href="/my/account">アカウント設定</a></p>
+                    <p><a href="/game/new">新しい正男を投稿</a></p>
                     <p><a href={`/game/list?owner=${session.user}`}>マイ正男</a></p>
                 </div>
             );
