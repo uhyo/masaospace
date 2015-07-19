@@ -22,7 +22,7 @@ var Header = React.createClass({
         var session=this.state.session;
         return (
             <div>
-                <p>{session.name} ({session.screen_name})</p>
+                <p>{session.name} さん <a href="/my">マイページ</a></p>
                 <p><a href="" onClick={this.onClick}>ログアウト</a></p>
             </div>
                );

@@ -38,7 +38,7 @@ module.exports = React.createClass({
                     <p>Password: <input name="password" type="password" onChange={this.handleChange} value={this.state.password} /></p>
                     <p><input type="submit" value="ログイン" /></p>
                 </form>
-                <p><a href="/entry">新規登録</a></p>
+                <p><a href="/entry/page">新規登録</a></p>
             </div>);
     }
 });

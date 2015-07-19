@@ -56,7 +56,7 @@ var Account=React.createClass({
         return (
             <div>
                 <form onSubmit={this.handleSubmit}>
-                    <p>ユーザーID: {session.user}</p>
+                    <p>ユーザーID: {session.screen_name}</p>
                     <p>ユーザー名: <input type="text" name="name" value={this.state.name} onChange={this.handleChange} /></p>
                     <p><input type="submit" value="変更を保存" /></p>
                 </form>
