@@ -9,7 +9,7 @@ function handleEvents(root){
     //handle click event
     document.addEventListener("click",function(ev){
         for(var t=ev.target;t;t=t.parentNode){
-            if(t.nodeName==="A"){
+            if(t.nodeName==="A" && t.href){
                 //internal link?
                 if(t.origin===location.origin){
                     ev.preventDefault();

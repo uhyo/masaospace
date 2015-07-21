@@ -5,12 +5,25 @@ var userAction=require('../actions/user');
 var sessionStore=require('../stores/session'),
     errorStore=require('../stores/error');
 
+var LoginForm=require('./commons/login-form.jsx');
+
 var Header = React.createClass({
     displayName: "Header",
     mixins: [Reflux.connect(sessionStore,"session")],
-    onClick:function(e){
+    getInitialState:function(){
+        return {
+            loginform: false
+        };
+    },
+    handleLogout:function(e){
         e.preventDefault();
         userAction.logout();
+    },
+    handleLogin:function(e){
+        e.preventDefault();
+        this.setState({
+            loginform: true
+        });
     },
     render:function(){
         var session=this.state.session;
@@ -19,9 +32,10 @@ var Header = React.createClass({
                 <ul className="root-header-menu">
                     {
                         (session.loggedin===true ?
-                            <li><a href="/my">マイページ</a></li>
+                            [<li><a href="/my">マイページ</a></li>,
+                            <li><a onClick={this.handleLogout}>ログアウト</a></li>]
                         :
-                            <li>ログイン？</li>)
+                            <li><a onClick={this.handleLogin}>ログイン</a></li>)
                     }
                 </ul>
             </div>
@@ -30,6 +44,13 @@ var Header = React.createClass({
                     session.loggedin===true ? this.loggedin() : this.notLoggedin()
                 }
             </div>
+            {
+                (session.loggedin!==true && this.state.loginform===true ?
+                    <div className="root-header-loginform">
+                        <LoginForm />
+                    </div>
+                    : null)
+            }
             <GlobalMessages />
         </div>);
     },
@@ -75,7 +96,9 @@ var GlobalMessages = React.createClass({
         if(this.state.logs.length===0){
             return null;
         }
-        return <p onClick={this.reset}>×</p>;
+        return <p className="header-logs-resetbutton" onClick={this.reset}>
+            <span>×</span>
+        </p>;
     }
 });
 

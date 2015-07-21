@@ -50,22 +50,33 @@ module.exports = React.createClass({
     render: function(){
         if(this.state.form){
             return (
-                <section>
+                <section className="changepassword-form">
                     <h1>パスワード変更</h1>
                     {this.state.error!=null ?
                         <p className="error-message">{this.state.error}</p> : null}
-                    <form onSubmit={this.handleSubmit}>
-                        <p>パスワード：<input type="password" name="password" onChange={this.handleChange} /></p>
-                        <p>再入力：<input type="password" name="password2" onChange={this.handleChange} /></p>
-                        <p><input type="submit" value="送信" /></p>
+                    <form className="form" onSubmit={this.handleSubmit}>
+                        <p>
+                            <label className="form-row">
+                                <span>新しいパスワード</span>
+                                <input type="password" name="password" onChange={this.handleChange} />
+                            </label>
+                        </p>
+                        <p>
+                            <label className="form-row">
+                                <span>再入力</span>
+                                <input type="password" name="password2" onChange={this.handleChange} />
+                            </label>
+                        </p>
+                        <p><input className="form-single form-button" type="submit" value="送信" /></p>
                     </form>
                 </section>
             );
         }else{
             return (
-                <div>
+                <section className="changepassword-form">
+                    <h1>パスワード変更</h1>
                     <p>パスワードを変更しました。</p>
-                </div>);
+                </section>);
         }
     }
 });

@@ -55,17 +55,29 @@ var Account=React.createClass({
         var session=this.state.session;
         return (
             <div>
-                <form onSubmit={this.handleSubmit}>
-                    <p>ユーザーID: {session.screen_name}</p>
-                    <p>ユーザー名: <input type="text" name="name" value={this.state.name} onChange={this.handleChange} /></p>
-                    <p><input type="submit" value="変更を保存" /></p>
+                <form className="form" onSubmit={this.handleSubmit}>
+                    <p>
+                        <label className="form-row">
+                            <span>ユーザーID</span>
+                            <input type="text" readOnly value={session.screen_name} />
+                        </label>
+                    </p>
+                    <p>
+                        <label className="form-row">
+                            <span>ユーザー名</span>
+                            <input type="text" name="name" value={this.state.name} onChange={this.handleChange} />
+                        </label>
+                    </p>
+                    <p><input className="form-single form-button" type="submit" value="変更を保存" /></p>
                 </form>
                 <hr/>
-                {!this.state.changePassword ? 
-                    (<p>
-                        <input type="button" value="パスワードを変更" onClick={this.openChangePassword} />
-                    </p>) :
-                        (<ChangePasswordForm/>)
+                {(!this.state.changePassword ? 
+                    <form className="form">
+                        <p>
+                            <input className="form-single form-button" type="button" value="パスワードを変更" onClick={this.openChangePassword} />
+                        </p>
+                    </form> :
+                        <ChangePasswordForm/>)
                 }
             </div>
         );

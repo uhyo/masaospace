@@ -32,13 +32,24 @@ module.exports = React.createClass({
     },
     render: function(){
         return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
-                    <p>User ID: <input name="id" onChange={this.handleChange} value={this.state.id} /></p>
-                    <p>Password: <input name="password" type="password" onChange={this.handleChange} value={this.state.password} /></p>
-                    <p><input type="submit" value="ログイン" /></p>
+            <section className="login-form">
+                <h1>ログイン</h1>
+                <form className="form" onSubmit={this.handleSubmit}>
+                    <p>
+                        <label className="form-row">
+                            <span>ユーザーID</span>
+                            <input name="id" onChange={this.handleChange} value={this.state.id} />
+                        </label>
+                    </p>
+                    <p>
+                        <label className="form-row">
+                            <span>パスワード</span>
+                            <input name="password" type="password" onChange={this.handleChange} value={this.state.password} />
+                        </label>
+                    </p>
+                    <p><input className="form-single form-button" type="submit" value="ログイン" /></p>
                 </form>
-                <p><a href="/entry/page">新規登録</a></p>
-            </div>);
+                <p>アカウントをお持ちでない方は<a href="/entry/page">新規登録</a></p>
+            </section>);
     }
 });

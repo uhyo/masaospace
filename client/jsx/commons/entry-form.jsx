@@ -54,12 +54,29 @@ module.exports = React.createClass({
             return (
                 <div>
                     <ErrorMessage>{this.state.error}</ErrorMessage>
-                    <form onSubmit={this.handleSubmit}>
-                        <p>User ID: <input name="screen_name" onChange={this.handleChange} value={this.state.screen_name} /></p>
-                        <p>User name: <input name="name" onChange={this.handleChange} value={this.state.name} /></p>
-                        <p>EMail: <input type="email" name="mail" onChange={this.handleChange} value={this.state.mail} /></p>
-                        <p><input type="submit" value="登録" /></p>
+                    <form className="form" onSubmit={this.handleSubmit}>
+                        <p>
+                            <label className="form-row">
+                                <span>ユーザーID</span>
+                                <input name="screen_name" onChange={this.handleChange} value={this.state.screen_name} />
+                            </label>
+                        </p>
+                        <p>
+                            <label className="form-row">
+                                <span>ユーザー名</span>
+                                <input name="name" onChange={this.handleChange} value={this.state.name} />
+                            </label>
+                        </p>
+                        <p>
+                            <label className="form-row">
+                                <span>メールアドレス</span>
+                                <input type="email" name="mail" onChange={this.handleChange} value={this.state.mail} />
+                            </label>
+                        </p>
+                        <p><input className="form-single form-button" type="submit" value="登録" /></p>
                     </form>
+                    <p>ユーザーID・ユーザー名を決めてください。</p>
+                    <p>入力したメールアドレスに登録手続用のメールが送信されます。</p>
                 </div>
             );
         }else{

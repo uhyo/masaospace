@@ -5,7 +5,7 @@ html, body {
 
   background-color: #fdfdfd;
 }
-section, header, footer, main, p, ul, li, h1, h2, h3, h4, h5, h6{
+section, header, footer, main, p, ul, li, h1, h2, h3, h4, h5, h6, input, button, textarea{
   margin: 0;
   padding: 0;
 }
@@ -26,22 +26,34 @@ a:active {
   color: #606060;
 }
 
+//mixins
+@mixin subsection {
+  & > h1 {
+    font-size: 1.2rem;
+    color: #444444;
+    padding: 0 0 0 1.2rem;
+    border-bottom: 1px dashed #888888;
+  }
+}
+
 .root {
   .root-header {
     // header
 
-    height: 36px;
-    padding-left: 160px;
-
     position: relative;
 
+    border-bottom: 1px solid rgba(#000000,0.05);
+  }
+  .root-header-bar {
     // bg
+
+    height: 36px;
+    padding: 0 0 0 160px;
     background-color: white;
     background-image: url(/static/images/logo.png);
     background-position: left top;
     background-repeat: no-repeat;
 
-    //bottom
     border-bottom:1px solid rgba(#000000,0.15);
   }
   ul.root-header-menu {
@@ -57,13 +69,22 @@ a:active {
       a {
         display: block;
         height: 36px;
+
+        color: #666666;
+        line-height: 36px;
+        text-decoration: none;
+        cursor: pointer;
+
+        &:hover {
+          background-color: rgba(#000000,0.05);
+        }
       }
     }
   }
   .root-header-session {
     position: absolute;
     right: 0;
-    bottom: 0;
+    top: 1rem;
 
     color: #aaaaaa;
   }
@@ -84,4 +105,75 @@ a:active {
   p {
     margin:0.6rem 0;
   }
+}
+
+.header-logs {
+  background-color: #ffe0e0;
+
+  display: flex;
+  padding:0 0 0 1rem;
+  .header-logs-resetbutton {
+    flex: 1.2rem 0 0;
+
+    span {
+      display: inline-block;
+      border:1px dashed #ffbbbb;
+      padding: 1px;
+      cursor: pointer;
+    }
+  }
+}
+
+
+// form
+.form {
+  width: 38rem;
+
+  p {
+    margin: 0.4rem 0;
+  }
+  label.form-row {
+    display: block;
+    height: 32px;
+    border-bottom: 1px solid #f3f3f3;
+    & > span {
+      // label
+      display: inline-block;
+      width: 12rem;
+      padding: 0 0 0 1.5rem;
+      line-height: 32px;
+      
+      color: #333333;
+    }
+    & > span + * {
+      // element
+      width: 24rem;
+      height: 26px;
+      border: 1px solid #cccccc;
+      box-shadow: -2px -2px 0 0 #eeeeee inset;
+    }
+  }
+
+  .form-single {
+    width: 38.5rem;
+    height: 26px;
+    border: 1px solid #cccccc;
+    box-shadow: -2px -2px 0 0 #eeeeee inset;
+
+    &.form-button {
+      background-color: #ededed;
+    }
+  }
+
+  input[readonly], textarea[readonly] {
+    background-color: #f3f3f3;
+  }
+}
+
+//login-form
+section.login-form, section.changepassword-form {
+  @include subsection;
+  width: 40rem;
+  padding: 0.8rem;
+  background-color: #f3f3f3;
 }
