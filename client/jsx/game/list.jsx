@@ -14,10 +14,10 @@ module.exports = React.createClass({
             owner: this.props.owner
         };
         return (
-            <div>
+            <section>
                 <h1>検索結果</h1>
                 <QueryList query={queryobj} />
-            </div>
+            </section>
         );
     }
 });

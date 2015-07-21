@@ -11,7 +11,7 @@ var Root = React.createClass({
     render:function(){
         var sp=this.state.page || this.props;
         var page=this.getPage();
-        return (<div>
+        return (<div className="root">
             <Header />
             {React.createElement(page,sp.data)}
             <Footer />

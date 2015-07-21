@@ -15,27 +15,32 @@ var Header = React.createClass({
     render:function(){
         var session=this.state.session;
         return (<div className="root-header">
-            {
-                session.loggedin===true ? this.loggedin() : this.notLoggedin()
-            }
+            <div className="root-header-bar">
+                <ul className="root-header-menu">
+                    {
+                        (session.loggedin===true ?
+                            <li><a href="/my">マイページ</a></li>
+                        :
+                            <li>ログイン？</li>)
+                    }
+                </ul>
+            </div>
+            <div className="root-header-session">
+                {
+                    session.loggedin===true ? this.loggedin() : this.notLoggedin()
+                }
+            </div>
             <GlobalMessages />
         </div>);
     },
     loggedin:function(){
         var session=this.state.session;
         return (
-            <div>
-                <p>{session.name} さん <a href="/my">マイページ</a></p>
-                <p><a href="" onClick={this.onClick}>ログアウト</a></p>
-            </div>
-               );
+            <p>{session.name} さん</p>
+        );
     },
     notLoggedin:function(){
-        return (
-            <div>
-                <p>未ログイン</p>
-            </div>
-        );
+        return null;
     }
 });
 

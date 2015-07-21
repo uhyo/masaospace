@@ -51,6 +51,7 @@
     "gulp": "^3.8.11",
     "gulp-changed": "^1.2.1",
     "gulp-concat": "^2.6.0",
+    "gulp-ruby-sass": "^1.0.5",
     "gulp-sass": "^2.0.4",
     "gulp-typescript": "^2.7.6",
     "reactify": "^1.1.1",

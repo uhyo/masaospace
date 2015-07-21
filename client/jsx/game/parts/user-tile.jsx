@@ -12,10 +12,12 @@ module.exports = React.createClass({
     render(){
         var props=this.props;
         return (
-            <div className="user-tile">
-                <p>{props.label}</p>
-                <p><a href={`/${props.screen_name}`}>{props.name}</a></p>
-            </div>
+            <a className="user-tile" href={`/${props.screen_name}`}>
+                <div>
+                    <span className="user-tile-name">{props.label}</span>
+                    <span className="user-tile-user">{props.name}</span>
+                </div>
+            </a>
         );
     }
 });

@@ -37,7 +37,7 @@ module.exports = React.createClass({
     },
     render:function(){
         return (
-            <div id={this.state.gameid} />
+            <div className="game-view" id={this.state.gameid} />
         );
     }
 });

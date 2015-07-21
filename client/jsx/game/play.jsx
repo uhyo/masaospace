@@ -16,9 +16,17 @@ module.exports = React.createClass({
         return (
             <section>
                 <h1>{metadata.title}</h1>
-                <GameView game={this.props.game} />
-                <UserTile {...this.props.owner} label="投稿者" />
-                <p className="game-description">{metadata.description}</p>
+                <div className="game-play-container">
+                    <GameView game={this.props.game} />
+                </div>
+                <div className="game-play-info">
+                    <div className="game-play-info-user">
+                        <UserTile {...this.props.owner} label="投稿者" />
+                    </div>
+                    <div className="game-play-info-description">
+                        <p>{metadata.description}</p>
+                    </div>
+                </div>
             </section>
         );
     }

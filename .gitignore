@@ -10,6 +10,9 @@ dist/
 
 #temprary files
 src/**/*.js
+.sass-cache
+client/css/*.css
+client/css/*.css.map
 
 #editor temporary files
 *.swp

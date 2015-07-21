@@ -8,7 +8,7 @@ var globule=require('globule');
 var typescript=require('gulp-typescript');
 var del=require('del');
 var changed=require('gulp-changed');
-var sass=require('gulp-sass');
+var sass=require('gulp-ruby-sass');
 var concat=require('gulp-concat');
 
 gulp.task('tsc',function(){
@@ -50,8 +50,7 @@ gulp.task('static',function(){
 });
 
 gulp.task('css',function(){
-    return gulp.src(["client/css/*.sass"])
-    .pipe(sass({outputStyle:"compressed"}).on("error",sass.logError))
+    return sass("client/css/")
     .pipe(concat("css.css"))
     .pipe(gulp.dest("dist/"));
 });
@@ -66,4 +65,5 @@ gulp.task('clean',function(cb){
     ],cb);
 });
 
+gulp.task('client',['jsx','css']);
 gulp.task('default',['tsc','jsx','css','mc_canvas','static']);

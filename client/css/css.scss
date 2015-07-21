@@ -1,0 +1,87 @@
+//reset
+html, body {
+  margin: 0;
+  padding: 0;
+
+  background-color: #fdfdfd;
+}
+section, header, footer, main, p, ul, li, h1, h2, h3, h4, h5, h6{
+  margin: 0;
+  padding: 0;
+}
+
+hr {
+  border: 1px solid #cccccc;
+}
+
+a:link {
+  color: #444444;
+  text-decoration: underline;
+}
+a:visited {
+  color: #777777;
+  text-decoration: underline;
+}
+a:active {
+  color: #606060;
+}
+
+.root {
+  .root-header {
+    // header
+
+    height: 36px;
+    padding-left: 160px;
+
+    position: relative;
+
+    // bg
+    background-color: white;
+    background-image: url(/static/images/logo.png);
+    background-position: left top;
+    background-repeat: no-repeat;
+
+    //bottom
+    border-bottom:1px solid rgba(#000000,0.15);
+  }
+  ul.root-header-menu {
+    height: 36px;
+
+    li {
+      display: block;
+      float: left;
+      height: 36px;
+
+      padding:0 6px;
+
+      a {
+        display: block;
+        height: 36px;
+      }
+    }
+  }
+  .root-header-session {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    color: #aaaaaa;
+  }
+}
+
+.root > section {
+  padding: 0 0.5rem 0.5rem 0.5rem;
+
+  & > h1 {
+    margin: 1rem -0.4rem 0.8rem -0.4rem;
+    padding: 0 0 0 0.4rem;
+
+    font-size: 1.5rem;
+    border-bottom: 1px solid #bbbbbb;
+    color: #444444;
+  }
+
+  p {
+    margin:0.6rem 0;
+  }
+}

@@ -12,10 +12,10 @@ module.exports = React.createClass({
             owner: this.props.userid
         };
         return (
-            <div className="user-page">
+            <section className="user-page">
                 <h1>{user.name}</h1>
                 <QueryList query={query} />
-            </div>
+            </section>
         );
     }
 });
