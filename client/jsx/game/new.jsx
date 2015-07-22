@@ -50,8 +50,12 @@ module.exports = React.createClass({
     },
     render:function(){
         return (
+            //TODO
             <section>
                 <h1>新しい正男を投稿</h1>
+                <div className="warning">
+                    <p>現在はJava版の正男が記述されたHTMLファイルの読み込みのみ対応しています。ご了承ください。</p>
+                </div>
                 <ErrorMessage>{this.state.error}</ErrorMessage>
                 <MasaoSelector onSelect={this.masaoSelected} />
                 {this.state.game!=null ? this.form() : null}

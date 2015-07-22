@@ -29,6 +29,11 @@ a:active {
 }
 
 //mixins
+.warning {
+  background-color: #ffffbb;
+  margin: 0.4rem;
+  padding: 0.6rem;
+}
 
 .root {
   .root-header {

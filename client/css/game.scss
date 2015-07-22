@@ -79,6 +79,11 @@ a.user-tile {
 
 
 //new
-.game-metadata-form, .game-masao-selector-preview {
+.game-metadata-form {
   @include subsection;
+}
+
+.game-masao-selector-preview {
+  @include subsection;
+  margin: 0.8rem 0 0 0;
 }

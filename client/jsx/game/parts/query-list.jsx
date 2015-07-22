@@ -41,7 +41,14 @@ module.exports = React.createClass({
         }
         //ゲームたちを表示
         var games=this.state.games;
-        var len=games.len;
+        var len=games.length;
+        if(len===0){
+            return (
+                <div className="game-query-list">
+                    <p>正男が見つかりませんでした。</p>
+                </div>
+            );
+        }
         return (
             <div className="game-query-list">{
                 games.map((obj,i)=>{

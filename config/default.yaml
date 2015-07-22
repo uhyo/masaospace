@@ -30,7 +30,7 @@ webserver:
 
 # service
 service:
-  name: MasaoPost
+  name: MasaoSpace
 
 # logging
 log:
