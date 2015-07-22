@@ -9,7 +9,7 @@ var typescript=require('gulp-typescript');
 var del=require('del');
 var changed=require('gulp-changed');
 var sass=require('gulp-ruby-sass');
-var concat=require('gulp-concat');
+var rename=require('gulp-rename');
 
 gulp.task('tsc',function(){
     return gulp.src("src/**/*.ts")
@@ -50,8 +50,8 @@ gulp.task('static',function(){
 });
 
 gulp.task('css',function(){
-    return sass("client/css/")
-    .pipe(concat("css.css"))
+    return sass("client/css/index.scss")
+    .pipe(rename("css.css"))
     .pipe(gulp.dest("dist/"));
 });
 
