@@ -2,6 +2,7 @@ var Reflux=require('reflux');
 
 var userAction=require('../actions/user');
 
+var emitError=Reflux.createAction();
 
 //エラーメッセージを集約
 
@@ -14,6 +15,7 @@ var userAction=require('../actions/user');
 
 var errorStore=Reflux.createStore({
     init(){
+        this.listenTo(emitError, this.someError);
         this.listenTo(userAction.login.failed, this.someError);
         this.listenTo(userAction.logout.failed, this.someError);
         this.listenTo(userAction.update.failed, this.someError);
@@ -34,5 +36,7 @@ errorStore.reset=function(){
         logs: []
     });
 };
+
+errorStore.emit=emitError;
 
 module.exports = errorStore;

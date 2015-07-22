@@ -3,22 +3,20 @@ var React = require('react');
 
 var FileSelector = require('../commons/file-selector.jsx');
 
-var ErrorMessage = require('../commons/error.jsx');
 var GameView = require('./game-view.jsx');
+
+var errorStore=require('../../stores/error');
 
 module.exports = React.createClass({
     displayName:"MasaoSelector",
     getInitialState:function(){
         return {
-            error: null,
             game: null
         };
     },
     fileSelected:function(file){
         if(file==null){
-            this.setState({
-                game:null
-            });
+            this.setGame(null,null);
             return;
         }
         //read file
@@ -56,9 +54,8 @@ module.exports = React.createClass({
                         resultString=td.decode(ab);
                     }catch(e){
                         //すべて失敗した
-                        _this.setState({
-                            error: "ファイルを読み込めませんでした。文字コードがUTF-8になっているか確認してください。"
-                        });
+                        errorStore.emit("ファイルを読み込めませんでした。文字コードがUTF-8になっているか確認してください。");
+                        this.setGame(null,null);
                         return;
                     }
                 }
@@ -76,35 +73,34 @@ module.exports = React.createClass({
         }else if(/\.json$/i.test(name)){
             //JSONファイルなので中身が正男になっていることを期待
             this.readJSONFile(name,text);
+        }else{
+            errorStore.emit("対応していない種類のファイルです。");
+            this.setGame(null,null);
         }
     },
     readHTMLFile:function(name,text){
         if("undefined"===typeof DOMParser){
-            this.setState({
-                error: "ブラウザがHTMLファイルの読み込みに対応していません。"
-            });
+            errorStore.emit("ブラウザがHTMLファイルの読み込みに対応していません。");
+            this.setGame(null,null);
             return;
         }
         var parser=new DOMParser;
         if("function"!==typeof parser.parseFromString){
-            this.setState({
-                error: "ブラウザがHTMLファイルの読み込みに対応していません。"
-            });
+            errorStore.emit("ブラウザがHTMLファイルの読み込みに対応していません。");
+            this.setGame(null,null);
             return;
         }
         var htmldoc;
         try{
             htmldoc = parser.parseFromString(text,"text/html");
         }catch(e){
-            this.setState({
-                error: "HTMLファイルを読み込めませんでした。"
-            });
+            errorStore.emit("HTMLファイルを読み込めませんでした。");
+            this.setGame(null,null);
             return;
         }
         if(htmldoc==null){
-            this.setState({
-                error: "HTMLファイルを読み込めませんでした。"
-            });
+            errorStore.emit("HTMLファイルを読み込めませんでした。");
+            this.setGame(null,null);
             return;
         }
         //HTMLファイルの読み込みに成功。正男を探す
@@ -161,9 +157,8 @@ module.exports = React.createClass({
         }
         if(found==false || version==null){
             //正男が見つからなかった
-            this.setState({
-                error: "ファイルから正男を検出できませんでした。"
-            });
+            errorStore.emit("ファイルから正男を検出できませんでした。");
+            this.setGame(null);
             return;
         }
         //タイトルを検出する
@@ -184,9 +179,8 @@ module.exports = React.createClass({
         try{
             obj=JSON.parse(text);
         }catch(e){
-            this.setState({
-                error: "ファイルを読み込めませんでした。JSONフォーマットになっているか確認してください。"
-            });
+            errorStore.emit("ファイルを読み込めませんでした。JSONフォーマットになっているか確認してください。");
+            this.setGame(null);
             return;
         }
         //objがゲームオブジェクトっぽい
@@ -211,7 +205,6 @@ module.exports = React.createClass({
     render:function(){
         return (
             <div className="game-masao-selector">
-                <ErrorMessage>{this.state.error}</ErrorMessage>
                 <FileSelector onSelect={this.fileSelected} accept="htm,html,json" />
                 { this.state.game ? this.preview() : null}
             </div>

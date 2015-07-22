@@ -107,7 +107,7 @@ export default class GameController{
                 }
                 return;
             }
-            collm.findOne({id:1},(err,doc)=>{
+            collm.findOne({id:id},(err,doc)=>{
                 if(doc==null){
                     //ゲームがない
                     if(!errend){
@@ -126,7 +126,7 @@ export default class GameController{
                 callback(err,null);
                 return;
             }
-            collg.findOne({id:1},(err,doc)=>{
+            collg.findOne({id:id},(err,doc)=>{
                 if(doc==null){
                     //ゲームがない
                     if(!errend){
