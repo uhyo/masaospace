@@ -19,11 +19,6 @@ validator.addCustomValidator("isPassword",(value:string)=>{
 validator.addCustomValidator("isGameTitle",(value:string)=>{
     return !funcs.length(value,1,config.get("game.title.maxLength"));
 });
-validator.addCustomValidator("isGameLevel",(value:string)=>{
-    if(funcs.isInteger(value))return false;
-    var v=parseInt(value);
-    return config.get("game.level.min")<=v && v<=config.get("game.level.max")
-});
 validator.addCustomValidator("isGameDescription",(value:string)=>{
     return !funcs.length(value,0,config.get("game.description.maxLength"));
 });

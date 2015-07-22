@@ -210,7 +210,7 @@ module.exports = React.createClass({
     },
     render:function(){
         return (
-            <div>
+            <div className="game-masao-selector">
                 <ErrorMessage>{this.state.error}</ErrorMessage>
                 <FileSelector onSelect={this.fileSelected} accept="*.htm; *.html" />
                 { this.state.game ? this.preview() : null}
@@ -219,7 +219,7 @@ module.exports = React.createClass({
     },
     preview:function(){
         return (
-            <section>
+            <section className="game-masao-selector-preview">
                 <h1>正男プレビュー</h1>
                 <GameView game={this.state.game} />
             </section>

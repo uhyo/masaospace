@@ -2,7 +2,7 @@
 import randomString=require('random-string');
 //some utils
 
-import {UserData,Session} from './data';
+import {UserData, UserOpenData, Session} from './data';
 
 export function uniqueToken(length:number):string{
     //2057年くらいまではDate.now().toString(36)は8桁
@@ -24,7 +24,7 @@ export function writeUserInfo(session:Session,obj?:any):any{
     return obj;
 }
 //外に出していいユーザー情報
-export function outUserData(data:UserData):any{
+export function outUserData(data:UserData):UserOpenData{
     return {
         screen_name: data.screen_name,
         name: data.name

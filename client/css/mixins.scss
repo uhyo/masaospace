@@ -1,0 +1,15 @@
+/// variables
+$color-background : #fdfdfd;
+
+
+/// mixins
+@mixin subsection {
+  & > h1 {
+    font-size: 1.2rem;
+    color: #444444;
+    padding: 0 0 0 1.2rem;
+    margin: 0 0 2px 0;
+    border-bottom: 1px dashed #888888;
+  }
+}
+

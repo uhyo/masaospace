@@ -27,6 +27,7 @@ module.exports = React.createClass({
             skip: this.state.page*this.state.limit,
             limit: this.state.limit
         }).then((result)=>{
+            console.log(result);
             this.setState({
                 loading: false,
                 games: result.metadatas

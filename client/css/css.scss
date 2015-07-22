@@ -1,9 +1,11 @@
+@import "./mixins.scss";
+
 //reset
 html, body {
   margin: 0;
   padding: 0;
 
-  background-color: #fdfdfd;
+  background-color: $color-background;
 }
 section, header, footer, main, p, ul, li, h1, h2, h3, h4, h5, h6, input, button, textarea{
   margin: 0;
@@ -27,14 +29,6 @@ a:active {
 }
 
 //mixins
-@mixin subsection {
-  & > h1 {
-    font-size: 1.2rem;
-    color: #444444;
-    padding: 0 0 0 1.2rem;
-    border-bottom: 1px dashed #888888;
-  }
-}
 
 .root {
   .root-header {
@@ -51,7 +45,7 @@ a:active {
     padding: 0 0 0 160px;
     background-color: white;
     background-image: url(/static/images/logo.png);
-    background-position: left top;
+    background-position: 0 2px;
     background-repeat: no-repeat;
 
     border-bottom:1px solid rgba(#000000,0.15);
@@ -69,6 +63,7 @@ a:active {
       a {
         display: block;
         height: 36px;
+        padding:0 3px;
 
         color: #666666;
         line-height: 36px;
@@ -134,7 +129,7 @@ a:active {
   }
   label.form-row {
     display: block;
-    height: 32px;
+    min-height: 32px;
     border-bottom: 1px solid #f3f3f3;
     & > span {
       // label
@@ -151,6 +146,9 @@ a:active {
       height: 26px;
       border: 1px solid #cccccc;
       box-shadow: -2px -2px 0 0 #eeeeee inset;
+    }
+    & > span + textarea{
+      height: 130px;
     }
   }
 

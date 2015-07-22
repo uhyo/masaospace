@@ -6,15 +6,19 @@ import mum=require('my-user-mongo');
 //ユーザー
 export import User=mum.User;
 
-export interface UserData{
-    //登録完了したかどうか
-    activated:boolean;
+//一般に見せられるユーザー情報
+export interface UserOpenData{
     //ユーザーID（表面用）
     screen_name:string;
-    //ユーザーID（小文字）
-    screen_name_lower:string;
     //表示名
     name:string;
+}
+
+export interface UserData extends UserOpenData{
+    //登録完了したかどうか
+    activated:boolean;
+    //ユーザーID（小文字）
+    screen_name_lower:string;
     //メールアドレス
     mail:string;
 
@@ -78,21 +82,28 @@ export interface FileQuery{
 }
 
 //正男（各種メタデータ）
-export interface GameMetadata{
+///一般に見せられる
+export interface GameOpenMetadata{
     //ゲームID
     id:number;
     //オーナーユーザーID
     owner:string;
     //タイトル
     title:string;
-    //難易度
-    level:number;
     //説明
     description:string;
     //作成日時
     created:Date;
+}
+///ゲームのデータ全部
+export interface GameMetadata extends GameOpenMetadata{
     //更新日時
     updated:Date;
+}
+///ユーザーデータも
+export interface GameOpenMetadataWithOwnerData extends GameOpenMetadata{
+    //オーナーのユーザーデータ
+    user:UserOpenData;
 }
 //ゲーム本体データ
 export interface GameData{

@@ -30,7 +30,7 @@ export default function(c:Controller,r:_Router):void{
                     callback(err,null);
                     return;
                 }
-                var data=outUserData(usr.getData());
+                var data:any=outUserData(usr.getData());
                 data.id=usr.id;
                 callback(null,{
                     title: obj.metadata.title,

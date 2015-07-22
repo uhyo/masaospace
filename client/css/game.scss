@@ -1,4 +1,5 @@
 //gaming
+@import "./mixins.scss";
 
 .game-view {
   text-align: center;
@@ -33,6 +34,7 @@ a.user-tile {
   box-shadow: 1px 1px 0 0 #dedede;
 
   text-decoration: none;
+  background-color: $color-background;
   color: inherit;
 
   display: inline-block;
@@ -53,4 +55,29 @@ a.user-tile {
     display: block;
     padding: 3px 0 0 3px;
   }
+}
+
+//game tile
+.game-tile {
+  background-color: #f2f2f2;
+  padding: 2px;
+  width: 296px;
+
+  p.game-tile-title {
+    font-weight: bold;
+    a {
+      text-decoration: undefline;
+      color: #444444;
+    }
+  }
+  p.game-tile-time {
+    color: #888888;
+    font-size: 0.9rem;
+  }
+}
+
+
+//new
+.game-metadata-form, .game-masao-selector-preview {
+  @include subsection;
 }

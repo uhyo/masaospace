@@ -5,7 +5,11 @@ import db=require('../db');
 import logger=require('../logger');
 import config=require('config');
 
-import {GameMetadata, GameData, GameQuery} from '../data';
+import extend=require('extend');
+
+import {UserOpenData, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GameQuery} from '../data';
+
+import util=require('../util');
 
 //constants
 const redis_nextid_key:string = "game:nextid";
@@ -225,8 +229,46 @@ export default class GameController{
                 callback("No search query.",null);
                 return;
             }
-            coll.find(q).skip(query.skip).limit(query.limit).sort(query.sort).toArray((err,docs)=>{
+            coll.find(q).skip(query.skip).limit(query.limit).sort(query.sort).toArray((err,docs:Array<GameMetadata>)=>{
+                var ids=docs.map(obj=>obj.id);
+
                 callback(err,docs);
+            });
+        });
+    }
+    //ゲームデータにユーザーデータを追加
+    addUserData(games:Array<GameOpenMetadata>,callback:Callback<Array<GameOpenMetadataWithOwnerData>>):void{
+        this.getUserCollection((err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+
+            //idを列挙する
+            var ids=games.map(obj=>obj.owner);
+            //ユーザーを探す
+            coll.find({
+                id:{
+                    $in: ids
+                }
+            }).toArray((err,docs:Array<any>)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                    return;
+                }
+
+                var dict=<{[id:string]:UserOpenData}>{};
+                for(var i=0,l=docs.length;i<l;i++){
+                    let obj=docs[i];
+                    dict[obj.id]=util.outUserData(obj.data);
+                }
+                //gamesに付加する
+                var games2:Array<GameOpenMetadataWithOwnerData> = games.map((obj)=>{
+                    return extend(obj,{user:dict[obj.owner]});
+                });
+                //OK
+                callback(null,games2);
             });
         });
     }
@@ -243,6 +285,15 @@ export default class GameController{
     }
     private getMetadataCollection(callback:Callback<db.Collection>):void{
         this.db.mongo.collection(config.get("mongodb.collection.gamemetadata"),(err,col)=>{
+            if(err){
+                logger.critical(err);
+                callback(err,null);
+            }
+            callback(null,col);
+        });
+    }
+    private getUserCollection(callback:Callback<db.Collection>):void{
+        this.db.mongo.collection(config.get("mongodb.collection.user"),(err,col)=>{
             if(err){
                 logger.critical(err);
                 callback(err,null);

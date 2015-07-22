@@ -64,7 +64,9 @@ module.exports = React.createClass({
         return (
             <div>
                 <GameMetadataForm onChange={this.handleMetadata} title={m.title} />
-                <p><input type="button" value="投稿する" disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
+                <form className="form">
+                    <p><input className="form-single form-button" type="button" value="投稿する" disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
+                </form>
             </div>
         );
     },
@@ -74,7 +76,7 @@ module.exports = React.createClass({
         var metadata=this.state.metadata;
         if(metadata==null)return true;
 
-        if(metadata.title && metadata.description && metadata.level)return false;
+        if(metadata.title && metadata.description)return false;
         return true;
     }
 });

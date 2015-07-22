@@ -30,7 +30,6 @@ class C{
             }
             //TODO: ゲームをバリデートする
             //メタ情報を付加
-            metadata.level=parseInt(metadata.level);
             metadata.owner=req.session.user;
             metadata.created=metadata.updated=new Date();
             c.game.newGame(game,metadata,(err,newid:number)=>{
@@ -79,8 +78,16 @@ class C{
                     });
                     return;
                 }
-                res.json({
-                    metadatas: docs
+                c.game.addUserData(docs,(err,docs)=>{
+                    if(err){
+                        res.json({
+                            error: String(err)
+                        });
+                        return;
+                    }
+                    res.json({
+                        metadatas: docs
+                    });
                 });
             });
 
