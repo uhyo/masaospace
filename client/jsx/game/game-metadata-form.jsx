@@ -13,6 +13,12 @@ module.exports = React.createClass({
             description: this.props.description || ""
         };
     },
+    componentWillReceiveProps:function(nextProps){
+        this.setState({
+            title: nextProps.title || this.state.title,
+            description: nextProps.description || this.state.description
+        });
+    },
     handleChange:function(e){
         var t=e.target;
         if(t.name==="title" || t.name==="description"){

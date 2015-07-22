@@ -2,6 +2,9 @@ var React=require('react');
 
 module.exports = React.createClass({
     displayName:"FileSelector",
+    propTypes:{
+        accept: React.PropTypes.string
+    },
     getInitialState:function(){
         return {
             file: null
@@ -41,12 +44,40 @@ module.exports = React.createClass({
         }
     },
     render:function(){
+        var inn;
+        if(this.state.file){
+            inn = this.acceptedView();
+        }else{
+            inn = this.acceptingView();
+        }
+        return (
+            <div className="fileselector">
+                <div className="fileselector-dragarea" onDragEnter={this.handleDragEnter} onDragOver={this.handleDragOver} onDrop={this.handleDrop}>{
+                    inn
+                }</div>
+            </div>
+        );
+    },
+    acceptedView:function(){
+        var name=this.state.file.name;
         return (
             <div>
-                <div className="fileselector-dragarea" onDragEnter={this.handleDragEnter} onDragOver={this.handleDragOver} onDrop={this.handleDrop}>
-                    ここ（あとでCSSで調整する）
-                </div>
+                <p>ファイル：{name}</p>
+            </div>
+        );
+    },
+    acceptingView:function(){
+        var accepts=null;
+        var accept=this.props.accept;
+        if(accept){
+            accepts = accept.split(",").map((ext)=>{
+                return `${ext.trim()}ファイル`;
+            }).join(", ") + "を読み込めます。";
+        }
+        return (
+            <div>
                 <p>ここにファイルをドラッグしてください。</p>
+                {accepts ? <p className="fileselector-accept">{accepts}</p> : null}
             </div>
         );
     }

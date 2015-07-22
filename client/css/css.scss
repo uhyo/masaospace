@@ -175,3 +175,20 @@ section.login-form, section.changepassword-form {
   padding: 0.8rem;
   background-color: #f3f3f3;
 }
+
+//file-selector
+.fileselector {
+  .fileselector-dragarea {
+    background-color: #e8e8e8;
+    border: 12px dashed #d0d0d0;
+
+    padding: 30px 0;
+
+    text-align: center;
+    color: #444444;
+  }
+  .fileselector-accept {
+    color: #666666;
+    font-size: 0.9rem;
+  }
+}

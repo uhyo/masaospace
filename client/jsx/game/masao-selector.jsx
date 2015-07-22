@@ -212,7 +212,7 @@ module.exports = React.createClass({
         return (
             <div className="game-masao-selector">
                 <ErrorMessage>{this.state.error}</ErrorMessage>
-                <FileSelector onSelect={this.fileSelected} accept="*.htm; *.html" />
+                <FileSelector onSelect={this.fileSelected} accept="htm,html,json" />
                 { this.state.game ? this.preview() : null}
             </div>
         );

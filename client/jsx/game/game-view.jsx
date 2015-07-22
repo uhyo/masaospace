@@ -17,7 +17,17 @@ module.exports = React.createClass({
         });
     },
     componentDidMount:function(){
-        var p=deepExtend({},this.props.game.params);
+        this.setGame(this.props.game);
+    },
+    componentWiiiUnMount:function(){
+        this.endGame();
+    },
+    componentDidUpdate:function(prevProps, prevState){
+        this.endGame();
+        this.setGame(this.props.game);
+    },
+    setGame:function(game){
+        var p=deepExtend({},game.params);
         /* set images */
         //TODO: custom images
         p["filename_title"]="/static/title.gif";
@@ -26,7 +36,10 @@ module.exports = React.createClass({
         p["filename_pattern"]="/static/pattern.gif";
         this.game=new CanvasMasao.Game(p,this.state.gameid);
     },
-    componentWiiiUnMount:function(){
+    endGame:function(){
+        if(this.game==null){
+            return;
+        }
         this.game.__mc.stop();
         this.game.__mc.destroy();
         /* 手動でcleanする */
@@ -34,6 +47,7 @@ module.exports = React.createClass({
         while(d.firstChild){
             d.removeChild(d.firstChild);
         }
+        this.game=null;
     },
     render:function(){
         return (
