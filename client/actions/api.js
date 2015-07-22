@@ -11,7 +11,9 @@ function api(path,params){
     var ps=[];
     ps.push("_csrf="+encodeURIComponent(_g_csrfToken));
     for(var key in params){
-        ps.push(encodeURIComponent(key)+"="+encodeURIComponent(params[key]));
+        if(params[key]!=undefined){
+            ps.push(encodeURIComponent(key)+"="+encodeURIComponent(params[key]));
+        }
     }
     var xhr=new XMLHttpRequest();
     xhr.open("POST",path);

@@ -9,14 +9,19 @@ module.exports = React.createClass({
     propTypes:{
         query:React.PropTypes.shape({
             owner: React.PropTypes.string
-        }).isRequired
+        }).isRequired,
+        limit:React.PropTypes.number
     },
     getInitialState:function(){
         return {
             loading: true,
             page:0,
-            limit:50,
             games: []
+        };
+    },
+    getInitialProps:function(){
+        return {
+            limit: 50
         };
     },
     componentDidMount:function(){
@@ -24,10 +29,9 @@ module.exports = React.createClass({
         api("/api/game/find",{
             owner: query.owner,
 
-            skip: this.state.page*this.state.limit,
-            limit: this.state.limit
+            skip: this.state.page*this.props.limit,
+            limit: this.props.limit
         }).then((result)=>{
-            console.log(result);
             this.setState({
                 loading: false,
                 games: result.metadatas

@@ -1,27 +1,18 @@
 var React=require('react');
 var Reflux=require('reflux');
 
-var sessionStore=require('../stores/session');
-
-var LoginForm=require('./commons/login-form.jsx');
+var QueryList=require('./game/parts/query-list.jsx');
 
 
 module.exports = React.createClass({
     displayName:"Top",
-    mixins:[Reflux.connect(sessionStore,"session")],
     render(){
         return (
-            <section>
-                <h1>{this.props.title}</h1>
-                {this.loginForm()}
-            </section>);
+            <div>
+                <section>
+                    <h1>最近投稿された正男</h1>
+                    <QueryList query={{}} limit={10} />
+                </section>
+            </div>);
     },
-    loginForm(){
-        if(this.state.session.loggedin){
-            //ログイン済
-            return null;
-        }else{
-            return <LoginForm />;
-        }
-    }
 });

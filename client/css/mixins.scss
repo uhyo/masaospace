@@ -4,6 +4,8 @@ $color-background : #fdfdfd;
 
 /// mixins
 @mixin subsection {
+  padding: 0;
+
   & > h1 {
     font-size: 1.2rem;
     color: #444444;

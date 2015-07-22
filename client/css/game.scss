@@ -63,6 +63,7 @@ a.user-tile {
   margin: 8px;
   padding: 2px;
   width: 296px;
+  flex: 296px 0 0;
 
   p.game-tile-title {
     font-weight: bold;
@@ -75,6 +76,14 @@ a.user-tile {
     color: #888888;
     font-size: 0.9rem;
   }
+}
+
+//query list
+.game-query-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
 }
 
 

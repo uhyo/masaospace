@@ -55,9 +55,9 @@ class C{
                 return;
             }
             var skip=parseInt(req.body.skip) || 0,
-                limit=parseInt(req.body.limit) || 50;
-            if(limit>100){
-                limit=100;
+                limit=parseInt(req.body.limit) || 10;
+            if(limit>50){
+                limit=50;
             }
 
 

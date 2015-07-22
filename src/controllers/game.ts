@@ -221,13 +221,7 @@ export default class GameController{
             }
             var q:any={}, flag=false;
             if(query.owner!=null){
-                flag=true;
                 q.owner=query.owner;
-            }
-            if(flag===false){
-                //検索条件がない
-                callback("No search query.",null);
-                return;
             }
             coll.find(q).skip(query.skip).limit(query.limit).sort(query.sort).toArray((err,docs:Array<GameMetadata>)=>{
                 var ids=docs.map(obj=>obj.id);
