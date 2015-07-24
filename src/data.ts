@@ -12,6 +12,8 @@ export interface UserOpenData{
     screen_name:string;
     //表示名
     name:string;
+    //自己紹介
+    profile:string;
 }
 
 export interface UserData extends UserOpenData{
@@ -39,6 +41,8 @@ export interface Session{
     screen_name:string;
     //user name
     name:string;
+    //user profile
+    profile:string;
 
     //methods provided by express-session
     regenerate(callback:Cont):void;

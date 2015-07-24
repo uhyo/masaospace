@@ -72,13 +72,13 @@ a:active {
         padding:0 3px;
         margin:0 4px;
 
-        color: #666666;
+        color: $color-lightcolor;
         line-height: 36px;
         text-decoration: none;
         cursor: pointer;
 
         &:hover {
-          background-color: rgba(#000000,0.05);
+          background-color: $color-hovermask;
         }
 
         //menu icons
@@ -135,7 +135,7 @@ section {
 }
 
 .commons-loading {
-  color: #777777;
+  color: $color-lightcolor;
 }
 
 // form

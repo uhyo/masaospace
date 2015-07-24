@@ -57,6 +57,10 @@ user:
   password:
     minLength: 6
     maxLength: 64
+  # profile
+  profile:
+    maxLength: 1024
+
 
 
 

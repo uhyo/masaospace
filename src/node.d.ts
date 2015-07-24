@@ -933,6 +933,7 @@ declare module "express"{
             isUserID():Validation;
             isUserName():Validation;
             isPassword():Validation;
+            isUserProfile():Validation;
             isGameTitle():Validation;
             isGameLevel():Validation;
             isGameDescription():Validation;

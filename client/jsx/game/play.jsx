@@ -1,7 +1,8 @@
 var React = require('react');
 
 var GameView=require('./game-view.jsx'),
-    UserTile=require('./parts/user-tile.jsx');
+    UserTile=require('./parts/user-tile.jsx'),
+    Datetime=require('../commons/datetime.jsx');
 
 
 module.exports = React.createClass({
@@ -20,7 +21,8 @@ module.exports = React.createClass({
                     <GameView game={this.props.game} />
                 </div>
                 <div className="game-play-info">
-                    <div className="game-play-info-user">
+                    <div className="game-play-info-meta">
+                        <p><Datetime date={new Date(metadata.created)} /> 投稿</p>
                         <UserTile {...this.props.owner} label="投稿者" />
                     </div>
                     <div className="game-play-info-description">

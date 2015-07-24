@@ -3,6 +3,8 @@ var Reflux=require('reflux');
 
 var sessionStore=require('../../stores/session');
 
+var NeedLogin=require('../commons/need-login.jsx');
+
 var MyPage=React.createClass({
     displayName:"MyPage",
     mixins: [Reflux.connect(sessionStore,"session")],
@@ -25,14 +27,11 @@ var MyPage=React.createClass({
                 <div>
                     <p><b>{session.name}</b> ({session.screen_name})</p>
                     <p><a href="/my/account">アカウント設定</a></p>
-                    <p><a href="/game/new">新しい正男を投稿</a></p>
                     <p><a href={`/game/list?owner=${session.user}`}>マイ正男</a></p>
                 </div>
             );
         }else{
-            return (
-                <p>ログインしていません。</p>
-            );
+            return <NeedLogin/>;
         }
     }
 });

@@ -33,6 +33,7 @@ class C{
                 screen_name_lower:req.body.screen_name.toLowerCase(),
                 name:req.body.name,
                 mail:req.body.mail,
+                profile:"",
 
                 created:new Date()
             };
@@ -186,6 +187,9 @@ class C{
         //ユーザー情報
         router.post("/update",util.apim.useUser,(req,res)=>{
             req.validateBody("name").isUserName();
+            req.validateBody("profile").isUserProfile();
+
+            console.log("!!!",req.body.name, req.body.profile);
 
             if(req.validationErrorResponse(res)){
                 return;
@@ -205,7 +209,8 @@ class C{
                     return;
                 }
                 user.writeData({
-                    name:req.body.name
+                    name:req.body.name,
+                    profile:req.body.profile
                 });
                 c.user.user.saveUser(user,(err,result)=>{
                     if(err){
@@ -213,6 +218,7 @@ class C{
                         throw err;
                     }
                     req.session.name = req.body.name;
+                    req.session.profile = req.body.profile;
                     req.session.save((err)=>{
                         if(err){
                             throw err;

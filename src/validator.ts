@@ -15,6 +15,9 @@ validator.addCustomValidator("isUserName",(value:string)=>{
 validator.addCustomValidator("isPassword",(value:string)=>{
     return !funcs.isASCIIPrintable(value) && !funcs.length(value,config.get("user.password.minLength"), config.get("user.password.maxLength"));
 });
+validator.addCustomValidator("isUserProfile",(value:string)=>{
+    return !funcs.length(value,config.get("user.profile.maxLength"));
+});
 ////////// game
 validator.addCustomValidator("isGameTitle",(value:string)=>{
     return !funcs.length(value,1,config.get("game.title.maxLength"));

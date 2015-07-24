@@ -13,8 +13,13 @@
   display: flex;
   max-width: 800px;
   margin: 0 auto;
-  .game-play-info-user {
-    flex: 200px 0 0;
+  .game-play-info-meta {
+    background-color: rgba(#000000,0.04);
+    color: #666666;
+    font-size: 0.9rem;
+    margin: 0 0.8rem 0 0;
+    padding: 0.2rem;
+    flex: 240px 0 0;
   }
   .game-play-info-description {
     flex: auto 1 0;

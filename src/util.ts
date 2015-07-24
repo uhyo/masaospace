@@ -22,13 +22,15 @@ export function writeUserInfo(session:Session,obj?:any):any{
     obj.user=session.user;
     obj.screen_name=session.screen_name;
     obj.name=session.name;
+    obj.profile=session.profile;
     return obj;
 }
 //外に出していいユーザー情報
 export function outUserData(data:UserData):UserOpenData{
     return {
         screen_name: data.screen_name,
-        name: data.name
+        name: data.name,
+        profile: data.profile
     };
 }
 
