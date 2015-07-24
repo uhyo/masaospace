@@ -1,17 +1,20 @@
-var React = require('react');
+var React = require('react'),
+    Reflux=require('reflux');
 
 var MasaoSelector = require('./masao-selector.jsx');
 var GameMetadataForm = require('./game-metadata-form.jsx');
-var ErrorMessage = require('../commons/error.jsx');
+var NeedLogin = require('../commons/need-login.jsx');
 
 var api=require('../../actions/api');
 var pageActions=require('../../actions/page');
+var errorStore=require('../../stores/error'),
+    sessionStore=require('../../stores/session');
 
 module.exports = React.createClass({
     displayName:"New",
+    mixins:[Reflux.connect(sessionStore,"session")],
     getInitialState:function(){
         return {
-            error:null,
             game:null,
             metadata:null
         };
@@ -42,13 +45,17 @@ module.exports = React.createClass({
             //投稿結果ページに移動
             pageActions.load("/play/"+result.id);
         }).catch(function(e){
-            _this.setState({
-                error: String(e)
-            });
+            errorStore.emit(String(e));
         });
 
     },
     render:function(){
+        if(this.state.session.loggedin===false){
+            return <section>
+                <h1>新しい正男を投稿</h1>
+                <NeedLogin/>
+            </section>;
+        }
         return (
             //TODO
             <section>
@@ -56,7 +63,6 @@ module.exports = React.createClass({
                 <div className="warning">
                     <p>現在はJava版の正男が記述されたHTMLファイルの読み込みのみ対応しています。ご了承ください。</p>
                 </div>
-                <ErrorMessage>{this.state.error}</ErrorMessage>
                 <MasaoSelector onSelect={this.masaoSelected} />
                 {this.state.game!=null ? this.form() : null}
             </section>

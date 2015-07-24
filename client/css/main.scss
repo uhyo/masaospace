@@ -70,6 +70,7 @@ a:active {
         display: block;
         height: 36px;
         padding:0 3px;
+        margin:0 4px;
 
         color: #666666;
         line-height: 36px;
@@ -78,6 +79,14 @@ a:active {
 
         &:hover {
           background-color: rgba(#000000,0.05);
+        }
+
+        //menu icons
+        &.root-header-menu-plus {
+          padding-left: 32px;
+          background-image: url(/static/images/masaoplus.png);
+          background-position: 0 2px;
+          background-repeat: no-repeat;
         }
       }
     }
@@ -125,6 +134,9 @@ section {
   }
 }
 
+.commons-loading {
+  color: #777777;
+}
 
 // form
 .form {
@@ -197,4 +209,13 @@ section.login-form, section.changepassword-form {
     color: #666666;
     font-size: 0.9rem;
   }
+}
+
+//portable stles
+.information {
+  background-color: #f3f3f3;
+  color: #444444;
+  padding: 1rem;
+  margin: 0.6rem;
+  font-size: 0.9rem;
 }

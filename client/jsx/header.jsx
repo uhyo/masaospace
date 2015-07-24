@@ -32,10 +32,14 @@ var Header = React.createClass({
                 <ul className="root-header-menu">
                     {
                         (session.loggedin===true ?
-                            [<li key="my"><a href="/my">マイページ</a></li>,
-                            <li key="logout"><a onClick={this.handleLogout}>ログアウト</a></li>]
-                        :
-                            <li key="login"><a onClick={this.handleLogin}>ログイン</a></li>)
+                         [
+                            (<li key="my"><a href="/my">マイページ</a></li>),
+                            (<li key="plus"><a className="root-header-menu-plus" href="/game/new">正男を投稿</a></li>),
+                            (<li key="logout"><a onClick={this.handleLogout}>ログアウト</a></li>)
+                        ]
+                            :
+                                <li key="login"><a onClick={this.handleLogin}>ログイン</a></li>
+                                )
                     }
                 </ul>
             </div>

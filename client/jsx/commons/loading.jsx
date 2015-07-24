@@ -5,7 +5,7 @@ module.exports = React.createClass({
     render:function(){
         return (
             <div className="commons-loading">
-                Loading... (TODO)
+                Loading...
             </div>
         );
     }
