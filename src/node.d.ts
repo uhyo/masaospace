@@ -1177,6 +1177,16 @@ declare module "nodemailer"{
         contentDisposition?:string;
     }
 }
+declare module "cron"{
+    export class CronJob{
+        constructor(cronTime:string|Date,onTick:Function,onComplete?:Function,start?:boolean,timeZone?:string,context?:any);
+        start():void;
+        stop():void;
+    }
+    export class CronTime{
+        constructor(time:string|Date);
+    }
+}
 
 // something useful for me
 interface Callback<T>{

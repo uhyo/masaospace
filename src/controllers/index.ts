@@ -1,5 +1,6 @@
 import domain=require('domain');
 
+import cron=require('cron');
 import config=require('config');
 import logger=require('../logger');
 
@@ -11,6 +12,9 @@ import SessionController from './session';
 import GameController from './game';
 import MailController from './mail';
 import mum=require('my-user-mongo');
+
+import {addDailyJob} from '../util';
+
 
 // 各種の操作
 class Controller{
@@ -90,11 +94,40 @@ class Controller{
                     },{
                         unique:true
                     },d.intercept((result)=>{
-                        callback(null);
+                        coll.createIndex({
+                            "data.activated":1,
+                            "data.created":1
+                        },{
+                        },d.intercept((result)=>{
+                            callback(null);
+
+                        }));
                     }));
                 }));
             }));
         }));
+        //たまにいらないデータをアレする
+        addDailyJob(()=>{
+            this.db.mongo.collection(config.get("mongodb.collection.user"),(err,coll)=>{
+                if(err){
+                    logger.error(err);
+                    return;
+                }
+                //登録したけど手続きを進めなかったユーザーを消す
+                var limitDate=new Date(Date.now()-config.get("ticket.life.setpassword")*1000);
+                coll.deleteMany({
+                    "data.activated":false,
+                    "data.created":{
+                        $lt: limitDate
+                    }
+                },(err)=>{
+                    if(err){
+                        logger.error(err);
+
+                    }
+                });
+            });
+        });
     }
 
     getMongoClient(){

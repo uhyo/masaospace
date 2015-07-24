@@ -1,5 +1,6 @@
 ///<reference path="./node.d.ts" />
 import randomString=require('random-string');
+import cron=require('cron');
 //some utils
 
 import {UserData, UserOpenData, Session} from './data';
@@ -29,6 +30,13 @@ export function outUserData(data:UserData):UserOpenData{
         screen_name: data.screen_name,
         name: data.name
     };
+}
+
+//cronに登録する
+export function addDailyJob(job:()=>void,hour:number=3):void{
+    new cron.CronJob("0 0 "+hour+" * * *",()=>{
+        job();
+    },null,true,"Asia/Tokyo");
 }
 
 
