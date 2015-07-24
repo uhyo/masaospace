@@ -83,8 +83,9 @@ module.exports = React.createClass({
             //TODO
             return (
                 <div>
-                    <p><b>{this.state.mail}</b>にメールを送信しました。（してない）</p>
-                    <p>ticket: <code>{this.state.ticket}</code></p>
+                    <p><b>{this.state.mail}</b>に登録手続用のメールを送信しました。</p>
+                    <p>メールに掲載されたリンクから登録手続を進めてください。</p>
+                    <p>このページは閉じても構いません。</p>
                 </div>);
         }
     }

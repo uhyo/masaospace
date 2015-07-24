@@ -9,6 +9,7 @@ export default function(c:Controller,r:_Router):void{
 
     //new entry
     r.add("/entry/page",(obj,callback:Callback<View>)=>{
+        console.log("foo!");
         callback(null,{
             title: "新規登録",
             page:"user.entry",

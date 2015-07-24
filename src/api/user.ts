@@ -84,11 +84,11 @@ class C{
                             });
                             return;
                         }
+                        //メールを送信する
+                        c.mail.userEntryMail(u,t.token);
                         //user entry success
                         res.json({
                             screen_name:u.getData().screen_name,
-                            //TODO
-                            ticket: t.token
                         });
                     });
                 });

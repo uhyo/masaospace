@@ -11,6 +11,7 @@ mongodb:
     file: file
     gamemetadata: gamemetadata
     gamedata: gamedata
+    mail: mail
 redis:
   host: localhost
   port: 6379
@@ -31,6 +32,9 @@ webserver:
 # service
 service:
   name: MasaoSpace
+  domain: localhost
+  url: "http://localhost/"
+  mail: "mail@localhost"
 
 # logging
 log:

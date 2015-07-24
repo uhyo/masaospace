@@ -1128,6 +1128,55 @@ declare module "node-jsx"{
         harmony?:boolean;
     }):void;
 }
+declare module "nodemailer"{
+    export function createTransport(option?:any):Transport;
+
+    export class Transport{
+        sendMail(data:Mail,callback:(error:any,response:any)=>void):void;
+        close():void;
+    }
+
+    export interface Mail{
+        from?:string|Address;
+        sender?:string;
+        to?:string|Address|Array<string|Address>;
+        cc?:string|Address|Array<string|Address>;
+        bcc?:string|Address|Array<string|Address>;
+        replyTo?:string;
+        inReplyTo?:string;
+        references?:string|Array<string>;
+        subject?:string;
+        text?:any;
+        html?:any;
+        watchHtml?:any;
+        headers?:any;
+        attachments?:Array<Attachment>;
+        alternatives?:Array<Attachment>;
+        envelope?:{
+            from?:string;
+            to?:string|Array<string|Address>;
+            cc?:string|Array<string|Address>;
+            bcc?:string|Array<string|Address>;
+        };
+        messageId?:string;
+        date?:string;
+        encoding?:string;
+    }
+    interface Address{
+        name?:string;
+        address:string;
+    }
+
+    interface Attachment{
+        filename:string;
+        cid?:string;
+        content:any;
+        encoding?:string;
+        path?:string;
+        contentType?:string;
+        contentDisposition?:string;
+    }
+}
 
 // something useful for me
 interface Callback<T>{

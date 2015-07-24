@@ -130,3 +130,12 @@ export interface GameQuery{
     limit:number;
     sort:any;
 }
+
+//メール（controllers/mail.tsが扱うもの）
+export interface Mail{
+    to: string | {name?:string;address:string};
+    subject: string;
+    text: string;
+
+    type: string;
+}

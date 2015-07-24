@@ -2,6 +2,10 @@ var React=require('react');
 
 var api=require('../../actions/api');
 
+var errorStore=require('../../stores/error');
+
+var Loading=require('../commons/loading.jsx');
+
 var Ticket = React.createClass({
     displayName:"Ticket",
     getInitialState:function(){
@@ -26,16 +30,12 @@ var Ticket = React.createClass({
             }else{
                 //なかった
                 this.setState({
-                    state:"error",
-                    errorMessage: "このURLは無効です。"
+                    state:"invalid",
                 });
             }
         })
         .catch((err)=>{
-            this.setState({
-                state:"error",
-                errorMessage: err
-            });
+            errorStore.emit(String(err));
         });
     },
     handleChange: function(e){
@@ -66,10 +66,7 @@ var Ticket = React.createClass({
             });
         })
         .catch(function(err){
-            t.setState({
-                state: "error",
-                errorMessage: String(err)
-            });
+            errorStore.emit(String(err));
         });
     },
     /* rendering */
@@ -88,32 +85,49 @@ var Ticket = React.createClass({
                 return this.form();
             case "complete":
                 return this.complete();
+            case "invalid":
+                return this.invalid();
             default:
-                return this.errorPage();
+                return null;
         }
     },
     loading:function(){
-        return (
-            <p>ロード中です。しばらくお待ちください。</p>
-        );
+        return <Loading/>;
     },
     complete:function(){
         return (
-            <p>登録を完了しました。TODO</p>
+            <div>
+                <p>登録を完了しました。</p>
+                <p><a href="/">トップページに戻る</a></p>
+                <p><a href="/my">マイページ</a></p>
+            </div>
         );
     },
-    errorPage:function(){
+    invalid:function(){
         return (
-            <p>エラー：{this.state.errorMessage}</p>
+            <div>
+                <p>このURLは無効です。</p>
+                <p>URLが発行されてから時間が経って無効となった可能性があります。もう一度最初からお試しください。</p>
+            </div>
         );
     },
     form:function(){
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form className="form" onSubmit={this.handleSubmit}>
                 <p>ユーザー<b>{this.props.screen_name}</b>のパスワードを登録します。</p>
-                <p>パスワード：<input type="password" name="password" onChange={this.handleChange} /></p>
-                <p>再入力：<input type="password" name="password2" onChange={this.handleChange} /></p>
-                <p><input type="submit" value="送信" /></p>
+                <p>
+                    <label className="form-row">
+                        <span>パスワード</span>
+                        <input type="password" name="password" onChange={this.handleChange} />
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>再入力</span>
+                        <input type="password" name="password2" onChange={this.handleChange} />
+                    </label>
+                </p>
+                <p><input className="form-single form-button" type="submit" value="送信" /></p>
             </form>
         );
     },
