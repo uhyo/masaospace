@@ -32,3 +32,22 @@ ul.user-account-menu {
     }
   }
 }
+
+//user page
+.user-page-profile {
+  background-color: $color-box-background;
+  padding: 0.7rem;
+
+  &.user-page-profile-empty {
+    color: $color-lightcolor;
+    font-size: 0.9rem;
+  }
+  
+  p {
+    white-space: pre-line;
+  }
+}
+.user-page-list {
+  @include subsection;
+  margin: 1rem 0;
+}

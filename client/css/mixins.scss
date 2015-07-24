@@ -2,6 +2,9 @@
 //ページの背景色
 $color-background : #fdfdfd;
 
+//ボックスの色
+$color-box-background : rgba(#000000,0.07);
+
 //薄い文字色
 $color-lightcolor : #727272;
 
@@ -18,7 +21,7 @@ $color-hovermask : rgba(#000000,0.05);
     color: #444444;
     padding: 0 0 0 1.2rem;
     margin: 0 0 2px 0;
-    border-bottom: 1px dashed #888888;
+    border-bottom: 1px dashed #bbbbbb;
   }
 }
 
