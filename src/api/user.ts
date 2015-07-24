@@ -232,11 +232,11 @@ class C{
         });
         router.post("/changepassword",util.apim.useUser,(req,res)=>{
 
-            req.validateBody("password").isPassword();
+            req.validateBody("oldpassword").isPassword();
+            req.validateBody("newpassword").isPassword();
             if(req.validationErrorResponse(res)){
                 return;
             }
-            //TODO: 古いパスワードをチェック
             c.user.user.findOneUser({
                 id: req.session.user
             },(err,u)=>{
@@ -247,8 +247,16 @@ class C{
                     });
                     return;
                 }
+                //古いパスワードをチェック
+                var r=u.auth(req.body.oldpassword);
+                if(r!==true){
+                    res.json({
+                        error: "現在のパスワードが間違っています。"
+                    });
+                    return;
+                }
                 //新しいパスワードをセット
-                u.setData(u.getData(),req.body.password);
+                u.setData(u.getData(),req.body.newpassword);
                 c.user.user.saveUser(u,(err,result)=>{
                     if(err){
                         logger.error(err);

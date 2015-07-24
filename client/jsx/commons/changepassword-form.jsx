@@ -3,6 +3,8 @@ var Reflux=require('reflux');
 
 var api=require('../../actions/api');
 
+var errorStore=require('../../stores/error');
+
 
 module.exports = React.createClass({
     displayName: "ChangePasswordForm",
@@ -10,17 +12,17 @@ module.exports = React.createClass({
         return {
             form: true,
 
-            errorMessage:null,
+            current:"",
             password: "",
             password2: ""
         };
     },
     handleChange: function(e){
         var name=e.target.name;
-        if(name==="password" || name==="password2"){
-            var obj={};
-            obj[name]=e.target.value;
-            this.setState(obj,()=>{
+        if(name==="current" || name==="password" || name==="password2"){
+            this.setState({
+                [name]:e.target.value
+            },()=>{
                 if(this.state.password!==this.state.password2){
                     React.findDOMNode(this).getElementsByTagName("form")[0].elements["password2"].setCustomValidity("パスワードが一致しません。");
                 }else{
@@ -34,7 +36,8 @@ module.exports = React.createClass({
         var t=this;
         //login request
         api("/api/user/changepassword",{
-            password: this.state.password
+            oldpassword: this.state.current,
+            newpassword: this.state.password
         })
         .then(function(obj){
             t.setState({
@@ -42,9 +45,7 @@ module.exports = React.createClass({
             });
         })
         .catch(function(e){
-            t.setState({
-                error:String(e)
-            });
+            errorStore.emit(String(e));
         });
     },
     render: function(){
@@ -52,9 +53,13 @@ module.exports = React.createClass({
             return (
                 <section className="changepassword-form">
                     <h1>パスワード変更</h1>
-                    {this.state.error!=null ?
-                        <p className="error-message">{this.state.error}</p> : null}
                     <form className="form" onSubmit={this.handleSubmit}>
+                        <p>
+                            <label className="form-row">
+                                <span>現在のパスワード</span>
+                                <input type="password" name="current" onChange={this.handleChange} />
+                            </label>
+                        </p>
                         <p>
                             <label className="form-row">
                                 <span>新しいパスワード</span>
