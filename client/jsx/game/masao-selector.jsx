@@ -130,6 +130,7 @@ module.exports = React.createClass({
                         version="fx";
                     }
                     found=true;
+                    break;
                 }
             }else if(a.tagName==="OBJECT"){
                 if(/^application\/x-java-applet$/i.test(a.type)){
@@ -154,7 +155,35 @@ module.exports = React.createClass({
                         }
                         params[p.name]=p.value;
                     }
+                    break;
                 }
+            }
+        }
+        if(found===false){
+            //まだ見つからないからcanvas正男をためす
+            var scripts=htmldoc.querySelectorAll("script");
+            version=null;
+            var l=scripts.length;
+            for(var i=0;i < l;i++){
+                var script=scripts[i];
+                if(script.src){
+                    if(/v28/.test(script.src)){
+                        //canvas正男のバージョンかもしれない
+                        version="2.8";
+                    }
+                    continue;
+                }
+                var text=scripts[i].text;
+                var ps=findCanvasParams(text);
+                console.log(ps);
+                if(ps!=null){
+                    found=true;
+                    params=ps;
+                }
+            }
+            if(found===true && version==null){
+                //バージョンはfxに認定
+                version="fx";
             }
         }
         if(found==false || version==null){
@@ -235,3 +264,79 @@ module.exports = React.createClass({
     }
 });
 
+
+function findCanvasParams(text){
+    var index=0, len=text.length;
+    //ソースからCanvas正男を抽出する
+    outerloop: while(index < len){
+        var pos=text.indexOf("Game({", index);
+        if(pos<0){
+            //ないね
+            return null;
+        }
+        var params={};
+        //可能性があるところを見つけた
+        //パースしていく
+        index=pos+6;
+
+        var state=0, key=null, pool="";
+        for(;index < len;index++){
+            var char=text[index];
+            if((state===0 || state===3 || state===4 || state===7) && (char===" " || char==="\t" || char==="\r" || char==="\n")){
+                continue;
+            }
+            if(state===0 && char==='}'){
+                //これはいける
+                return params;
+            }
+            if(state===0 || state===4){
+                //文字列を探してる
+                if(char==="'"){
+                    pool="";
+                    state+=1;
+                }else if(char==='"'){
+                    pool="";
+                    state+=2;
+                }else{
+                    //parse error
+                    continue outerloop;
+                }
+            }else if(state===1 || state===5){
+                //'の中の文字列
+                if(char==="'"){
+                    state+=2;
+                }else{
+                    pool+=char;
+                }
+            }else if(state===2 || state===6){
+                //"の中の文字列
+                if(char==='"'){
+                    state+=1;
+                }else{
+                    pool+=char;
+                }
+            }else if(state===3){
+                //:を待っている
+                if(char===':'){
+                    state=4;
+                    key=pool;
+                }else{
+                    continue outerloop;
+                }
+            }else if(state===7){
+                //終わりかも
+                if(char===','){
+                    params[key]=pool;
+                    state=0;
+                }else if(char==='}'){
+                    //おわりだ！！！
+                    params[key]=pool;
+                    return params;
+                }else{
+                    continue outerloop;
+                }
+            }
+        }
+    }
+    return null;
+}
