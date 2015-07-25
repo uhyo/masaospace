@@ -10,7 +10,8 @@ var Ticket = React.createClass({
     displayName:"Ticket",
     propTypes:{
         ticket: React.PropTypes.string.isRequired,
-        screen_name: React.PropTypes.string
+        screen_name: React.PropTypes.string,
+        config: React.PropTypes.object
     },
     getInitialState:function(){
         return {
@@ -75,7 +76,7 @@ var Ticket = React.createClass({
             return (
                 <section>
                     <h1>パスワード設定</h1>
-                    <SetPassword ticket={this.props.ticket} />
+                    <SetPassword screen_name={this.props.screen_name} ticket={this.props.ticket} config={this.props.config}/>
                 </section>);
         }else if(this.state.type==="setmail"){
             return (
@@ -93,7 +94,9 @@ var Ticket = React.createClass({
 var SetPassword = React.createClass({
     displayName:"SetPassword",
     propTypes:{
-        ticket: React.PropTypes.string
+        screen_name: React.PropTypes.string,
+        ticket: React.PropTypes.string,
+        config: React.PropTypes.object,
     },
     getInitialState:function(){
         return {
@@ -108,10 +111,23 @@ var SetPassword = React.createClass({
             this.setState({
                 [name]: e.target.value
             },()=>{
+                if(name==="password"){
+                    //長さチェーック
+                    var t=React.findDOMNode(this.refs.password);
+                    if(this.state.password && (this.state.password.length < this.props.config.user.password.minLength)){
+                        //長さがたりない
+                        if(t.validity.tooShort!==true){
+                            //自分でアレする
+                            t.setCustomValidity("パスワードが短すぎます。最低"+this.props.config.user.password.minLength+"文字入力してください。");
+                        }
+                    }else{
+                        t.setCustomValidity("");
+                    }
+                }
                 if(this.state.password!==this.state.password2){
-                    React.findDOMNode(this.refs.password).setCustomValidity("パスワードが一致しません。");
+                    React.findDOMNode(this.refs.password2).setCustomValidity("パスワードが一致しません。");
                 }else{
-                    React.findDOMNode(this.refs.password).setCustomValidity("");
+                    React.findDOMNode(this.refs.password2).setCustomValidity("");
                 }
             });
         }
@@ -134,10 +150,12 @@ var SetPassword = React.createClass({
         });
     },
     render(){
+        var config=this.props.config.user;
         if(this.state.end===true){
             return (
                 <div>
                     <p>ユーザー登録を完了しました。</p>
+                    <p>さっそく上のメニューからログインしてみましょう。</p>
                 </div>
             );
         }
@@ -147,13 +165,13 @@ var SetPassword = React.createClass({
                 <p>
                     <label className="form-row">
                         <span>パスワード</span>
-                        <input type="password" name="password" onChange={this.handleChange} />
+                        <input type="password" name="password" ref="password" minLength={config.password.minLength} maxLength={config.password.maxLength} onChange={this.handleChange} />
                     </label>
                 </p>
                 <p>
                     <label className="form-row">
                         <span>再入力</span>
-                        <input type="password" name="password2" ref="password" onChange={this.handleChange} />
+                        <input type="password" name="password2" ref="password2" minLength={config.password.minLength} maxLength={config.password.maxLength} onChange={this.handleChange} />
                     </label>
                 </p>
                 <p><input className="form-single form-button" type="submit" value="送信" /></p>

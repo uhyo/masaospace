@@ -8,12 +8,18 @@ var Footer=require('./footer.jsx');
 var Root = React.createClass({
     displayName:"Root",
     mixins: [Reflux.connect(pageStore,"page")],
+    propTypes:{
+        config: React.PropTypes.object,
+        page: React.PropTypes.string,
+        csrfToken: React.PropTypes.string,
+        session: React.PropTypes.object,
+        data: React.PropTypes.object
+    },
     render:function(){
-        var sp=this.state.page || this.props;
-        var page=this.getPage();
+        var [elm,props]=this.getPage();
         return (<div className="root">
             <Header />
-            {React.createElement(page,sp.data)}
+            {React.createElement(elm,props)}
             <Footer />
         </div>);
     },
@@ -22,32 +28,52 @@ var Root = React.createClass({
         switch(page.page){
             case "top":
                 //top page
-                return require('./top.jsx');
+                return [require('./top.jsx'),null];
             ///// user
             case "user.entry":
                 //entry page
-                return require('./user/entry.jsx');
+                return [require('./user/entry.jsx'),{
+                    config: this.props.config
+                }];
             case "user.ticket":
                 //ticket confirmation page
-                return require('./user/ticket.jsx');
+                return [require('./user/ticket.jsx'),{
+                    ticket: page.data.ticket,
+                    screen_name: page.data.screen_name,
+                    config: this.props.config
+                }];
             case "user.page":
-                return require('./user/page.jsx');
+                return [require('./user/page.jsx'),{
+                    userid: page.data.userid,
+                    data: page.data.data
+                }];
+
             case "user.my":
                 //mypage
-                return require('./user/my.jsx');
+                return [require('./user/my.jsx'),null];
             case "user.account":
                 //account settings
-                return require('./user/account.jsx');
+                return [require('./user/account.jsx'),{
+                    config: this.props.config
+                }];
             ///// game
             case "game.new":
-                return require('./game/new.jsx');
+                return [require('./game/new.jsx'),{
+                    config: this.props.config
+                }];
             case "game.play":
-                return require('./game/play.jsx');
+                return [require('./game/play.jsx'),{
+                    game: page.data.game,
+                    metadata: page.data.metadata,
+                    owner: page.data.owner
+                }]
             case "game.list":
-                return require('./game/list.jsx');
+                return [require('./game/list.jsx'),{
+                    owner: page.data.owner
+                }];
             default:
                 //"404"とか
-                return require('./notfound.jsx');
+                return [require('./notfound.jsx'),null]
         }
     }
 });

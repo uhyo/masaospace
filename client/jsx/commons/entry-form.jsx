@@ -3,33 +3,30 @@ var Reflux=require('reflux');
 
 var api=require('../../actions/api');
 
-var ErrorMessage=require('./error.jsx');
+var MinLinkMixin=require('./min-link.jsx');
+
+var errorStore=require('../../stores/error');
 
 
 module.exports = React.createClass({
     displayName: "EntryForm",
+    mixins:[MinLinkMixin],
+    propTypes:{
+        config: React.PropTypes.object
+    },
     getInitialState:function(){
         return {
             form: true,
 
-            error:null,
             screen_name:"",
             name:"",
             mail:""
         };
     },
-    handleChange: function(e){
-        var name=e.target.name;
-        if(name==="screen_name" || name==="name" || name==="mail"){
-            var obj={};
-            obj[name]=e.target.value;
-            this.setState(obj);
-        }
-    },
     handleSubmit: function(e){
         e.preventDefault();
         var t=this;
-        //login request
+        //entry request
         api("/api/user/entry",{
             screen_name: this.state.screen_name,
             name: this.state.name,
@@ -39,38 +36,32 @@ module.exports = React.createClass({
             t.setState({
                 form:false,
                 screen_name: obj.screen_name,
-                //TODO
-                ticket: obj.ticket
             });
         })
-        .catch(function(e){
-            t.setState({
-                error:String(e)
-            });
-        });
+        .catch(errorStore.emit);
     },
     render: function(){
+        var config=this.props.config.user;
         if(this.state.form){
             return (
                 <div>
-                    <ErrorMessage>{this.state.error}</ErrorMessage>
                     <form className="form" onSubmit={this.handleSubmit}>
                         <p>
                             <label className="form-row">
                                 <span>ユーザーID</span>
-                                <input name="screen_name" onChange={this.handleChange} value={this.state.screen_name} />
+                                <input ref="screen_name" valueLink={this.linkState("screen_name",config.screenName.minLength)} minLength={config.screenName.minLength} maxLength={config.screenName.maxLength} required />
                             </label>
                         </p>
                         <p>
                             <label className="form-row">
                                 <span>ユーザー名</span>
-                                <input name="name" onChange={this.handleChange} value={this.state.name} />
+                                <input ref="name" required valueLink={this.linkState("name")} />
                             </label>
                         </p>
                         <p>
                             <label className="form-row">
                                 <span>メールアドレス</span>
-                                <input type="email" name="mail" onChange={this.handleChange} value={this.state.mail} />
+                                <input type="email" ref="mail" required valueLink={this.linkState("mail")} />
                             </label>
                         </p>
                         <p><input className="form-single form-button" type="submit" value="登録" /></p>
@@ -80,7 +71,6 @@ module.exports = React.createClass({
                 </div>
             );
         }else{
-            //TODO
             return (
                 <div>
                     <p><b>{this.state.mail}</b>に登録手続用のメールを送信しました。</p>

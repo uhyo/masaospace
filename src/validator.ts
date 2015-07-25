@@ -10,7 +10,7 @@ validator.addCustomValidator("isUserID",(value:string)=>{
     return !funcs.matches(value,/^[0-9a-zA-Z_]+$/) && !funcs.length(value,config.get("user.screenName.minLength"), config.get("user.screenName.maxLength"));
 });
 validator.addCustomValidator("isUserName",(value:string)=>{
-    return !funcs.length(value,config.get("user.name.minLength"), config.get("user.name.maxLength"));
+    return !funcs.length(value, config.get("user.name.maxLength"));
 });
 validator.addCustomValidator("isPassword",(value:string)=>{
     return !funcs.isASCIIPrintable(value) && !funcs.length(value,config.get("user.password.minLength"), config.get("user.password.maxLength"));

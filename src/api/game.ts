@@ -2,7 +2,7 @@
 import express=require('express');
 import Controller=require('../controllers/index');
 
-import masao=require('../masao');
+import masao=require('../../lib/masao');
 import logger=require('../logger');
 import validator=require('../validator');
 

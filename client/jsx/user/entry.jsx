@@ -5,11 +5,18 @@ var EntryForm = require('../commons/entry-form.jsx');
 
 var Entry = React.createClass({
     displayName:"Entry",
+    propTypes:{
+        config: React.PropTypes.object
+    },
     render:function(){
         return (
             <section>
                 <h1>新規登録</h1>
-                <EntryForm />
+                <div className="warning">
+                    <p>注意：このサービスを利用して発生したいかなる損害にも運営者はその責任を負いません。</p>
+                    <p>このサービスはアルファ版にも満たない何かです。登録されたデータは予告なく変更・削除されることがあります。</p>
+                </div>
+                <EntryForm config={this.props.config}/>
             </section>);
     }
 });

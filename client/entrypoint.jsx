@@ -2,6 +2,7 @@
 var React=require('react');
 var Root=require('./jsx/root');
 var userAction=require('./actions/user');
+var configStore=require('./stores/config');
 
 //init view
 var app=document.getElementById('app');
@@ -15,6 +16,9 @@ if("undefined"!==typeof window){
 
 //session
 userAction.init(data.session);
+
+//config
+configStore.set(data.config);
 
 var root = React.createElement(Root,data);
 

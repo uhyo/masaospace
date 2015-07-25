@@ -37,9 +37,13 @@ var Root=require('../client/jsx/root.jsx');
 
 export class WebServer{
     private app:express.Express;
+    private clientConfig:any;
     constructor(){
     }
     init(c:Controller,callback:Cont):void{
+        //client用のconfigを生成
+        this.generateClientConfig();
+
         //open web server
         this.app=express();
         // set some methods
@@ -203,6 +207,7 @@ export class WebServer{
                 }
                 var session = req.session.user!=null ? writeUserInfo(req.session) : null;
                 var initialData={
+                    config: this.clientConfig,
                     page: view.page,
                     csrfToken: req.csrfToken(),
                     session:session,
@@ -215,5 +220,13 @@ export class WebServer{
                 });
             });
         });
+    }
+
+    private generateClientConfig():void{
+        //validationなど
+        this.clientConfig={
+            user: config.get("user"),
+            game: config.get("game")
+        };
     }
 }

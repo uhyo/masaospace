@@ -13,6 +13,9 @@ var errorStore=require('../../stores/error'),
 module.exports = React.createClass({
     displayName:"New",
     mixins:[Reflux.connect(sessionStore,"session")],
+    propTypes:{
+        config: React.PropTypes.object
+    },
     getInitialState:function(){
         return {
             game:null,
@@ -61,7 +64,8 @@ module.exports = React.createClass({
             <section>
                 <h1>新しい正男を投稿</h1>
                 <div className="warning">
-                    <p>現在はJava版の正男が記述されたHTMLファイルの読み込みのみ対応しています。ご了承ください。</p>
+                    <p>現在はJava版またはcanvas版の正男が記述されたHTMLファイルの読み込みのみ対応しています。ご了承ください。</p>
+                    <p>まだ画像はデフォルトのものしか使用できません。</p>
                 </div>
                 <MasaoSelector onSelect={this.masaoSelected} />
                 {this.state.game!=null ? this.form() : null}

@@ -5,6 +5,10 @@ var QueryList=require('../game/parts/query-list.jsx');
 
 module.exports = React.createClass({
     displayName:"UserPage",
+    propTypes:{
+        userid: React.PropTypes.string,
+        data: React.PropTypes.object
+    },
     render(){
         var user=this.props.data;
         var query={

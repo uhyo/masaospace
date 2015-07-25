@@ -6,13 +6,15 @@ var sessionStore=require('../../stores/session'),
     errorStore=require('../../stores/error');
 var api=require('../../actions/api');
 
-var ChangePasswordForm = require('../commons/changepassword-form.jsx'),
-    NeedLogin = require('../commons/need-login.jsx'),
+var NeedLogin = require('../commons/need-login.jsx'),
     Loading = require('../commons/loading.jsx');
 
 var Account=React.createClass({
     displayName:"Account",
     mixins: [Reflux.listenTo(sessionStore,"onSessionChange")],
+    propTypes:{
+        config: React.PropTypes.object,
+    },
     getInitialState:function(){
         return {
             page: "profile",
@@ -85,7 +87,7 @@ var Account=React.createClass({
             //プロフィール
             return <ProfileForm userdata={this.state.userdata}/>;
         }else if(page==="password"){
-            return <ChangePasswordForm/>;
+            return <ChangePasswordForm config={this.props.config}/>;
         }else if(page==="mail"){
             return <MailForm userdata={this.state.userdata}/>;
         }
@@ -164,6 +166,104 @@ var ProfileForm=React.createClass({
                 <p><input className="form-single form-button" type="submit" value={"変更を保存"+ (this.state.modified ? " …" : "")} /></p>
             </form>
         );
+    }
+});
+
+var ChangePasswordForm = React.createClass({
+    displayName: "ChangePasswordForm",
+    propTypes:{
+        config: React.PropTypes.object
+    },
+    getInitialState:function(){
+        return {
+            form: true,
+
+            current:"",
+            password: "",
+            password2: ""
+        };
+    },
+    handleChange: function(e){
+        var name=e.target.name;
+        if(name==="current" || name==="password" || name==="password2"){
+            this.setState({
+                [name]:e.target.value
+            },()=>{
+                if(name==="current" || name==="password"){
+                    //長さチェック(TODO: まとめる)
+                    var t=React.findDOMNode(this.refs[name]);
+                    if(this.state[name] && (this.state[name].length < this.props.config.user.password.minLength)){
+                        //長さがたりない
+                        if(t.validity.tooShort!==true){
+                            //自分でアレする
+                            t.setCustomValidity("パスワードが短すぎます。最低"+this.props.config.user.password.minLength+"文字入力してください。");
+                        }
+                    }else{
+                        t.setCustomValidity("");
+                    }
+                }
+                if(this.state.password!==this.state.password2){
+                    React.findDOMNode(this.refs.password2).setCustomValidity("パスワードが一致しません。");
+                }else{
+                    React.findDOMNode(this.refs.password2).setCustomValidity("");
+                }
+            });
+        }
+    },
+    handleSubmit: function(e){
+        e.preventDefault();
+        var t=this;
+        //login request
+        api("/api/user/changepassword",{
+            oldpassword: this.state.current,
+            newpassword: this.state.password
+        })
+        .then(function(obj){
+            t.setState({
+                form:false
+            });
+        })
+        .catch(function(e){
+            errorStore.emit(String(e));
+        });
+    },
+    render: function(){
+        var config=this.props.config.user;
+
+        if(this.state.form){
+            return (
+                <section className="changepassword-form">
+                    <h1>パスワード変更</h1>
+                    <form className="form" onSubmit={this.handleSubmit}>
+                        <p>
+                            <label className="form-row">
+                                <span>現在のパスワード</span>
+                                <input type="password" name="current" ref="current" minLength={config.screenName.minLength} maxLength={config.screenName.maxLength} required onChange={this.handleChange} />
+                            </label>
+                        </p>
+                        <p>
+                            <label className="form-row">
+                                <span>新しいパスワード</span>
+                                <input type="password" name="password" ref="password" minLength={config.screenName.minLength} maxLength={config.screenName.maxLength} required onChange={this.handleChange} />
+                            </label>
+                        </p>
+                        <p>
+                            <label className="form-row">
+                                <span>再入力</span>
+                                <input type="password" name="password2" ref="password2" minLength={config.screenName.minLength} maxLength={config.screenName.maxLength} required onChange={this.handleChange} />
+                            </label>
+                        </p>
+                        <p><input className="form-single form-button" type="submit" value="送信" /></p>
+                    </form>
+                </section>
+            );
+        }else{
+            return (
+                <section className="changepassword-form">
+                    <h1>パスワード変更</h1>
+                    <p>パスワードを変更しました。</p>
+                </section>);
+        }
     }
 });
 
