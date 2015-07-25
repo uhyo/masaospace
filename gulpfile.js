@@ -8,7 +8,7 @@ var globule=require('globule');
 var typescript=require('gulp-typescript');
 var del=require('del');
 var changed=require('gulp-changed');
-var sass=require('gulp-ruby-sass');
+var sass=require('gulp-sass');
 var rename=require('gulp-rename');
 
 gulp.task('tsc',function(){
@@ -50,7 +50,8 @@ gulp.task('static',function(){
 });
 
 gulp.task('css',function(){
-    return sass("client/css/index.scss")
+    return gulp.src(["client/css/index.scss"])
+    .pipe(sass({outputStyle:"compressed"}))
     .pipe(rename("css.css"))
     .pipe(gulp.dest("dist/"));
 });

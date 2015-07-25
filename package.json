@@ -30,6 +30,7 @@
     "express": "^4.12.3",
     "express-session": "^1.10.4",
     "extend": "^2.0.1",
+    "gulp-sass": "^2.0.4",
     "js-yaml": "^3.2.7",
     "log": "^1.4.0",
     "mongodb": "^2.0.33",
