@@ -1,20 +1,48 @@
-var React=require('react');
+var React=require('react/addons');
 var Reflux=require('reflux');
 
 var userAction=require('../../actions/user');
-var sessionStore=require('../../stores/session');
+var sessionStore=require('../../stores/session'),
+    errorStore=require('../../stores/error');
 var api=require('../../actions/api');
 
 var ChangePasswordForm = require('../commons/changepassword-form.jsx'),
-    NeedLogin = require('../commons/need-login.jsx');
+    NeedLogin = require('../commons/need-login.jsx'),
+    Loading = require('../commons/loading.jsx');
 
 var Account=React.createClass({
     displayName:"Account",
-    mixins: [Reflux.connect(sessionStore,"session")],
+    mixins: [Reflux.listenTo(sessionStore,"onSessionChange")],
     getInitialState:function(){
         return {
-            page: "profile"
+            page: "profile",
+            session: sessionStore.getInitialState()
         };
+    },
+    onSessionChange(session){
+        if(session.loggedin===false){
+            //ログアウトした
+            this.setState({
+                session: session,
+                userdata: null
+            });
+        }else{
+            this.loadUserdata(session);
+        }
+    },
+    loadUserdata(session){
+        api("/api/user/mydata")
+        .then((obj)=>{
+            this.setState({
+                session: session,
+                userdata: obj.data
+            });
+        })
+        .catch(errorStore.emit);
+
+    },
+    componentDidMount(){
+        this.loadUserdata(this.state.session);
     },
     handleClick:function(e){
         var t=e.target;
@@ -40,7 +68,7 @@ var Account=React.createClass({
         );
     },
     menu(){
-        var pages=[["profile","プロフィール"],["password","パスワード変更"]];
+        var pages=[["profile","プロフィール"],["password","パスワード変更"],["mail","メールアドレス変更"]];
         var current=this.state.page;
         return (
             <ul className="user-account-menu">{
@@ -55,9 +83,11 @@ var Account=React.createClass({
         var page=this.state.page;
         if(page==="profile"){
             //プロフィール
-            return <ProfileForm/>;
+            return <ProfileForm userdata={this.state.userdata}/>;
         }else if(page==="password"){
             return <ChangePasswordForm/>;
+        }else if(page==="mail"){
+            return <MailForm userdata={this.state.userdata}/>;
         }
         return null;
     }
@@ -66,22 +96,24 @@ var Account=React.createClass({
 //サブコンテンツ
 var ProfileForm=React.createClass({
     displayName:"ProfileForm",
-    mixins: [Reflux.listenTo(sessionStore,"onSessionChange")],
+    propTypes:{
+        userdata: React.PropTypes.object
+    },
     getInitialState:function(){
-        return this.makeStateFromSession(sessionStore.getInitialState());
+        return this.makeStateFromProps(this.props);
     },
-    onSessionChange:function(session){
-        this.setState(this.makeStateFromSession(session));
-    },
-    makeStateFromSession:function(session){
+    makeStateFromProps:function(props){
+        var userdata=props.userdata || {};
         return {
-            session: session,
             //user data form
-            name: session ? session.name : "",
-            profile: session ? session.profile : "",
+            name: userdata.name || "",
+            profile: userdata.profile || "",
             //modified flag
             modified: false,
         };
+    },
+    componentWillReceiveProps(newProps){
+        this.setState(this.makeStateFromProps(newProps));
     },
     handleChange:function(e){
         var n=e.target.name;
@@ -100,13 +132,21 @@ var ProfileForm=React.createClass({
         });
     },
     render(){
-        var session=this.state.session;
+        if(this.props.userdata==null){
+            return <Loading/>;
+        }
         return (
             <form className="form" onSubmit={this.handleSubmit}>
                 <p>
                     <label className="form-row">
                         <span>ユーザーID</span>
-                        <input type="text" readOnly value={session.screen_name} />
+                        <input type="text" readOnly value={this.props.userdata.screen_name} />
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>メールアドレス</span>
+                        <input type="email" readOnly value={this.props.userdata.mail} />
                     </label>
                 </p>
                 <p>
@@ -123,6 +163,56 @@ var ProfileForm=React.createClass({
                 </p>
                 <p><input className="form-single form-button" type="submit" value={"変更を保存"+ (this.state.modified ? " …" : "")} /></p>
             </form>
+        );
+    }
+});
+
+var MailForm=React.createClass({
+    displayName:"MailForm",
+    mixins:[React.addons.LinkedStateMixin],
+    getInitialState(){
+        return {
+            end: false,
+            mail:""
+        };
+    },
+    propTypes:{
+        userdata: React.PropTypes.object
+    },
+    handleSubmit(e){
+        e.preventDefault();
+        api("/api/user/changemail",{
+            mail: this.state.mail
+        })
+        .then((obj)=>{
+            this.setState({
+                end: true
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    render(){
+        if(this.state.end===true){
+            return (
+                <div>
+                    <p>メールを<b>{this.state.mail}</b>に送信しました。</p>
+                    <p>メールに記載されたリンクから変更手続を行なってください。</p>
+                </div>
+            );
+        }
+        return (
+            <div>
+                <p>新しいメールアドレスを入力してください。確認用のメールが送信されます。</p>
+                <form className="form" onSubmit={this.handleSubmit}>
+                    <p>
+                        <label className="form-row">
+                            <span>メールアドレス</span>
+                            <input type="email" name="mail" required valueLink={this.linkState("mail")}/>
+                        </label>
+                    </p>
+                    <p><input className="form-single form-button" type="submit" value="送信" /></p>
+                </form>
+            </div>
         );
     }
 });

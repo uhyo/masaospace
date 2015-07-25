@@ -57,6 +57,8 @@ export interface TicketData{
     type:string;
     //user id
     user:string;
+    //additioal data
+    data?:any;
 }
 export interface Ticket extends TicketData{
     token:string;

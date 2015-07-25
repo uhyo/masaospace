@@ -64,6 +64,7 @@ export default class TicketController{
                 token: token,
                 type: t.type,
                 user: t.user,
+                data: t.data || null,
                 created:new Date()
             };
             coll.insertOne(ti,(err,result)=>{
@@ -123,10 +124,16 @@ export default class TicketController{
     //Ticketがvalidかどうかチェック
     private checkTicket(t:TicketData):boolean{
         //type check
-        if(t.type!=="setpassword"){
-            //undefined ticket type
-            return false;
+        if(t.type==="setpassword"){
+            return true;
         }
-        return true;
+        if(t.type==="setmail"){
+            //dataはメールアドレス
+            if("string"!==typeof t.data){
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

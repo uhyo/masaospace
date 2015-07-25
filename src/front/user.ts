@@ -40,6 +40,16 @@ export default function(c:Controller,r:_Router):void{
             }
         });
     });
+    r.add("/my/ticket/:ticket",(obj,callback:Callback<View>)=>{
+        callback(null,{
+            title: "各種手続",
+            page:"user.ticket",
+            data:{
+                ticket: obj[":ticket"]
+            }
+        });
+    });
+
     //user page
     r.add("/:userid",(obj,callback:Callback<View>)=>{
         c.user.user.findOneUser({

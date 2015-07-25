@@ -8,25 +8,44 @@ var Loading=require('../commons/loading.jsx');
 
 var Ticket = React.createClass({
     displayName:"Ticket",
+    propTypes:{
+        ticket: React.PropTypes.string.isRequired,
+        screen_name: React.PropTypes.string
+    },
     getInitialState:function(){
         return {
             state: "loading",
 
-            errorMessage:null,
             password: "",
             password2: ""
         };
     },
     componentDidMount:function(){
-        api("/api/user/entry/check",{
+        api("/api/user/ticket/check",{
             token: this.props.ticket
         })
         .then((obj)=>{
             if(obj.ticket===true){
                 //チケットがあった
-                this.setState({
-                    state:"form"
-                });
+                //チケットタイプによる分岐
+                if(obj.type==="setpassword"){
+                    //パスワードを設定
+                    this.setState({
+                        state:"form",
+                        type: "setpassword"
+                    });
+                }else if(obj.type==="setmail"){
+                    //メールアドレスを設定
+                    this.setState({
+                        state: "form",
+                        type: "setmail"
+                    });
+                }else{
+                    //分からない
+                    this.setState({
+                        state:"invalid",
+                    });
+                }
             }else{
                 //なかった
                 this.setState({
@@ -38,16 +57,61 @@ var Ticket = React.createClass({
             errorStore.emit(String(err));
         });
     },
+    /* rendering */
+    render:function(){
+        if(this.state.state==="loading"){
+            return <Loading/>;
+        }
+        if(this.state.state==="invalid"){
+            return (
+                <div className="information">
+                    <p>このURLは無効です。</p>
+                    <p>URLが発行されてから時間が経って無効となった可能性があります。もう一度最初からお試しください。</p>
+                </div>
+            );
+        }
+        //formだろう
+        if(this.state.type==="setpassword"){
+            return (
+                <section>
+                    <h1>パスワード設定</h1>
+                    <SetPassword ticket={this.props.ticket} />
+                </section>);
+        }else if(this.state.type==="setmail"){
+            return (
+                <section>
+                    <h1>メールアドレス変更</h1>
+                    <Resolve ticket={this.props.ticket}>
+                        <p>メールアドレスの変更を完了しました。</p>
+                    </Resolve>
+                </section>);
+        }
+    },
+});
+
+//パスワード変更フォーム
+var SetPassword = React.createClass({
+    displayName:"SetPassword",
+    propTypes:{
+        ticket: React.PropTypes.string
+    },
+    getInitialState:function(){
+        return {
+            end:false,
+            password: "",
+            password2: ""
+        };
+    },
     handleChange: function(e){
         var name=e.target.name;
         if(name==="password" || name==="password2"){
-            var obj={};
-            obj[name]=e.target.value;
-            this.setState(obj,()=>{
+            this.setState({
+                [name]: e.target.value
+            },()=>{
                 if(this.state.password!==this.state.password2){
-                    React.findDOMNode(this).getElementsByTagName("form")[0].elements["password2"].setCustomValidity("パスワードが一致しません。");
+                    React.findDOMNode(this.refs.password).setCustomValidity("パスワードが一致しません。");
                 }else{
-                    React.findDOMNode(this).getElementsByTagName("form")[0].elements["password2"].setCustomValidity("");
+                    React.findDOMNode(this.refs.password).setCustomValidity("");
                 }
             });
         }
@@ -62,56 +126,21 @@ var Ticket = React.createClass({
         })
         .then(function(obj){
             t.setState({
-                state: "complete"
+                end:true
             });
         })
         .catch(function(err){
             errorStore.emit(String(err));
         });
     },
-    /* rendering */
-    render:function(){
-        return (
-            <section>
-                <h1>パスワード設定</h1>
-                {this.getPage()}
-            </section>);
-    },
-    getPage:function(){
-        switch(this.state.state){
-            case "loading":
-                return this.loading();
-            case "form":
-                return this.form();
-            case "complete":
-                return this.complete();
-            case "invalid":
-                return this.invalid();
-            default:
-                return null;
+    render(){
+        if(this.state.end===true){
+            return (
+                <div>
+                    <p>ユーザー登録を完了しました。</p>
+                </div>
+            );
         }
-    },
-    loading:function(){
-        return <Loading/>;
-    },
-    complete:function(){
-        return (
-            <div>
-                <p>登録を完了しました。</p>
-                <p><a href="/">トップページに戻る</a></p>
-                <p><a href="/my">マイページ</a></p>
-            </div>
-        );
-    },
-    invalid:function(){
-        return (
-            <div>
-                <p>このURLは無効です。</p>
-                <p>URLが発行されてから時間が経って無効となった可能性があります。もう一度最初からお試しください。</p>
-            </div>
-        );
-    },
-    form:function(){
         return (
             <form className="form" onSubmit={this.handleSubmit}>
                 <p>ユーザー<b>{this.props.screen_name}</b>のパスワードを登録します。</p>
@@ -124,7 +153,7 @@ var Ticket = React.createClass({
                 <p>
                     <label className="form-row">
                         <span>再入力</span>
-                        <input type="password" name="password2" onChange={this.handleChange} />
+                        <input type="password" name="password2" ref="password" onChange={this.handleChange} />
                     </label>
                 </p>
                 <p><input className="form-single form-button" type="submit" value="送信" /></p>
@@ -132,5 +161,36 @@ var Ticket = React.createClass({
         );
     },
 
+});
+
+//一般のチケットをアレする
+var Resolve = React.createClass({
+    displayName:"Resolve",
+    propTypes:{
+        ticket: React.PropTypes.string.isRequired
+    },
+    getInitialState(){
+        return {
+            end: false
+        };
+    },
+    componentDidMount(){
+        api("/api/user/ticket/resolve",{
+            token: this.props.ticket
+        }).then(()=>{
+            this.setState({
+                end: true
+            });
+        })
+        .catch((e)=>{
+            errorStore.emit(e);
+        });
+    },
+    render(){
+        if(this.state.end===false){
+            return <Loading/>;
+        }
+        return <div>{this.props.children}</div>;
+    }
 });
 module.exports = Ticket;

@@ -1,5 +1,6 @@
 ///<reference path="../node.d.ts" />
 import express=require('express');
+import extend=require('extend');
 import Controller=require('../controllers/index');
 
 import logger=require('../logger');
@@ -14,6 +15,33 @@ import {User,UserData, UserOneQuery, Session} from '../data';
 //User auth&session
 class C{
     route(router:express._Router,c:Controller):void{
+        // 自分の情報
+        router.post("/mydata",util.apim.useUser,(req,res)=>{
+            c.user.user.findOneUser({
+                id: req.session.user
+            },(err,user)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(user==null){
+                    logger.warning("Session for non-existent user: "+req.session.user);
+                    res.json({
+                        error: "そのユーザーは存在しません。"
+                    });
+                    return;
+                }
+                //ユーザーの情報をあげるけど……
+                var data=extend(user.getData(),{
+                    id: user.id
+                });
+                res.json({
+                    data: data
+                });
+            });
+        });
         // 新規ユーザー登録
         router.post("/entry",(req,res)=>{
             //バリデーション
@@ -95,8 +123,8 @@ class C{
                 });
             });
         });
-        //ユーザー登録（チケットチェック）
-        router.post("/entry/check",(req,res)=>{
+        //チケットチェック
+        router.post("/ticket/check",(req,res)=>{
             var token:string=req.body.token;
             //トークンを探してあげる
             c.ticket.findTicket(token,(err,t)=>{
@@ -106,9 +134,17 @@ class C{
                     });
                     return;
                 }
+                if(t==null){
+                    //チケットがなかった
+                    res.json({
+                        ticket: false
+                    });
+                    return;
+                }
+                //あった
                 res.json({
-                    //チケットがあればtrue,なければfalse
-                    ticket: t!=null
+                    ticket: true,
+                    type: t.type
                 });
             });
         });
@@ -189,8 +225,6 @@ class C{
             req.validateBody("name").isUserName();
             req.validateBody("profile").isUserProfile();
 
-            console.log("!!!",req.body.name, req.body.profile);
-
             if(req.validationErrorResponse(res)){
                 return;
             }
@@ -268,6 +302,114 @@ class C{
                     //成功した
                     res.json({
                         success:true
+                    });
+                });
+            });
+        });
+        router.post("/changemail",util.apim.useUser,(req,res)=>{
+            req.validateBody("mail").isEmail();
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+
+            c.user.user.findOneUser({
+                id: req.session.user,
+                "data.activated":true
+            },(err,u)=>{
+                if(err){
+                    logger.error(err);
+                    res.json({
+                        error: err
+                    });
+                    return;
+                }
+                if(u==null){
+                    //?????
+                    logger.warning("Session for non-existent user: "+req.session.user);
+                    res.json({
+                        error: "ログインしていません？"
+                    });
+                    return;
+                }
+                //メールアドレス変更チケットを発行
+                c.ticket.newTicket({
+                    type: "setmail",
+                    user: req.session.user,
+                    data: req.body.mail
+                },(err,t)=>{
+                    if(err){
+                        res.json({
+                            error:String(err)
+                        });
+                        return;
+                    }
+                    //メールを送信する
+                    c.mail.changeMailMail(u,req.body.mail,t.token);
+                    res.json({
+                        success: true
+                    });
+                });
+            });
+        });
+        //発行したticketを処理する（TODO: entryだけ別）
+        router.post("/ticket/resolve",(req,res)=>{
+            var token:string=req.body.token;
+            c.ticket.findTicket(token,(err,t)=>{
+                if(err){
+                    res.json({
+                        error:String(err)
+                    });
+                    return;
+                }
+                if(t==null){
+                    //チケットがなかった
+                    res.json({
+                        error: "そのチケットはありません。"
+                    });
+                    return;
+                }
+                //あった
+                var type=t.type;
+                //ユーザーを探す
+                c.user.user.findOneUser({
+                    id: t.user
+                },(err,u)=>{
+                    if(err){
+                        logger.error(err);
+                        res.json({
+                            error:String(err)
+                        });
+                        return;
+                    }
+                    //チケットの種類に応じた処理
+                    if(type==="setmail"){
+                        u.writeData({
+                            mail: t.data
+                        });
+                    }else{
+                        res.json({
+                            error:"不明なチケットです。"
+                        });
+                        return;
+                    }
+                    //セーブ
+                    c.user.user.saveUser(u,(err,result)=>{
+                        if(err){
+                            logger.error(err);
+                            res.json({
+                                error:String(err)
+                            });
+                            return;
+                        }
+                        //成功した
+                        res.json({
+                            success:true
+                        });
+                        c.ticket.removeTicket(token,(err)=>{
+                            if(err){
+                                logger.error(err);
+                            }
+                        });
                     });
                 });
             });

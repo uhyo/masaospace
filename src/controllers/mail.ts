@@ -8,7 +8,7 @@ import config=require('config');
 
 import {uniqueToken} from '../util';
 
-import {User,Mail} from '../data';
+import {User, Mail} from '../data';
 
 export default class MailController{
     private transporter:nodemailer.Transport;
@@ -38,6 +38,26 @@ export default class MailController{
             },
             subject: `${sname} 登録手続きメール`,
             text: "以下のリンクにアクセスすると"+sname+"への登録が完了します。\n\n"+
+                addr+"\n\n"+
+                "----------\n"+
+                "このメールに心当たりが無い場合：\n"+
+                "誰かがあなたのメールアドレスを勝手に入力しました。\n"+
+                "このメールを無視すればあなたのメールアドレスが"+sname+"の登録に利用されることはありません。",
+        });
+    }
+    //メールアドレス変更手続きメール
+    changeMailMail(u:User, newmail:string, ticket:string):void{
+        var d=u.getData();
+        var sname=config.get("service.name");
+        var addr=config.get("service.url")+"my/ticket/"+ticket;
+        this.send({
+            type: "changemail",
+            to: {
+                name: d.name,
+                address: newmail
+            },
+            subject: `${sname} 登録メールアドレス変更手続`,
+            text: "以下のリンクにアクセスすると"+d.name+"さん("+d.screen_name+")のメールアドレスの変更が完了します。\n\n"+
                 addr+"\n\n"+
                 "----------\n"+
                 "このメールに心当たりが無い場合：\n"+
