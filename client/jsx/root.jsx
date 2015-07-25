@@ -28,7 +28,9 @@ var Root = React.createClass({
         switch(page.page){
             case "top":
                 //top page
-                return [require('./top.jsx'),null];
+                return [require('./top.jsx'),{
+                    config: this.props.config
+                }];
             ///// user
             case "user.entry":
                 //entry page

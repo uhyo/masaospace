@@ -225,6 +225,7 @@ export class WebServer{
     private generateClientConfig():void{
         //validationなど
         this.clientConfig={
+            service: config.get("service"),
             user: config.get("user"),
             game: config.get("game")
         };
