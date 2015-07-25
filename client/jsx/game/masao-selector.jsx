@@ -7,6 +7,8 @@ var GameView = require('./game-view.jsx');
 
 var errorStore=require('../../stores/error');
 
+var masao=require('../../../lib/masao');
+
 module.exports = React.createClass({
     displayName:"MasaoSelector",
     getInitialState:function(){
@@ -164,12 +166,15 @@ module.exports = React.createClass({
         //タイトルを検出する
         var te=htmldoc.querySelector("title");
         var title = te ? te.textContent : "";
-        this.setGame({
+
+        var game={
             id: null,
             version: version,
             params: params,
             resources: []
-        },{
+        };
+        this.sanitizeGame(game);
+        this.setGame(game,{
             title: title
         });
 
@@ -201,6 +206,16 @@ module.exports = React.createClass({
         if("function"===typeof this.props.onSelect){
             this.props.onSelect(game,metadata);
         }
+    },
+    sanitizeGame(game){
+        if(game==null){
+            game={};
+        }
+        if(game.params==null){
+            game.params={};
+        }
+        masao.removeResources(game.params);
+        game.params=masao.removeInvalidParams(game.params);
     },
     render:function(){
         return (

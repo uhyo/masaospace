@@ -80,7 +80,7 @@ ticket:
     setpassword: 86400
 
 # games
-games:
+game:
   title:
     maxLength: 30
   level:

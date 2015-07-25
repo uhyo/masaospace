@@ -2,7 +2,9 @@
 import express=require('express');
 import Controller=require('../controllers/index');
 
+import masao=require('../masao');
 import logger=require('../logger');
+import validator=require('../validator');
 
 import config=require('config');
 
@@ -14,10 +16,10 @@ class C{
     route(router:express._Router,c:Controller):void{
         // ゲームを投稿する
         // IN game: ゲームのJSON表現
-        // IN metadata: メタデータのJSON表現(title,level,description)
+        // IN metadata: メタデータのJSON表現(title,description)
         // OUT id: 新しいゲームのid
         router.post("/new",util.apim.useUser,(req,res)=>{
-            var game, metadata;
+            var game:GameData, metadata:GameMetadata;
             //JSONを読む
             try{
                 game=JSON.parse(req.body.game);
@@ -28,11 +30,47 @@ class C{
                 });
                 return;
             }
-            //TODO: ゲームをバリデートする
-            //メタ情報を付加
-            metadata.owner=req.session.user;
-            metadata.created=metadata.updated=new Date();
-            c.game.newGame(game,metadata,(err,newid:number)=>{
+            //ゲームをバリデートする
+            if(game==null || metadata==null){
+                res.json({
+                    error: "ゲーム情報が不正です。"
+                });
+                return;
+            }
+            if(!masao.validateParams(game.params) || !masao.validateVersion(game.version)){
+                res.json({
+                    error: "ゲーム情報が不正です。"
+                });
+                return;
+            }
+            //メタ情報のバリデーション
+            if(validator.funcs.isGameTitle(metadata.title)!=null || validator.funcs.isGameDescription(metadata.description)!=null){
+                res.json({
+                    error: "ゲーム情報が不正です。"
+                });
+                return;
+            }
+            //リソース情報を除去
+            masao.removeResources(game.params);
+            
+            //TODO: 現在はとりあえずリソース空
+            var gameobj:GameData = {
+                id: null,
+                version: game.version,
+                params: game.params,
+                resources: []
+            };
+            var now=new Date();
+            var metadataobj: GameMetadata = {
+                id: null,
+                owner: req.session.user,
+                title: metadata.title,
+                description: metadata.description,
+                created: now,
+                updated: now
+            };
+
+            c.game.newGame(gameobj,metadataobj,(err,newid:number)=>{
                 if(err){
                     res.json({
                         error:String(err)
