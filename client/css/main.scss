@@ -43,6 +43,23 @@ a:active {
 
     border-bottom: 1px solid rgba(#000000,0.05);
   }
+  .root-header-topnavi {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 160px;
+    height: 36px;
+
+    a {
+      display: block;
+      width: 160px;
+      height: 36px;
+
+      text-indent: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
   .root-header-bar {
     // bg
 

@@ -28,6 +28,9 @@ var Header = React.createClass({
     render:function(){
         var session=this.state.session;
         return (<div className="root-header">
+            <div className="root-header-topnavi">
+                <a href="/">トップページ</a>
+            </div>
             <div className="root-header-bar">
                 <ul className="root-header-menu">
                     {
