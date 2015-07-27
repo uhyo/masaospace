@@ -12,11 +12,6 @@ module.exports = React.createClass({
         return {
         };
     },
-    componentWillMount:function(){
-        this.setState({
-            gameid: Math.random().toString(36).slice(2)
-        });
-    },
     componentDidMount:function(){
         this.setGame(this.props.game);
     },
@@ -29,13 +24,19 @@ module.exports = React.createClass({
     },
     setGame:function(game){
         var p=deepExtend({},game.params);
+        if(this.gameid==null){
+            this.gameid=Math.random().toString(36).slice(2);
+        }
+        React.findDOMNode(this).id=this.gameid;
         /* set images */
         //TODO: custom images
         p["filename_title"]="/static/title.gif";
         p["filename_ending"]="/static/ending.gif";
         p["filename_gameover"]="/static/gameover.gif";
         p["filename_pattern"]="/static/pattern.gif";
-        this.game=new CanvasMasao.Game(p,this.state.gameid);
+        p["filename_haikei"]="/static/haikei.gif";
+        p["se_switch"]="2";
+        this.game=new CanvasMasao.Game(p,this.gameid);
     },
     endGame:function(){
         if(this.game==null){
@@ -45,6 +46,7 @@ module.exports = React.createClass({
         this.game.__mc.destroy();
         /* 手動でcleanする */
         var d=React.findDOMNode(this);
+        d.id=null;
         while(d.firstChild){
             d.removeChild(d.firstChild);
         }
@@ -52,7 +54,7 @@ module.exports = React.createClass({
     },
     render:function(){
         return (
-            <div className="game-view" id={this.state.gameid} />
+            <div className="game-view" />
         );
     }
 });
