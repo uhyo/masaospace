@@ -8,9 +8,10 @@ var GameView=require('./game-view.jsx'),
 module.exports = React.createClass({
     displayName:"Play",
     propTypes:{
-        game: React.PropTypes.object,
-        metadata: React.PropTypes.object,
-        owner: React.PropTypes.object
+        game: React.PropTypes.object.isRequired,
+        metadata: React.PropTypes.object.isRequired,
+        owner: React.PropTypes.object.isRequired,
+        session: React.PropTypes.object.isRequired
     },
     render:function(){
         var metadata=this.props.metadata;

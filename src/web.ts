@@ -19,6 +19,7 @@ import ect=require('ect');
 import React=require('react');
 import nodejsx=require('node-jsx');
 
+import {Session} from './data';
 import {writeUserInfo} from './util';
 
 import {makeFrontRouter} from './front/index';
@@ -210,7 +211,7 @@ export class WebServer{
                     config: this.clientConfig,
                     page: view.page,
                     csrfToken: req.csrfToken(),
-                    session:session,
+                    session:makeClientSession(session),
                     data: view.data
                 };
                 res.render("index.ect",{
@@ -229,5 +230,18 @@ export class WebServer{
             user: config.get("user"),
             game: config.get("game")
         };
+    }
+}
+
+//クライアント用セッション
+function makeClientSession(session:Session):any{
+    if(session==null){
+        return {
+            loggedin: false
+        };
+    }else{
+        return writeUserInfo(session,{
+            loggedin: true
+        });
     }
 }

@@ -3,14 +3,12 @@ var Reflux=require('reflux');
 
 var QueryList=require('./game/parts/query-list.jsx');
 
-var sessionStore=require('../stores/session');
-
 
 module.exports = React.createClass({
     displayName:"Top",
-    mixins:[Reflux.connect(sessionStore,"session")],
     propTypes:{
-        config: React.PropTypes.object.isRequired
+        config: React.PropTypes.object.isRequired,
+        session: React.PropTypes.object.isRequired
     },
     render(){
         return (
@@ -23,7 +21,7 @@ module.exports = React.createClass({
             </div>);
     },
     welcome(){
-        if(this.state.session.loggedin===true){
+        if(this.props.session.loggedin===true){
             return null;
         }
         //welcomeメッセージ

@@ -2,8 +2,7 @@ var React=require('react/addons');
 var Reflux=require('reflux');
 
 var userAction=require('../../actions/user');
-var sessionStore=require('../../stores/session'),
-    errorStore=require('../../stores/error');
+var errorStore=require('../../stores/error');
 var api=require('../../actions/api');
 
 var NeedLogin = require('../commons/need-login.jsx'),
@@ -11,40 +10,44 @@ var NeedLogin = require('../commons/need-login.jsx'),
 
 var Account=React.createClass({
     displayName:"Account",
-    mixins: [Reflux.listenTo(sessionStore,"onSessionChange")],
     propTypes:{
-        config: React.PropTypes.object,
+        config: React.PropTypes.object.isRequired,
+        session: React.PropTypes.object.isRequired
     },
     getInitialState:function(){
         return {
             page: "profile",
-            session: sessionStore.getInitialState()
+            userdata: null
         };
+    },
+    componentDidMount(){
+        this.loadUserdata(this.props.session);
+    },
+    componentWillReceiveProps(nextProps){
+        if(this.props.session!==nextProps.session){
+            this.onSessionChange(nextProps.session);
+        }
     },
     onSessionChange(session){
         if(session.loggedin===false){
             //ログアウトした
             this.setState({
-                session: session,
                 userdata: null
             });
         }else{
             this.loadUserdata(session);
         }
     },
+
     loadUserdata(session){
         api("/api/user/mydata")
         .then((obj)=>{
             this.setState({
-                session: session,
                 userdata: obj.data
             });
         })
         .catch(errorStore.emit);
 
-    },
-    componentDidMount(){
-        this.loadUserdata(this.state.session);
     },
     handleClick:function(e){
         var t=e.target;
@@ -57,7 +60,7 @@ var Account=React.createClass({
         return (
             <section>
                 <h1>アカウント設定</h1>
-                {this.state.session.loggedin===true ? this.content() : <NeedLogin/>}
+                {this.props.session.loggedin===true ? this.content() : <NeedLogin/>}
             </section>
         );
     },
@@ -115,7 +118,9 @@ var ProfileForm=React.createClass({
         };
     },
     componentWillReceiveProps(newProps){
-        this.setState(this.makeStateFromProps(newProps));
+        if(this.props.userdata !== newProps.userdata){
+            this.setState(this.makeStateFromProps(newProps));
+        }
     },
     handleChange:function(e){
         var n=e.target.name;

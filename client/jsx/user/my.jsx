@@ -1,13 +1,13 @@
 var React=require('react');
 var Reflux=require('reflux');
 
-var sessionStore=require('../../stores/session');
-
 var NeedLogin=require('../commons/need-login.jsx');
 
 var MyPage=React.createClass({
     displayName:"MyPage",
-    mixins: [Reflux.connect(sessionStore,"session")],
+    propTypes:{
+        session: React.PropTypes.object.isRequire
+    },
     getInitialState:function(){
         return {
         };
@@ -21,7 +21,7 @@ var MyPage=React.createClass({
         );
     },
     myPageContent:function(){
-        var session=this.state.session;
+        var session=this.props.session;
         if(session.loggedin){
             return (
                 <div>

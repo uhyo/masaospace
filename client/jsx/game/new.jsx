@@ -7,14 +7,13 @@ var NeedLogin = require('../commons/need-login.jsx');
 
 var api=require('../../actions/api');
 var pageActions=require('../../actions/page');
-var errorStore=require('../../stores/error'),
-    sessionStore=require('../../stores/session');
+var errorStore=require('../../stores/error');
 
 module.exports = React.createClass({
     displayName:"New",
-    mixins:[Reflux.connect(sessionStore,"session")],
     propTypes:{
-        config: React.PropTypes.object
+        config: React.PropTypes.object.isRequired,
+        session: React.PropTypes.object.session
     },
     getInitialState:function(){
         return {
@@ -53,7 +52,7 @@ module.exports = React.createClass({
 
     },
     render:function(){
-        if(this.state.session.loggedin===false){
+        if(this.props.session.loggedin===false){
             return <section>
                 <h1>新しい正男を投稿</h1>
                 <NeedLogin/>

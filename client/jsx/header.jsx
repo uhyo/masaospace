@@ -2,14 +2,15 @@ var React=require('react');
 var Reflux=require('reflux');
 
 var userAction=require('../actions/user');
-var sessionStore=require('../stores/session'),
-    errorStore=require('../stores/error');
+var errorStore=require('../stores/error');
 
 var LoginForm=require('./commons/login-form.jsx');
 
 var Header = React.createClass({
     displayName: "Header",
-    mixins: [Reflux.connect(sessionStore,"session")],
+    propTypes:{
+        session: React.PropTypes.object
+    },
     getInitialState:function(){
         return {
             loginform: false
@@ -26,7 +27,7 @@ var Header = React.createClass({
         });
     },
     render:function(){
-        var session=this.state.session;
+        var session=this.props.session;
         return (<div className="root-header">
             <div className="root-header-topnavi">
                 <a href="/">トップページ</a>
@@ -62,7 +63,7 @@ var Header = React.createClass({
         </div>);
     },
     loggedin:function(){
-        var session=this.state.session;
+        var session=this.props.session;
         return (
             <p>{session.name} さん</p>
         );

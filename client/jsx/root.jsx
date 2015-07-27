@@ -1,13 +1,14 @@
 var React=require('react');
 var Reflux=require('reflux');
-var pageStore = require('../stores/page');
+var pageStore = require('../stores/page'),
+    sessionStore = require('../stores/session');
 
 var Header=require('./header.jsx');
 var Footer=require('./footer.jsx');
 
 var Root = React.createClass({
     displayName:"Root",
-    mixins: [Reflux.connect(pageStore,"page")],
+    mixins: [Reflux.connect(pageStore,"page"), Reflux.connect(sessionStore,"session")],
     propTypes:{
         config: React.PropTypes.object,
         page: React.PropTypes.string,
@@ -16,20 +17,23 @@ var Root = React.createClass({
         data: React.PropTypes.object
     },
     render:function(){
+        var session = this.state.session || this.props.session;
         var [elm,props]=this.getPage();
         return (<div className="root">
-            <Header />
+            <Header session={session} />
             {React.createElement(elm,props)}
             <Footer />
         </div>);
     },
     getPage:function(){
+        var session = this.state.session || this.props.session;
         var page=this.state.page || this.props;
         switch(page.page){
             case "top":
                 //top page
                 return [require('./top.jsx'),{
-                    config: this.props.config
+                    config: this.props.config,
+                    session: session
                 }];
             ///// user
             case "user.entry":
@@ -52,22 +56,28 @@ var Root = React.createClass({
 
             case "user.my":
                 //mypage
-                return [require('./user/my.jsx'),null];
+                return [require('./user/my.jsx'),{
+                    session: session
+                }];
             case "user.account":
                 //account settings
                 return [require('./user/account.jsx'),{
-                    config: this.props.config
+                    config: this.props.config,
+                    session: session
                 }];
             ///// game
             case "game.new":
                 return [require('./game/new.jsx'),{
-                    config: this.props.config
+                    config: this.props.config,
+                    session: session
                 }];
             case "game.play":
                 return [require('./game/play.jsx'),{
                     game: page.data.game,
                     metadata: page.data.metadata,
-                    owner: page.data.owner
+                    owner: page.data.owner,
+
+                    session: session
                 }]
             case "game.list":
                 return [require('./game/list.jsx'),{
