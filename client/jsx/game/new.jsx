@@ -13,7 +13,7 @@ module.exports = React.createClass({
     displayName:"New",
     propTypes:{
         config: React.PropTypes.object.isRequired,
-        session: React.PropTypes.object.session
+        session: React.PropTypes.object.isRequired
     },
     getInitialState:function(){
         return {
@@ -76,10 +76,15 @@ module.exports = React.createClass({
         var m = this.state.metadata || {};
         return (
             <div>
-                <GameMetadataForm onChange={this.handleMetadata} title={m.title} />
-                <form className="form">
-                    <p><input className="form-single form-button" type="button" value="投稿する" disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
-                </form>
+                <section className="game-metadata-form">
+                    <h1>正男情報</h1>
+                    <div className="game-new-metadataform-wrapper">
+                        <GameMetadataForm onChange={this.handleMetadata} title={m.title} />
+                        <form className="form">
+                            <p><input className="form-single form-button" type="button" value="投稿する" disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
+                        </form>
+                    </div>
+                </section>
             </div>
         );
     },

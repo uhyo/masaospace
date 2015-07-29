@@ -16,7 +16,9 @@ var Entry = React.createClass({
                     <p>注意：このサービスを利用して発生したいかなる損害にも運営者はその責任を負いません。</p>
                     <p>このサービスはアルファ版にも満たない何かです。登録されたデータは予告なく変更・削除されることがあります。</p>
                 </div>
-                <EntryForm config={this.props.config}/>
+                <div className="user-entry-form-wrapper">
+                    <EntryForm config={this.props.config}/>
+                </div>
             </section>);
     }
 });

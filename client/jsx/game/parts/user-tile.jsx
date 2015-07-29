@@ -3,11 +3,11 @@ var React = require('react');
 module.exports = React.createClass({
     displayName:"UserTile",
     propTypes:{
-        id:React.PropTypes.string,
-        screen_name:React.PropTypes.string,
-        name:React.PropTypes.string,
+        id:React.PropTypes.string.isRequired,
+        screen_name:React.PropTypes.string.isRequired,
+        name:React.PropTypes.string.isRequired,
 
-        label:React.PropTypes.string
+        label:React.PropTypes.string.isRequired
     },
     render(){
         var props=this.props;

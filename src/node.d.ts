@@ -937,6 +937,7 @@ declare module "express"{
             isGameTitle():Validation;
             isGameLevel():Validation;
             isGameDescription():Validation;
+            isComment():Validation;
         }
         class ValidationError{
             name:string;

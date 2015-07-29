@@ -77,6 +77,7 @@ var Root = React.createClass({
                     metadata: page.data.metadata,
                     owner: page.data.owner,
 
+                    config: this.props.config,
                     session: session
                 }]
             case "game.list":

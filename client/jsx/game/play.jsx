@@ -2,7 +2,8 @@ var React = require('react');
 
 var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
-    Datetime=require('../commons/datetime.jsx');
+    Datetime=require('../commons/datetime.jsx'),
+    GameComment=require('./parts/game-comment.jsx');
 
 
 module.exports = React.createClass({
@@ -11,6 +12,8 @@ module.exports = React.createClass({
         game: React.PropTypes.object.isRequired,
         metadata: React.PropTypes.object.isRequired,
         owner: React.PropTypes.object.isRequired,
+
+        config: React.PropTypes.object.isRequired,
         session: React.PropTypes.object.isRequired
     },
     render:function(){
@@ -30,6 +33,7 @@ module.exports = React.createClass({
                         <p>{metadata.description}</p>
                     </div>
                 </div>
+                <GameComment game={metadata.id} config={this.props.config} session={this.props.session} />
             </section>
         );
     }

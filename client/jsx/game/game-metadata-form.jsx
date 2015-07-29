@@ -39,23 +39,20 @@ module.exports = React.createClass({
     },
     render:function(){
         return (
-            <section className="game-metadata-form">
-                <h1>正男情報</h1>
-                <form className="form" onSubmit={this.handleSubmit}>
-                    <p>
-                        <label className="form-row">
-                            <span>タイトル</span>
-                            <input type="text" name="title" onChange={this.handleChange} value={this.state.title} />
-                        </label>
-                    </p>
-                    <p>
-                        <label className="form-row">
-                            <span>説明</span>
-                            <textarea name="description" onChange={this.handleChange} value={this.state.description} />
-                        </label>
-                    </p>
-                </form>
-            </section>
+            <form className="form" onSubmit={this.handleSubmit}>
+                <p>
+                    <label className="form-row">
+                        <span>タイトル</span>
+                        <input type="text" name="title" onChange={this.handleChange} value={this.state.title} />
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>説明</span>
+                        <textarea name="description" onChange={this.handleChange} value={this.state.description} />
+                    </label>
+                </p>
+            </form>
         );
     },
 });
