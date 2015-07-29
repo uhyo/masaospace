@@ -51,3 +51,8 @@ ul.user-account-menu {
   @include subsection;
   margin: 1rem 0;
 }
+
+.user-entry-form-wrapper, .user-changepassword-form-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}

@@ -61,7 +61,9 @@ module.exports = React.createClass({
         }
         return <section className="game-play-comments">
             <h1>コメント</h1>
-            {commentForm}
+            <div className="game-play-comments-form-wrapper">
+                {commentForm}
+            </div>
             {comments}
         </section>;
     },
