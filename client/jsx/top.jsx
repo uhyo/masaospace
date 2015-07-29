@@ -14,6 +14,12 @@ module.exports = React.createClass({
         return (
             <div>
                 {this.welcome()}
+                <div className="information">
+                    <p>最近の更新：</p>
+                    <ul>
+                        <li>2015-07-30: コメント機能を追加しました。</li>
+                    </ul>
+                </div>
                 <section>
                     <h1>最近投稿された正男</h1>
                     <QueryList query={{}} limit={10} />
