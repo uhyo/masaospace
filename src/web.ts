@@ -228,7 +228,8 @@ export class WebServer{
         this.clientConfig={
             service: config.get("service"),
             user: config.get("user"),
-            game: config.get("game")
+            game: config.get("game"),
+            comment: config.get("comment")
         };
     }
 }

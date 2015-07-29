@@ -197,6 +197,9 @@ section {
       background-color: #ededed;
     }
   }
+  textarea.form-single {
+    height: 130px;
+  }
 
   input[readonly], textarea[readonly] {
     background-color: #f3f3f3;

@@ -137,6 +137,36 @@ export interface GameQuery{
     sort:any;
 }
 
+//コメント
+export interface Comment{
+    //コメントID
+    id:number;
+    //ゲームID
+    game:number;
+    //ユーザーID
+    userid:string;
+
+    //内容
+    comment:string;
+    //日時
+    time:Date;
+}
+export interface CommentWithUserData extends Comment{
+    user:UserOpenData;
+}
+
+//コメントを探すとき
+export interface CommentQuery{
+    id?:number;
+    game?:number;
+    userid?:string;
+
+    skip:number;
+    limit:number;
+    sort:any;
+}
+
+
 //メール（controllers/mail.tsが扱うもの）
 export interface Mail{
     to: string | {name?:string;address:string};

@@ -26,4 +26,9 @@ validator.addCustomValidator("isGameDescription",(value:string)=>{
     return !funcs.length(value,0,config.get("game.description.maxLength"));
 });
 
+////////// comment
+validator.addCustomValidator("isComment",(value:string)=>{
+    return !funcs.length(value,1,config.get("comment.maxLength"));
+});
+
 export = validator;

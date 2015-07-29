@@ -93,6 +93,31 @@ a.user-tile {
 }
 
 
+//comments
+.comments-comment {
+  display: flex;
+  max-width: 800px;
+  margin: 1rem 0;
+
+
+  .comments-user {
+    flex: 200px 0 0;
+  }
+  .comments-body {
+    flex: auto 1 0;
+    background-color: $color-box-background;
+
+    .comments-text {
+      white-space: pre-line;
+    }
+    .comments-time {
+      color: $color-lightcolor;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+
 //new
 .game-metadata-form {
   @include subsection;
