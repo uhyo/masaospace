@@ -1,4 +1,5 @@
 var React = require('react');
+var extend= require('extend');
 //masao edit component
 
 var MasaoSelector = require('./masao-selector.jsx'),
@@ -20,8 +21,8 @@ module.exports = React.createClass({
     },
     getInitialState(){
         return {
-            game:null,
-            metadata:null
+            game:this.props.game || null,
+            metadata:this.props.metadata || null
         }
     },
     masaoSelected(game,metadata){
@@ -30,9 +31,9 @@ module.exports = React.createClass({
         }
         this.setState({
             game: game,
-            metadata: {
+            metadata: extend({},this.state.metadata,{
                 title: metadata.title
-            }
+            })
         });
     },
     handleMetadata(metadata){
@@ -74,9 +75,9 @@ module.exports = React.createClass({
                 <section className="game-metadata-form">
                     <h1>正男情報</h1>
                     <div className="game-new-metadataform-wrapper">
-                        <GameMetadataForm onChange={this.handleMetadata} title={m.title} />
+                        <GameMetadataForm onChange={this.handleMetadata} title={m.title} description={m.description} />
                         <form className="form">
-                            <p><input className="form-single form-button" type="button" value="投稿する" disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
+                            <p><input className="form-single form-button" type="button" value={this.props.saveButton} disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
                         </form>
                     </div>
                 </section>

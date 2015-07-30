@@ -44,7 +44,7 @@ class C{
                 return;
             }
             //メタ情報のバリデーション
-            if(validator.funcs.isGameTitle(metadata.title)!=null || validator.funcs.isGameDescription(metadata.description)!=null){
+            if(!validateMetadata(metadata)){
                 res.json({
                     error: "ゲーム情報が不正です。"
                 });
@@ -83,7 +83,98 @@ class C{
                 });
             });
         });
+        //ゲームに修正をかける
+        router.post("/edit",util.apim.useUser,(req,res)=>{
+            var game:GameData, metadata:GameMetadata;
+            //JSONを読む
+            try{
+                game=JSON.parse(req.body.game);
+                metadata=JSON.parse(req.body.metadata);
+            }catch(e){
+                res.json({
+                    error:String(e)
+                });
+                return;
+            }
+            //ゲームをバリデートする
+            if(game==null || metadata==null){
+                res.json({
+                    error: "ゲーム情報が不正です。"
+                });
+                return;
+            }
+            if(!masao.validateParams(game.params) || !masao.validateVersion(game.version)){
+                res.json({
+                    error: "ゲーム情報が不正です。"
+                });
+                return;
+            }
+            //メタ情報のバリデーション
+            if(!validateMetadata(metadata)){
+                res.json({
+                    error: "ゲーム情報が不正です。"
+                });
+                return;
+            }
+            //リソース情報を除去
+            masao.removeResources(game.params);
+            
+            //TODO: 現在はとりあえずリソース空
+            var gameobj:GameData = {
+                id: null,
+                version: game.version,
+                params: game.params,
+                resources: []
+            };
+            var now=new Date();
+            var metadataobj: GameMetadata = {
+                id: null,
+                owner: req.session.user,
+                title: metadata.title,
+                description: metadata.description,
+                created: null,
+                updated: now
+            };
 
+            c.game.editGame(parseInt(req.body.id), req.session.user, gameobj, metadataobj,(err)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                }else{
+                    res.json({
+                        success:true
+                    });
+                }
+            });
+        });
+
+        //ゲームを読む
+        //IN: id (number)
+        //OUT: {game, metadata}
+        router.post("/get",(req,res)=>{
+            req.validateBody("id").isInteger();
+
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+
+            c.game.getGame(parseInt(req.body.id),(err,obj)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(obj==null){
+                    res.json({
+                        error: "そのゲームIDは存在しません。"
+                    });
+                }else{
+                    res.json(obj);
+                }
+            });
+        });
         //ゲームを探す
         router.post("/find",(req,res)=>{
             req.validateBody("page").isInteger().optional();
@@ -133,3 +224,11 @@ class C{
 }
 
 export = C;
+
+//だめだったらfalse
+function validateMetadata(metadata:GameMetadata):boolean{
+    if(validator.funcs.isGameTitle(metadata.title)!=null || validator.funcs.isGameDescription(metadata.description)!=null){
+        return false;
+    }
+    return true;
+}

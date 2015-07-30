@@ -12,15 +12,30 @@ module.exports = React.createClass({
     displayName:"Edit",
     propTypes:{
         config: React.PropTypes.object.isRequired,
-        session: React.PropTypes.object.isRequired
+        session: React.PropTypes.object.isRequired,
+
+        id: React.PropTypes.number.isRequired
     },
     getInitialState(){
         return {
             loading: true,
+            initialGame: null,
+            initialMetadata: null
         };
     },
-    onSave({game, metadata}){
-        var id=this.props.game.id;
+    componentDidMount(){
+        api("/api/game/get",{id: this.props.id})
+        .then(({game,metadata})=>{
+            this.setState({
+                loading: false,
+                initialGame: game,
+                initialMetadata: metadata
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    handleSave({game, metadata}){
+        var id=this.props.id;
 
         api("/api/game/edit",{
             id: id,
@@ -37,7 +52,7 @@ module.exports = React.createClass({
         if(this.state.loading===true){
             return <Loading/>;
         }
-        var game=this.props.game, metadata=this.props.metadata;
+        var game=this.state.initialGame, metadata=this.state.initialMetadata;
         if(game==null || metadata==null){
             return null;
         }

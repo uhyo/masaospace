@@ -87,7 +87,8 @@ var Root = React.createClass({
             case "game.edit":
                 return [require('./game/edit.jsx'),{
                     config: this.props.config,
-                    session: session
+                    session: session,
+                    id: page.data.id
                 }];
             default:
                 //"404"とか

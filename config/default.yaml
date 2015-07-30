@@ -11,6 +11,7 @@ mongodb:
     file: file
     gamemetadata: gamemetadata
     gamedata: gamedata
+    gamepast: gamepast
     mail: mail
     comment: comment
 redis:
