@@ -128,6 +128,13 @@ export interface GameData{
         id:string;
     }>;
 }
+//過去のデータ
+export interface GamePastData{
+    id:number;
+    created:Date;
+    game:GameData;
+    metadata:GameMetadata;
+}
 //ゲームを探すクエリ
 export interface GameQuery{
     owner?:string;
@@ -136,6 +143,7 @@ export interface GameQuery{
     limit:number;
     sort:any;
 }
+
 
 //コメント
 export interface Comment{

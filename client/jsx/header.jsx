@@ -37,12 +37,26 @@ var Header = React.createClass({
                     {
                         (session.loggedin===true ?
                          [
-                            (<li key="my"><a href="/my">マイページ</a></li>),
-                            (<li key="plus"><a className="root-header-menu-plus" href="/game/new">正男を投稿</a></li>),
-                            (<li key="logout"><a onClick={this.handleLogout}>ログアウト</a></li>)
+                            (<li key="my">
+                                <a href="/my">
+                                    <span className="icon icon-home"/>
+                                    <span>マイページ</span>
+                                </a>
+                            </li>),
+                            (<li key="plus">
+                                <a href="/game/new">
+                                    <span className="icon icon-masaoplus"/>
+                                    <span>正男を投稿</span>
+                                </a>
+                            </li>),
+                            (<li key="logout">
+                                <a onClick={this.handleLogout}>ログアウト</a>
+                            </li>)
                         ]
                             :
-                                <li key="login"><a onClick={this.handleLogin}>ログイン</a></li>
+                                <li key="login">
+                                    <a onClick={this.handleLogin}>ログイン</a>
+                                </li>
                                 )
                     }
                 </ul>

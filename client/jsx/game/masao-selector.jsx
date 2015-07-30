@@ -3,19 +3,12 @@ var React = require('react');
 
 var FileSelector = require('../commons/file-selector.jsx');
 
-var GameView = require('./game-view.jsx');
-
 var errorStore=require('../../stores/error');
 
 var masao=require('../../../lib/masao');
 
 module.exports = React.createClass({
     displayName:"MasaoSelector",
-    getInitialState:function(){
-        return {
-            game: null
-        };
-    },
     fileSelected:function(file){
         if(file==null){
             this.setGame(null,null);
@@ -23,18 +16,17 @@ module.exports = React.createClass({
         }
         //read file
         var fr=new FileReader();
-        var _this=this;
         if("undefined"===typeof TextDecoder){
             // read as UTF-8
-            fr.onload=function(e){
-                _this.fileRead(file.name,fr.result);
+            fr.onload=(e)=>{
+                this.fileRead(file.name,fr.result);
             };
             fr.readAsText(file);
             return;
         }
         // Try UTF-8, SJIS, EUC-JP
         fr.readAsArrayBuffer(file);
-        fr.onload=function(e){
+        fr.onload=(e)=>{
             var ab=fr.result, resultString;
             var td=new TextDecoder("utf-8",{
                 fatal: true
@@ -62,7 +54,7 @@ module.exports = React.createClass({
                     }
                 }
             }
-            _this.fileRead(file.name,resultString);
+            this.fileRead(file.name,resultString);
         };
     },
     fileRead:function(name,text){
@@ -229,9 +221,6 @@ module.exports = React.createClass({
         });
     },
     setGame:function(game,metadata){
-        this.setState({
-            game:game
-        });
         if("function"===typeof this.props.onSelect){
             this.props.onSelect(game,metadata);
         }
@@ -250,18 +239,9 @@ module.exports = React.createClass({
         return (
             <div className="game-masao-selector">
                 <FileSelector onSelect={this.fileSelected} accept="htm,html,json" />
-                { this.state.game ? this.preview() : null}
             </div>
         );
     },
-    preview:function(){
-        return (
-            <section className="game-masao-selector-preview">
-                <h1>正男プレビュー</h1>
-                <GameView game={this.state.game} />
-            </section>
-        );
-    }
 });
 
 

@@ -65,5 +65,14 @@ export default function(c:Controller,r:_Router):void{
             data:{}
         });
     });
+    r.add("/game/edit/:number",(obj,callback:Callback<View>)=>{
+        callback(null,{
+            title: "正男を編集",
+            page: "game.edit",
+            data:{
+                id: parseInt(obj[":number"])
+            }
+        });
+    });
 }
 

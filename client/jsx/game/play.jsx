@@ -17,7 +17,17 @@ module.exports = React.createClass({
         session: React.PropTypes.object.isRequired
     },
     render:function(){
-        var metadata=this.props.metadata;
+        var metadata=this.props.metadata, session=this.props.session;
+        var ownertools = null;
+        if(session.user===metadata.owner){
+            //わたしがオーナーだ！
+            ownertools = <p>
+                <a href={`/game/edit/${metadata.id}`}>
+                    <span className="icon icon-edit"/>
+                    <span>正男を編集</span>
+                </a>
+            </p>;
+        }
         return (
             <section>
                 <h1>{metadata.title}</h1>
@@ -27,13 +37,14 @@ module.exports = React.createClass({
                 <div className="game-play-info">
                     <div className="game-play-info-meta">
                         <p><Datetime date={new Date(metadata.created)} /> 投稿</p>
+                        {ownertools}
                         <UserTile {...this.props.owner} label="投稿者" />
                     </div>
                     <div className="game-play-info-description">
                         <p>{metadata.description}</p>
                     </div>
                 </div>
-                <GameComment game={metadata.id} config={this.props.config} session={this.props.session} />
+                <GameComment game={metadata.id} config={this.props.config} session={session} />
             </section>
         );
     }

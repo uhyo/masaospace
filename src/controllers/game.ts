@@ -7,7 +7,7 @@ import config=require('config');
 
 import extend=require('extend');
 
-import {UserOpenData, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GameQuery} from '../data';
+import {UserOpenData, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GamePastData, GameQuery} from '../data';
 
 import util=require('../util');
 
@@ -27,7 +27,7 @@ export default class GameController{
         });
 
         //indexes
-        this.db.mongo.collection(config.get("mongodb.collection.gamemetadata"),d.intercept((coll)=>{
+        this.getGameCollection(d.intercept((coll)=>{
             coll.createIndex({
                 id:1
             },{
@@ -43,13 +43,22 @@ export default class GameController{
                     },{
                     },d.intercept((result)=>{
                         //gamedata index
-                        this.db.mongo.collection(config.get("mongodb.collection.gamedata"),d.intercept((coll)=>{
+                        this.getMetadataCollection(d.intercept((coll)=>{
                             coll.createIndex({
                                 id:1
                             },{
                                 unique:1
                             },d.intercept((result)=>{
-                                this.initRedis(callback);
+                                this.getPastCollection(d.intercept((coll)=>{
+                                    //gamepast index
+                                    coll.createIndex({
+                                        id:1,
+                                        created:-1
+                                    },{
+                                    },d.intercept((result)=>{
+                                        this.initRedis(callback);
+                                    }));
+                                }));
                             }));
                         }));
                     }));
@@ -173,13 +182,11 @@ export default class GameController{
     newGame(game:GameData,metadata:GameMetadata,callback:Callback<number>):void{
         this.getGameCollection((err,collg)=>{
             if(err){
-                logger.error(err);
                 callback(err,null);
                 return;
             }
             this.getMetadataCollection((err,collm)=>{
                 if(err){
-                    logger.error(err);
                     callback(err,null);
                     return;
                 }
@@ -231,6 +238,86 @@ export default class GameController{
             });
         });
     }
+    //ゲームを変更する（オーナーのチェックもする）
+    //NOTE: metadata.createdはnullになっている（そのまま）
+    editGame(id:number,owner:string,game:GameData,metadata:GameMetadata,callback:Cont):void{
+        game.id=metadata.id=id;
+        this.getGameCollection((err,collg)=>{
+            if(err){
+                callback(err);
+                return;
+            }
+            this.getMetadataCollection((err,collm)=>{
+                if(err){
+                    callback(err);
+                    return;
+                }
+                //まず今までのやつをとっておく
+                collg.findOne({id},(err,gamedoc:GameData)=>{
+                    if(err){
+                        logger.error(err);
+                        callback(err);
+                        return;
+                    }
+                    collm.findOne({id},(err,metadatadoc:GameMetadata)=>{
+                        if(err){
+                            logger.error(err);
+                            callback(err);
+                            return;
+                        }
+                        if(gamedoc==null || metadatadoc==null){
+                            callback("そのゲームIDは存在しません。");
+                            return;
+                        }
+                        if(metadatadoc.owner!==owner){
+                            callback("所有者が違います。");
+                            return;
+                        }
+
+                        //過去ログを作成
+                        metadata.created=metadatadoc.created;
+                        var pastdata: GamePastData={
+                            id,
+                            created: metadatadoc.updated,
+                            game: gamedoc,
+                            metadata: metadatadoc
+                        };
+                        //入れる
+                        this.getPastCollection((err,collp)=>{
+                            if(err){
+                                callback(err);
+                                return;
+                            }
+                            collp.insertOne(pastdata,(err,result)=>{
+                                if(err){
+                                    logger.error(err);
+                                    callback(err);
+                                    return;
+                                }
+                                //そして本命の変更
+                                collg.replaceOne({id},game,(err,result)=>{
+                                    if(err){
+                                        logger.error(err);
+                                        callback(err);
+                                        return;
+                                    }
+                                    collm.replaceOne({id},metadata,(err,result)=>{
+                                        if(err){
+                                            logger.error(err);
+                                            logger.alert("Game id "+id+" is inconsistent");
+                                            callback(err);
+                                        }
+                                        //おわり
+                                        callback(null);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    }
     //ゲームを見つける
     findGames(query:GameQuery,callback:Callback<Array<GameMetadata>>):void{
         this.getMetadataCollection((err,coll)=>{
@@ -259,19 +346,20 @@ export default class GameController{
 
     //MongoDBのコレクションを得る
     private getGameCollection(callback:Callback<db.Collection>):void{
-        this.db.mongo.collection(config.get("mongodb.collection.gamedata"),(err,col)=>{
-            if(err){
-                logger.critical(err);
-                callback(err,null);
-            }
-            callback(null,col);
-        });
+        this.getCollection(config.get("mongodb.collection.gamedata"),callback);
     }
     private getMetadataCollection(callback:Callback<db.Collection>):void{
-        this.db.mongo.collection(config.get("mongodb.collection.gamemetadata"),(err,col)=>{
+        this.getCollection(config.get("mongodb.collection.gamemetadata"),callback);
+    }
+    private getPastCollection(callback:Callback<db.Collection>):void{
+        this.getCollection(config.get("mongodb.collection.gamepast"),callback);
+    }
+    private getCollection(name:string,callback:Callback<db.Collection>):void{
+        this.db.mongo.collection(name,(err,col)=>{
             if(err){
                 logger.critical(err);
                 callback(err,null);
+                return;
             }
             callback(null,col);
         });

@@ -84,6 +84,12 @@ var Root = React.createClass({
                 return [require('./game/list.jsx'),{
                     owner: page.data.owner
                 }];
+            case "game.edit":
+                return [require('./game/edit.jsx'),{
+                    config: this.props.config,
+                    session: session,
+                    id: page.data.id
+                }];
             default:
                 //"404"とか
                 return [require('./notfound.jsx'),null]
