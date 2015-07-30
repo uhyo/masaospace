@@ -15,6 +15,9 @@ section, header, footer, main, p, ul, li, h1, h2, h3, h4, h5, h6, input, button,
 * {
   box-sizing: border-box;
 }
+ul {
+  list-style-position: inside;
+}
 
 hr {
   border: 1px solid #cccccc;
