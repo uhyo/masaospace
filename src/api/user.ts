@@ -435,11 +435,21 @@ class C{
                         });
                         return;
                     }
+                    //結果オブジェクト
+                    var result:any={};
                     //チケットの種類に応じた処理
                     if(type==="setmail"){
+                        //メールアドレスを変更
                         u.writeData({
                             mail: t.data
                         });
+                    }else if(type==="resetpassword"){
+                        //パスワードを再発行
+                        let newpassword = util.uniqueToken(config.get("user.password.maxLength"));
+                        let d=u.getData();
+                        result.screen_name=d.screen_name;
+                        result.newpassword=newpassword;
+                        u.setData(d,newpassword);
                     }else{
                         res.json({
                             error:"不明なチケットです。"
@@ -447,7 +457,7 @@ class C{
                         return;
                     }
                     //セーブ
-                    c.user.user.saveUser(u,(err,result)=>{
+                    c.user.user.saveUser(u,(err,r)=>{
                         if(err){
                             logger.error(err);
                             res.json({
@@ -457,7 +467,8 @@ class C{
                         }
                         //成功した
                         res.json({
-                            success:true
+                            success:true,
+                            result:result
                         });
                         c.ticket.removeTicket(token,(err)=>{
                             if(err){
