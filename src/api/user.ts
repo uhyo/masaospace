@@ -220,6 +220,60 @@ class C{
                 });
             });
         });
+        //パスワードリセット
+        //IN: id_or_mail:string
+        //OUT: success:boolean
+        router.post("/entry/reset",(req,res)=>{
+            var id:string = req.body.id_or_mail;
+            var uq:any;
+            if("string"!==typeof id){
+                id="";
+            }
+            if(id.indexOf("@")>=0){
+                //mail addressっぽい
+                uq={
+                    "data.mail": id
+                };
+            }else{
+                uq={
+                    "data.screen_name_lower": id.toLowerCase()
+                };
+            }
+            c.user.user.findOneUser(uq,(err,user)=>{
+                if(err){
+                    logger.error(err);
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(user==null){
+                    res.json({
+                        error: "ユーザーが見つかりませんでした。"
+                    });
+                    return;
+                }
+                //パスワード再発行チケットを発行
+                c.ticket.newTicket({
+                    type: "resetpassword",
+                    user: user.id,
+                },(err,t)=>{
+                    if(err){
+                        res.json({
+                            error:String(err)
+                        });
+                        return;
+                    }
+                    //チケットを発行した。メールを送る
+                    c.mail.resetPasswordMail(user,t.token);
+                    //success
+                    res.json({
+                        success: true
+                    });
+                });
+            });
+
+        });
         //ユーザー情報
         router.post("/update",util.apim.useUser,(req,res)=>{
             req.validateBody("name").isUserName();
@@ -381,11 +435,21 @@ class C{
                         });
                         return;
                     }
+                    //結果オブジェクト
+                    var result:any={};
                     //チケットの種類に応じた処理
                     if(type==="setmail"){
+                        //メールアドレスを変更
                         u.writeData({
                             mail: t.data
                         });
+                    }else if(type==="resetpassword"){
+                        //パスワードを再発行
+                        let newpassword = util.uniqueToken(config.get("user.password.maxLength"));
+                        let d=u.getData();
+                        result.screen_name=d.screen_name;
+                        result.newpassword=newpassword;
+                        u.setData(d,newpassword);
                     }else{
                         res.json({
                             error:"不明なチケットです。"
@@ -393,7 +457,7 @@ class C{
                         return;
                     }
                     //セーブ
-                    c.user.user.saveUser(u,(err,result)=>{
+                    c.user.user.saveUser(u,(err,r)=>{
                         if(err){
                             logger.error(err);
                             res.json({
@@ -403,7 +467,8 @@ class C{
                         }
                         //成功した
                         res.json({
-                            success:true
+                            success:true,
+                            result:result
                         });
                         c.ticket.removeTicket(token,(err)=>{
                             if(err){

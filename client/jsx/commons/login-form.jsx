@@ -49,7 +49,10 @@ module.exports = React.createClass({
                     </p>
                     <p><input className="form-single form-button" type="submit" value="ログイン" /></p>
                 </form>
-                <p>アカウントをお持ちでない方は<a href="/entry/page">新規登録</a></p>
+                <div className="login-form-info">
+                    <p>アカウントをお持ちでない方は<a href="/entry/page">新規登録</a></p>
+                    <p>パスワードをお忘れですか？　<a href="/entry/reset">パスワードの再発行</a>ができます。</p>
+                </div>
             </section>);
     }
 });

@@ -1,4 +1,4 @@
-var React=require('react');
+var React=require('react/addons');
 
 var api=require('../../actions/api');
 
@@ -41,6 +41,12 @@ var Ticket = React.createClass({
                         state: "form",
                         type: "setmail"
                     });
+                }else if(obj.type==="resetpassword"){
+                    //パスワード再発行
+                    this.setState({
+                        state: "form",
+                        type: "resetpassword"
+                    });
                 }else{
                     //分からない
                     this.setState({
@@ -54,9 +60,7 @@ var Ticket = React.createClass({
                 });
             }
         })
-        .catch((err)=>{
-            errorStore.emit(String(err));
-        });
+        .catch(errorStore.emit);
     },
     /* rendering */
     render:function(){
@@ -86,6 +90,13 @@ var Ticket = React.createClass({
                         <p>メールアドレスの変更を完了しました。</p>
                     </Resolve>
                 </section>);
+        }else if(this.state.type==="resetpassword"){
+            return (
+                <section>
+                    <h1>パスワード再発行</h1>
+                    <ResetPassword ticket={this.props.ticket}/>
+                </section>
+            );
         }
     },
 });
@@ -179,6 +190,53 @@ var SetPassword = React.createClass({
         );
     },
 
+});
+
+//パスワード再発行
+var ResetPassword = React.createClass({
+    displayName:"ResetPassword",
+    mixins:[React.addons.LinkedStateMixin],
+    propTypes:{
+        ticket: React.PropTypes.string.isRequired
+    },
+    getInitialState(){
+        return {
+            end: false,
+            show_password: false,
+            screen_name: "",
+            newpassword: ""
+        };
+    },
+    componentDidMount(){
+        api("/api/user/ticket/resolve",{
+            token: this.props.ticket
+        })
+        .then((obj)=>{
+            this.setState({
+                end: true,
+                screen_name: obj.result.screen_name,
+                newpassword: obj.result.newpassword
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    render(){
+        if(this.state.end===false){
+            return <Loading/>;
+        }
+        var password;
+        if(this.state.show_password){
+            password = <p>ユーザーIDは<b>{this.state.screen_name}</b>, 新しいパスワードは<b>{this.state.newpassword}</b>です。</p>;
+        }else{
+            password = null;
+        }
+        return <div>
+            <p>パスワードの再発行が完了しました。下のチェックボックスをチェックすると新しいパスワードが表示されます。</p>
+            <p>ログイン後、新しくパスワードを設定しなおすことをおすすめします。</p>
+            <p>パスワードを表示： <input type="checkbox" checkedLink={this.linkState("show_password")} /></p>
+            {password}
+        </div>;
+    }
 });
 
 //一般のチケットをアレする

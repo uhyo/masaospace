@@ -34,7 +34,7 @@ export default class TicketController{
                 coll.createIndex({
                     created:1
                 },{
-                    expireAfterSeconds:config.get("ticket.life.setpassword")
+                    expireAfterSeconds:config.get("ticket.life")
                 },(err,result)=>{
                     if(err){
                         logger.critical(err);
@@ -124,7 +124,7 @@ export default class TicketController{
     //Ticketがvalidかどうかチェック
     private checkTicket(t:TicketData):boolean{
         //type check
-        if(t.type==="setpassword"){
+        if(t.type==="setpassword" || t.type==="resetpassword"){
             return true;
         }
         if(t.type==="setmail"){

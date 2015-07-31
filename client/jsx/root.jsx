@@ -41,6 +41,11 @@ var Root = React.createClass({
                 return [require('./user/entry.jsx'),{
                     config: this.props.config
                 }];
+            case "user.reset":
+                //password reset page
+                return [require('./user/reset.jsx'),{
+                    config: this.props.config
+                }];
             case "user.ticket":
                 //ticket confirmation page
                 return [require('./user/ticket.jsx'),{

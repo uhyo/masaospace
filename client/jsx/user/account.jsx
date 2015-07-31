@@ -244,19 +244,19 @@ var ChangePasswordForm = React.createClass({
                             <p>
                                 <label className="form-row">
                                     <span>現在のパスワード</span>
-                                    <input type="password" name="current" ref="current" minLength={config.screenName.minLength} maxLength={config.screenName.maxLength} required onChange={this.handleChange} />
+                                    <input type="password" name="current" ref="current" minLength={config.password.minLength} maxLength={config.password.maxLength} required onChange={this.handleChange} />
                                 </label>
                             </p>
                             <p>
                                 <label className="form-row">
                                     <span>新しいパスワード</span>
-                                    <input type="password" name="password" ref="password" minLength={config.screenName.minLength} maxLength={config.screenName.maxLength} required onChange={this.handleChange} />
+                                    <input type="password" name="password" ref="password" minLength={config.password.minLength} maxLength={config.password.maxLength} required onChange={this.handleChange} />
                                 </label>
                             </p>
                             <p>
                                 <label className="form-row">
                                     <span>再入力</span>
-                                    <input type="password" name="password2" ref="password2" minLength={config.screenName.minLength} maxLength={config.screenName.maxLength} required onChange={this.handleChange} />
+                                    <input type="password" name="password2" ref="password2" minLength={config.password.minLength} maxLength={config.password.maxLength} required onChange={this.handleChange} />
                                 </label>
                             </p>
                             <p><input className="form-single form-button" type="submit" value="送信" /></p>
