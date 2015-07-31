@@ -6,7 +6,7 @@ import db=require('../db');
 import logger=require('../logger');
 import config=require('config');
 
-import {uniqueToken} from '../util';
+import {uniqueToken, secondToString} from '../util';
 
 import {User, Mail} from '../data';
 
@@ -37,7 +37,8 @@ export default class MailController{
                 address: d.mail
             },
             subject: `${sname} 登録手続きメール`,
-            text: "以下のリンクにアクセスすると"+sname+"への登録が完了します。\n\n"+
+            text: "以下のURLにアクセスすると"+sname+"への登録が完了します。\n"+
+                "URLの有効期間は発行されてから"+secondToString(config.get("ticket.life"))+"です。\n\n"+
                 addr+"\n\n"+
                 "----------\n"+
                 "このメールに心当たりが無い場合：\n"+
@@ -57,12 +58,33 @@ export default class MailController{
                 address: newmail
             },
             subject: `${sname} 登録メールアドレス変更手続`,
-            text: "以下のリンクにアクセスすると"+d.name+"さん("+d.screen_name+")のメールアドレスの変更が完了します。\n\n"+
+            text: "以下のリンクにアクセスすると"+d.name+"さん("+d.screen_name+")のメールアドレスの変更が完了します。\n"+
+                "URLの有効期間は発行されてから"+secondToString(config.get("ticket.life"))+"です。\n\n"+
                 addr+"\n\n"+
                 "----------\n"+
                 "このメールに心当たりが無い場合：\n"+
                 "誰かがあなたのメールアドレスを勝手に入力しました。\n"+
                 "このメールを無視すればあなたのメールアドレスが"+sname+"の登録に利用されることはありません。",
+        });
+    }
+    resetPasswordMail(u:User, ticket:string):void{
+        var d=u.getData();
+        var sname=config.get("service.name");
+        var addr=config.get("service.url")+"my/ticket/"+ticket;
+        this.send({
+            type: "resetpassword",
+            to: {
+                name: d.name,
+                address: d.mail
+            },
+            subject: `${sname} パスワード再発行メール`,
+            text: "以下のリンクにアクセスすると"+d.name+"さん("+d.screen_name+")の新しいパスワードが発行され、古いパスワードは無効になります。\n"+
+                "URLの有効期間は発行されてから"+secondToString(config.get("ticket.life"))+"です。\n\n"+
+                addr+"\n\n"+
+                "----------\n"+
+                "このメールに心当たりが無い場合：\n"+
+                "誰かがあなたのユーザーIDかメールアドレスを勝手に入力しました。\n"+
+                "このメールを無視すればあなたのパスワードが変更されることはありません。\n",
         });
     }
 

@@ -220,6 +220,60 @@ class C{
                 });
             });
         });
+        //パスワードリセット
+        //IN: id_or_mail:string
+        //OUT: success:boolean
+        router.post("/entry/reset",(req,res)=>{
+            var id:string = req.body.id_or_mail;
+            var uq:any;
+            if("string"!==typeof id){
+                id="";
+            }
+            if(id.indexOf("@")>=0){
+                //mail addressっぽい
+                uq={
+                    "data.mail": id
+                };
+            }else{
+                uq={
+                    "data.screen_name_lower": id.toLowerCase()
+                };
+            }
+            c.user.user.findOneUser(uq,(err,user)=>{
+                if(err){
+                    logger.error(err);
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(user==null){
+                    res.json({
+                        error: "ユーザーが見つかりませんでした。"
+                    });
+                    return;
+                }
+                //パスワード再発行チケットを発行
+                c.ticket.newTicket({
+                    type: "resetpassword",
+                    user: user.id,
+                },(err,t)=>{
+                    if(err){
+                        res.json({
+                            error:String(err)
+                        });
+                        return;
+                    }
+                    //チケットを発行した。メールを送る
+                    c.mail.resetPasswordMail(user,t.token);
+                    //success
+                    res.json({
+                        success: true
+                    });
+                });
+            });
+
+        });
         //ユーザー情報
         router.post("/update",util.apim.useUser,(req,res)=>{
             req.validateBody("name").isUserName();

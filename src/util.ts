@@ -41,6 +41,13 @@ export function addDailyJob(job:()=>void,hour:number=3):void{
     },null,true,"Asia/Tokyo");
 }
 
+//秒数をJapaneseにする
+export function secondToString(secs:number):string{
+    var hours:number, minutes:number, seconds:number;
+    hours=Math.floor(secs/3600), minutes=Math.floor((secs%3600)/60), seconds=secs%60;
+    return `${hours ? hours+"時間" : ""}${minutes ? minutes+"分" : ""}${seconds ? seconds+"秒" : ""}`;
+}
+
 
 // api middleware
 export module apim{

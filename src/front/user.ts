@@ -30,6 +30,16 @@ export default function(c:Controller,r:_Router):void{
         });
     });
 
+    //reset password
+    r.add("/entry/reset",(obj,callback:Callback<View>)=>{
+        callback(null,{
+            title: "パスワード再発行",
+            page:"user.reset",
+            data:{
+            }
+        });
+    });
+
     //my page
     r.add("/my",(obj,callback:Callback<View>)=>{
         callback(null,{

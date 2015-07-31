@@ -77,8 +77,7 @@ ticket:
   # ticket length
   length: 16
   # ticket life 8in seconds)
-  life:
-    setpassword: 86400
+  life: 86400
 
 # games
 game:
