@@ -26,14 +26,14 @@ class C{
             }
             var gameid:number=parseInt(req.body.game);
             //ゲームが存在するか確かめる
-            c.game.existsGame(gameid,(err,exists)=>{
+            c.game.getGame(gameid,(err,obj)=>{
                 if(err){
                     res.json({
                         error: String(err)
                     });
                     return;
                 }
-                if(exists===false){
+                if(obj==null){
                     res.json({
                         error: "そのゲームは存在しません。"
                     });
@@ -44,6 +44,7 @@ class C{
                     id: null,
                     game: gameid,
                     userid: req.session.user,
+                    gameowner: obj.metadata.owner,
                     comment: req.body.comment,
                     time: new Date()
                 };

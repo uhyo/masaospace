@@ -154,12 +154,16 @@ export interface Comment{
     //ユーザーID
     userid:string;
 
+    //ゲームのオーナーのID
+    gameowner:string;
+
     //内容
     comment:string;
     //日時
     time:Date;
 }
 export interface CommentWithUserData extends Comment{
+    //コメント主のデータ
     user:UserOpenData;
 }
 
