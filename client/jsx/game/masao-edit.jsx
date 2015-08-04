@@ -58,6 +58,7 @@ module.exports = React.createClass({
             </div>
             <MasaoSelector onSelect={this.masaoSelected} />
             {game!=null ? this.preview() : null}
+            {game!=null ? this.files() : null}
             {game!=null ? this.form() : null}
         </div>;
     },
@@ -65,6 +66,11 @@ module.exports = React.createClass({
         return <section className="game-masao-preview">
             <h1>正男プレビュー</h1>
             <GameView game={this.state.game} />
+        </section>;
+    },
+    files:function(){
+        return <section className="game-files">
+            <h1>ファイル選択</h1>
         </section>;
     },
     form:function(){

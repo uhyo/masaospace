@@ -242,6 +242,39 @@ section.login-form{
   }
 }
 
+//horizontal menu
+ul.horizontal-menu {
+  display: flex;
+
+  background-color: #ffffff;
+  min-height: 32px;
+  border-top: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+
+  margin: 0 0 0.8rem 0;
+
+  li {
+    display: block;
+    flex: auto 1 1;
+    padding: 0 0.8rem;
+
+    cursor: pointer;
+
+    color: $color-lightcolor;
+    text-align: center;
+    line-height: 36px;
+
+    border-bottom: 4px hidden transparent;
+
+    &.horizontal-menu-current {
+      border-bottom: 4px solid #bebebe;
+    }
+
+    &:hover {
+      background-color: $color-hovermask;
+    }
+  }
+}
 //portable styles
 .information {
   background-color: #f3f3f3;
