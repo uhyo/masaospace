@@ -132,7 +132,7 @@ a.user-tile {
   max-width: 800px;
   margin: 0.4rem auto;
 }
-.game-metadata-form {
+.game-metadata-form, .game-files {
   @include subsection;
 }
 

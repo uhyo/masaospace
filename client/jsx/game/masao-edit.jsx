@@ -1,14 +1,17 @@
-var React = require('react');
+var React = require('react/addons');
 var extend= require('extend');
 //masao edit component
 
 var MasaoSelector = require('./masao-selector.jsx'),
     GameMetadataForm = require('./game-metadata-form.jsx'),
     NeedLogin = require('../commons/need-login.jsx'),
-    GameView = require('./game-view.jsx');
+    GameView = require('./game-view.jsx'),
+    HorizontalMenu = require('../commons/horizontal-menu.jsx'),
+    FileList = require('../commons/file-list.jsx');
 
 module.exports = React.createClass({
     displayName:"MasaoEdit",
+    mixins: [React.addons.LinkedStateMixin],
     propTypes:{
         config: React.PropTypes.object.isRequired,
         session: React.PropTypes.object.isRequired,
@@ -22,7 +25,9 @@ module.exports = React.createClass({
     getInitialState(){
         return {
             game:this.props.game || null,
-            metadata:this.props.metadata || null
+            metadata:this.props.metadata || null,
+
+            filesPage:"filename_pattern",
         }
     },
     masaoSelected(game,metadata){
@@ -51,6 +56,10 @@ module.exports = React.createClass({
     },
     render(){
         var game=this.state.game;
+        if(this.props.session.loggedin===false){
+            //?????
+            return null;
+        }
         return <div>
             <div className="warning">
                 <p>現在はJava版またはcanvas版の正男が記述されたHTMLファイルの読み込みのみ対応しています。ご了承ください。</p>
@@ -69,8 +78,36 @@ module.exports = React.createClass({
         </section>;
     },
     files:function(){
+        var contents=[{
+            id: "filename_pattern",
+            name: "パターン画像"
+        },{
+            id: "filename_title",
+            name: "タイトル画像"
+        },{
+            id: "filename_ending",
+            name: "エンディング画像"
+        },{
+            id: "filename_gameover",
+            name: "ゲームオーバー画像"
+        },{
+            id: "filename_haikei",
+            name: "背景画像",
+        },{
+            id: "filename_mapchip",
+            name: "マップチップ（背景レイヤー）"
+            //},{
+            //id: "-",
+            //name: "その他"
+        }];
+        var query={
+            owner: this.props.session.user,
+            usage: this.state.filesPage
+        };
         return <section className="game-files">
             <h1>ファイル選択</h1>
+            <HorizontalMenu contents={contents} pageLink={this.linkState("filesPage")} />
+            <FileList query={query} fileLink={this.linkState(this.state.filesPage)} />
         </section>;
     },
     form:function(){

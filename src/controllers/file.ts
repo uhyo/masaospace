@@ -27,7 +27,7 @@ export default class FileController{
                 return;
             }
             //next prepare databases
-            this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+            this.getCollection((err,coll)=>{
                 if(err){
                     callback(err);
                     return;
@@ -59,7 +59,7 @@ export default class FileController{
     }
     addFile(f:FileData,filepath:string,callback:Callback<File>):void{
         //add file to db
-        this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+        this.getCollection((err,coll)=>{
             if(err){
                 callback(err,null);
                 return;
@@ -71,7 +71,9 @@ export default class FileController{
                 id:id,
                 type: f.type,
                 owner: f.owner,
+                usage: f.usage,
                 name: f.name,
+                description: f.description,
                 created: f.created
             };
             var newpath = path.join(config.get("file.path"),id);
@@ -109,7 +111,7 @@ export default class FileController{
         });
     }
     getFiles(q:FileQuery,callback:Callback<Array<File>>):void{
-        this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+        this.getCollection((err,coll)=>{
             if(err){
                 callback(err,null);
                 return;
@@ -122,6 +124,16 @@ export default class FileController{
                 }
                 callback(null,docs);
             });
+        });
+    }
+    //コレクションを得る
+    private getCollection(callback:Callback<db.Collection>):void{
+        this.db.mongo.collection(config.get("mongodb.collection.file"),(err,col)=>{
+            if(err){
+                logger.critical(err);
+                callback(err,null);
+            }
+            callback(null,col);
         });
     }
 
