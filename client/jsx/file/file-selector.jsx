@@ -3,7 +3,9 @@ var React=require('react');
 module.exports = React.createClass({
     displayName:"FileSelector",
     propTypes:{
-        accept: React.PropTypes.string
+        //拡張子（.は含まない）を,で区切った文字列がいい
+        accept: React.PropTypes.string,
+        onSelect: React.PropTypes.func
     },
     getInitialState:function(){
         return {

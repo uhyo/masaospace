@@ -187,6 +187,7 @@ section {
       width: 66%;
       height: 26px;
       border: 1px solid #cccccc;
+      background-color: #ffffff;
       box-shadow: -2px -2px 0 0 #eeeeee inset;
     }
     & > span + textarea{
@@ -275,6 +276,45 @@ ul.horizontal-menu {
     }
   }
 }
+
+//file-list
+.file-list-container {
+  .file-list-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    margin: 0 0 12px 0;
+
+    .file-list-file {
+      flex: 120px 0 0;
+      margin:0 12px;
+      padding:12px 0;
+      border-right: 1px solid #dedede;
+      border-bottom: 1px solid #dedede;
+
+      min-height: 160px;
+
+      cursor: pointer;
+
+      &.file-list-command {
+        background-color: $color-box-background;
+        color: $color-lightcolor;
+
+        text-align: center;
+      }
+      &.file-list-default {
+        padding-top: 60px;
+      }
+      &.file-list-current {
+        background-color: #bbff99;
+      }
+    }
+
+  }
+}
+
+
 //portable styles
 .information {
   background-color: #f3f3f3;
@@ -291,7 +331,7 @@ ul.horizontal-menu {
   height: 32px;
   overflow: hidden;
   background-image: url(/static/images/icons.png);
-  background-size: 64px 64px;
+  background-size: 64px 120px;
   background-repeat: no-repeat;
 
   &.icon-home {
@@ -306,5 +346,11 @@ ul.horizontal-menu {
     height: 24px;
 
     background-position: 0 -32px;
+  }
+
+  &.icon-fileplus {
+    width: 64px;
+    height: 64px;
+    background-position:0 -56px;
   }
 }

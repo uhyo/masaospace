@@ -7,7 +7,7 @@ var MasaoSelector = require('./masao-selector.jsx'),
     NeedLogin = require('../commons/need-login.jsx'),
     GameView = require('./game-view.jsx'),
     HorizontalMenu = require('../commons/horizontal-menu.jsx'),
-    FileList = require('../commons/file-list.jsx');
+    FileList = require('../file/file-list.jsx');
 
 module.exports = React.createClass({
     displayName:"MasaoEdit",
@@ -28,7 +28,7 @@ module.exports = React.createClass({
             metadata:this.props.metadata || null,
 
             filesPage:"filename_pattern",
-        }
+        };
     },
     masaoSelected(game,metadata){
         if(metadata==null){
@@ -107,7 +107,7 @@ module.exports = React.createClass({
         return <section className="game-files">
             <h1>ファイル選択</h1>
             <HorizontalMenu contents={contents} pageLink={this.linkState("filesPage")} />
-            <FileList query={query} fileLink={this.linkState(this.state.filesPage)} />
+            <FileList config={this.props.config} query={query} fileLink={this.linkState(this.state.filesPage)} />
         </section>;
     },
     form:function(){

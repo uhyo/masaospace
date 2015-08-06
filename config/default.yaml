@@ -24,6 +24,12 @@ file:
   path: /home/no/masaopost/data
   # file id length
   idLength: 16
+# file data
+filedata:
+  name:
+    maxLength: 250
+  description:
+    maxLength: 1024
 
 # web server config
 webserver:

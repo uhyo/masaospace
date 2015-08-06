@@ -1,7 +1,7 @@
 //正男データをファイルとかから生成する
 var React = require('react');
 
-var FileSelector = require('../commons/file-selector.jsx');
+var FileSelector = require('../file/file-selector.jsx');
 
 var errorStore=require('../../stores/error');
 

@@ -5,11 +5,13 @@ var api=require('../../actions/api');
 
 var errorStore=require('../../stores/error');
 
-var Loading=require('./loading.jsx');
+var Loading=require('../commons/loading.jsx'),
+    FileUpload=require('./file-upload.jsx');
 
 module.exports = React.createClass({
     displayName:"FileList",
     propTypes:{
+        config: React.PropTypes.object.isRequired,
         query: React.PropTypes.shape({
             owner: React.PropTypes.string,
             usage: React.PropTypes.string
@@ -22,14 +24,17 @@ module.exports = React.createClass({
     getInitialState(){
         return {
             loading: true,
-            files: []
+            files: [],
+            file_upload: false,
         };
     },
     componentDidMount(){
         this.load(this.props.query);
     },
     componentWillReceiveProps(nextProps){
-        if(this.props.query!==nextProps.query){
+        //検索条件が違うときだけ再読み込み
+        var oldQuery=this.props.query, newQuery=nextProps.query;
+        if(oldQuery.owner!==newQuery.owner || oldQuery.usage!==newQuery.usage){
             this.load(nextProps.query);
         }
     },
@@ -52,18 +57,35 @@ module.exports = React.createClass({
             return <Loading />;
         }
         var current = this.props.fileLink.value;
+        if(this.state.file_upload===true){
+            current="file";
+        }else if(!current){
+            current="default";
+        }
         return <div className="file-list-container">
             <div className="file-list-main">{
-                ["default"].concat(this.state.files).map((file,i)=>{
+                ["default","file"].concat(this.state.files).map((file,i)=>{
                     var className="file-list-file", handleClick;
                     if(file==="default"){
                         //デフォルトを使用するボタん
-                        className+=" file-list-default";
-                        if(current===""){
+                        className+=" file-list-command file-list-default";
+                        if(current==="default"){
                             className+=" file-list-current";
                         }
                         handleClick = this.clickHandler("");
-                        return <div key={i}className={className} onClick={handleClick}>デフォルトの画像を使用する</div>;
+                        return <div key={i} className={className} onClick={handleClick}>デフォルトの画像を使用する</div>;
+                    }else if(file==="file"){
+                        //ファイルアップロード
+                        className+=" file-list-command";
+                        if(current==="file"){
+                            className+=" file-list-current";
+                        }
+                        return <div key={i} className={className} onClick={this.handleUploadCommand}>
+                            <div>
+                                <span className="icon icon-fileplus" />
+                            </div>
+                            <div>新しいファイルを追加...</div>
+                        </div>;
                     }else{
                         //ファイル
                         if(current===file.id){
@@ -77,6 +99,7 @@ module.exports = React.createClass({
                     }
                 })
             }</div>
+            { this.state.file_upload ? this.fileUpload() : null}
         </div>;
     },
     clickHandler(fileid){
@@ -86,6 +109,16 @@ module.exports = React.createClass({
                 fl.requestChange(fileid);
             }
         };
+    },
+    handleUploadCommand(e){
+        //ファイルアップロードボタンが押された
+        this.setState({
+            file_upload: true
+        });
+    },
+    fileUpload(){
+        //ファイルアップロード部分
+        return <FileUpload config={this.props.config} onUpload={this.handleFileUpload} usage={this.props.query.usage} />;
     }
 });
 
