@@ -26,6 +26,8 @@ file:
   idLength: 16
 # file data
 filedata:
+  # max file size in bytes
+  maxSize: 1048576
   name:
     maxLength: 250
   description:

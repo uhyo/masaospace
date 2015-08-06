@@ -24,6 +24,8 @@ module.exports = React.createClass({
     getInitialState(){
         return {
             file: null,
+            //処理状態
+            status: "",
             //ファイルのメタデーーーーーーーータ
             type: "",
             name: "",
@@ -39,6 +41,7 @@ module.exports = React.createClass({
     },
     fileData(){
         //ファイルの情報をアレする
+        //TODO
         var usages=[
             ['filename_pattern','パターン画像'],
             ['filename_title','タイトル画像'],
@@ -49,6 +52,16 @@ module.exports = React.createClass({
             ['','その他']
         ];
         var config=this.props.config.filedata;
+        var uploadbutton, disabled, uploadtext;
+        if(this.state.status==="uploadable"){
+            disabled=false, uploadtext="アップロード"
+        }else if(this.state.status==="uploading"){
+            disabled=true, uploadtext="アップロード中"
+        }else if(this.state.status==="uploaded"){
+            disabled=true, uploadtext="アップロード完了"
+        }
+        uploadbutton = <input className="form-single form-button" type="submit" disabled={disabled} value={uploadtext} />;
+
         return <form className="form" onSubmit={this.handleSubmit}>
             <p>
                 <label className="form-row">
@@ -81,13 +94,14 @@ module.exports = React.createClass({
                 </label>
             </p>
             <p>
-                <input className="form-single form-button" type="submit" value="アップロード" />
+                {uploadbutton}
             </p>
         </form>;
     },
     handleFile(file){
         this.setState({
             file: file,
+            status: "uploadable",
             type: mime.lookup(file.name),
             name: file.name,
             description: ""
@@ -96,7 +110,28 @@ module.exports = React.createClass({
     handleSubmit(e){
         e.preventDefault();
         //ファイルをアップロードするぞーーーーーー
-        //TODO
+        api("/api/file/upload",{
+            file: this.state.file,
+            name: this.state.name,
+            type: this.state.type,
+            usage: this.state.usage,
+            description: this.state.description,
+        },"multipart/form-data")
+        .then(({id})=>{
+            //アップロード成功
+            if("function"===typeof this.props.onUpload){
+                this.props.onUpload(id);
+            }
+            this.setState({
+                status: "uploaded"
+            });
+        })
+        .catch(errorStore.emit);
+        //アップロード中
+        this.setState({
+            status: "uploading"
+        });
+
     },
 });
 
