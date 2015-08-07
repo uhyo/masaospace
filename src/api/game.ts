@@ -37,7 +37,7 @@ class C{
                 });
                 return;
             }
-            if(!masao.validateParams(game.params) || !masao.validateVersion(game.version)){
+            if(!masao.validateParams(game.params) || !masao.validateVersion(game.version) || !Array.isArray(game.resources)){
                 res.json({
                     error: "ゲーム情報が不正です。"
                 });
@@ -53,33 +53,87 @@ class C{
             //リソース情報を除去
             masao.removeResources(game.params);
             
-            //TODO: 現在はとりあえずリソース空
-            var gameobj:GameData = {
-                id: null,
-                version: game.version,
-                params: game.params,
-                resources: []
-            };
-            var now=new Date();
-            var metadataobj: GameMetadata = {
-                id: null,
-                owner: req.session.user,
-                title: metadata.title,
-                description: metadata.description,
-                created: now,
-                updated: now
-            };
-
-            c.game.newGame(gameobj,metadataobj,(err,newid:number)=>{
+            //リソースがあるか確認する
+            var resourceTargetFlag:boolean = false;
+            var resourceIds=game.resources.map((obj)=>{
+                if(obj==null){
+                    resourceTargetFlag=true;
+                    return null;
+                }
+                if(!(obj.target in masao.resources)){
+                    //そんなリソースはない
+                    resourceTargetFlag=true;
+                    return null;
+                }
+                if("string"!==typeof obj.id){
+                    resourceTargetFlag=true;
+                    return null;
+                }
+                return obj.id;
+            });
+            if(resourceTargetFlag===true){
+                //resourcesデータにまずいところがあった
+                res.json({
+                    error: "ゲーム情報が不正です。"
+                });
+                return;
+            }
+            c.file.getFiles({
+                ids: resourceIds,
+                owner: req.session.user
+            },(err,files)=>{
                 if(err){
                     res.json({
-                        error:String(err)
+                        error: String(err)
                     });
                     return;
                 }
-                //できた
-                res.json({
-                    id: newid
+                //ファイルが全部存在するか調べる
+                var table:any={};
+                for(var i=0;i<files.length;i++){
+                    table[files[i].id]=true;
+                }
+                for(var i=0;i<resourceIds.length;i++){
+                    if(table[resourceIds[i]]!==true){
+                        //!?
+                        res.json({
+                            error: "ゲーム情報が不正です。"
+                        });
+                        return;
+                    }
+                }
+                //ファイルはOKだ
+                var gameobj:GameData = {
+                    id: null,
+                    version: game.version,
+                    params: game.params,
+                    resources: game.resources.map((obj)=>{
+                        return {
+                            target: obj.target,
+                            id: obj.id
+                        };
+                    })
+                };
+                var now=new Date();
+                var metadataobj: GameMetadata = {
+                    id: null,
+                    owner: req.session.user,
+                    title: metadata.title,
+                    description: metadata.description,
+                    created: now,
+                    updated: now
+                };
+                c.game.newGame(gameobj,metadataobj,(err,newid:number)=>{
+                    if(err){
+                        res.json({
+                            error:String(err)
+                        });
+                        return;
+                    }
+                    //できた
+                    res.json({
+                        id: newid
+                    });
                 });
             });
         });

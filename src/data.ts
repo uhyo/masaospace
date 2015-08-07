@@ -90,6 +90,7 @@ export interface File extends FileData{
 //ファイルを探すクエリ
 export interface FileQuery{
     id?:string;
+    ids?:Array<string>;
     owner?:string;
     usage?:string;
 }

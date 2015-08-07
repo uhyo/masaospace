@@ -112,6 +112,12 @@ export default class FileController{
         });
     }
     getFiles(q:FileQuery,callback:Callback<Array<File>>):void{
+        if(Array.isArray(q.ids)){
+            q.id = <any>{
+                $in: q.ids
+            };
+            delete q.ids;
+        }
         this.getCollection((err,coll)=>{
             if(err){
                 callback(err,null);
