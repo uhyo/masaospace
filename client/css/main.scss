@@ -309,6 +309,13 @@ ul.horizontal-menu {
       &.file-list-current {
         background-color: #bbff99;
       }
+
+      .file-list-file-name {
+        font-weight: bold;
+      }
+      .file-list-file-description {
+        font-size: 0.9rem;
+      }
     }
 
   }

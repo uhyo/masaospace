@@ -19,111 +19,17 @@ class C{
         // IN metadata: メタデータのJSON表現(title,description)
         // OUT id: 新しいゲームのid
         router.post("/new",util.apim.useUser,(req,res)=>{
-            var game:GameData, metadata:GameMetadata;
-            //JSONを読む
-            try{
-                game=JSON.parse(req.body.game);
-                metadata=JSON.parse(req.body.metadata);
-            }catch(e){
-                res.json({
-                    error:String(e)
-                });
-                return;
-            }
-            //ゲームをバリデートする
-            if(game==null || metadata==null){
-                res.json({
-                    error: "ゲーム情報が不正です。"
-                });
-                return;
-            }
-            if(!masao.validateParams(game.params) || !masao.validateVersion(game.version) || !Array.isArray(game.resources)){
-                res.json({
-                    error: "ゲーム情報が不正です。"
-                });
-                return;
-            }
-            //メタ情報のバリデーション
-            if(!validateMetadata(metadata)){
-                res.json({
-                    error: "ゲーム情報が不正です。"
-                });
-                return;
-            }
-            //リソース情報を除去
-            masao.removeResources(game.params);
-            
-            //リソースがあるか確認する
-            var resourceTargetFlag:boolean = false;
-            var resourceIds=game.resources.map((obj)=>{
-                if(obj==null){
-                    resourceTargetFlag=true;
-                    return null;
-                }
-                if(!(obj.target in masao.resources)){
-                    //そんなリソースはない
-                    resourceTargetFlag=true;
-                    return null;
-                }
-                if("string"!==typeof obj.id){
-                    resourceTargetFlag=true;
-                    return null;
-                }
-                return obj.id;
-            });
-            if(resourceTargetFlag===true){
-                //resourcesデータにまずいところがあった
-                res.json({
-                    error: "ゲーム情報が不正です。"
-                });
-                return;
-            }
-            c.file.getFiles({
-                ids: resourceIds,
-                owner: req.session.user
-            },(err,files)=>{
+            processMasao(req,c,(err,obj)=>{
                 if(err){
                     res.json({
                         error: String(err)
                     });
                     return;
                 }
-                //ファイルが全部存在するか調べる
-                var table:any={};
-                for(var i=0;i<files.length;i++){
-                    table[files[i].id]=true;
-                }
-                for(var i=0;i<resourceIds.length;i++){
-                    if(table[resourceIds[i]]!==true){
-                        //!?
-                        res.json({
-                            error: "ゲーム情報が不正です。"
-                        });
-                        return;
-                    }
-                }
-                //ファイルはOKだ
-                var gameobj:GameData = {
-                    id: null,
-                    version: game.version,
-                    params: game.params,
-                    resources: game.resources.map((obj)=>{
-                        return {
-                            target: obj.target,
-                            id: obj.id
-                        };
-                    })
-                };
+                //時刻をセット
                 var now=new Date();
-                var metadataobj: GameMetadata = {
-                    id: null,
-                    owner: req.session.user,
-                    title: metadata.title,
-                    description: metadata.description,
-                    created: now,
-                    updated: now
-                };
-                c.game.newGame(gameobj,metadataobj,(err,newid:number)=>{
+                obj.metadata.created=obj.metadata.updated=now;
+                c.game.newGame(obj.game,obj.metadata,(err,newid:number)=>{
                     if(err){
                         res.json({
                             error:String(err)
@@ -139,67 +45,26 @@ class C{
         });
         //ゲームに修正をかける
         router.post("/edit",util.apim.useUser,(req,res)=>{
-            var game:GameData, metadata:GameMetadata;
-            //JSONを読む
-            try{
-                game=JSON.parse(req.body.game);
-                metadata=JSON.parse(req.body.metadata);
-            }catch(e){
-                res.json({
-                    error:String(e)
-                });
-                return;
-            }
-            //ゲームをバリデートする
-            if(game==null || metadata==null){
-                res.json({
-                    error: "ゲーム情報が不正です。"
-                });
-                return;
-            }
-            if(!masao.validateParams(game.params) || !masao.validateVersion(game.version)){
-                res.json({
-                    error: "ゲーム情報が不正です。"
-                });
-                return;
-            }
-            //メタ情報のバリデーション
-            if(!validateMetadata(metadata)){
-                res.json({
-                    error: "ゲーム情報が不正です。"
-                });
-                return;
-            }
-            //リソース情報を除去
-            masao.removeResources(game.params);
-            
-            //TODO: 現在はとりあえずリソース空
-            var gameobj:GameData = {
-                id: null,
-                version: game.version,
-                params: game.params,
-                resources: []
-            };
-            var now=new Date();
-            var metadataobj: GameMetadata = {
-                id: null,
-                owner: req.session.user,
-                title: metadata.title,
-                description: metadata.description,
-                created: null,
-                updated: now
-            };
-
-            c.game.editGame(parseInt(req.body.id), req.session.user, gameobj, metadataobj,(err)=>{
+            processMasao(req,c,(err,obj)=>{
                 if(err){
                     res.json({
                         error: String(err)
                     });
-                }else{
-                    res.json({
-                        success:true
-                    });
+                    return;
                 }
+                //updatedをセット（createdはeditGameで）
+                obj.metadata.updated=new Date();
+                c.game.editGame(parseInt(req.body.id), req.session.user, obj.game, obj.metadata,(err)=>{
+                    if(err){
+                        res.json({
+                            error: String(err)
+                        });
+                    }else{
+                        res.json({
+                            success:true
+                        });
+                    }
+                });
             });
         });
 
@@ -285,4 +150,102 @@ function validateMetadata(metadata:GameMetadata):boolean{
         return false;
     }
     return true;
+}
+
+//正男のデータをバリデーションとかする
+function processMasao(req:express.Request,c:Controller,callback:Callback<{game:GameData;metadata:GameMetadata}>):void{
+    var game:GameData, metadata:GameMetadata;
+    //JSONを読む
+    try{
+        game=JSON.parse(req.body.game);
+        metadata=JSON.parse(req.body.metadata);
+    }catch(e){
+        callback(e,null);
+        return;
+    }
+    //ゲームをバリデートする
+    if(game==null || metadata==null){
+        callback("ゲーム情報が不正です。",null);
+        return;
+    }
+    if(!masao.validateParams(game.params) || !masao.validateVersion(game.version) || !Array.isArray(game.resources)){
+        callback("ゲーム情報が不正です。",null);
+        return;
+    }
+    //メタ情報のバリデーション
+    if(!validateMetadata(metadata)){
+        callback("ゲーム情報が不正です。",null);
+        return;
+    }
+    //リソース情報を除去
+    masao.removeResources(game.params);
+
+    //リソースがあるか確認する
+    var resourceTargetFlag:boolean = false;
+    var resourceIds=game.resources.map((obj)=>{
+        if(obj==null){
+            resourceTargetFlag=true;
+            return null;
+        }
+        if(!(obj.target in masao.resources)){
+            //そんなリソースはない
+            resourceTargetFlag=true;
+            return null;
+        }
+        if("string"!==typeof obj.id){
+            resourceTargetFlag=true;
+            return null;
+        }
+        return obj.id;
+    });
+    if(resourceTargetFlag===true){
+        //resourcesデータにまずいところがあった
+        callback("ゲーム情報が不正です。",null);
+        return;
+    }
+    c.file.getFiles({
+        ids: resourceIds,
+        owner: req.session.user
+    },(err,files)=>{
+        if(err){
+            callback(err,null);
+            return;
+        }
+        //ファイルが全部存在するか調べる
+        var table:any={};
+        for(var i=0;i<files.length;i++){
+            table[files[i].id]=true;
+        }
+        for(var i=0;i<resourceIds.length;i++){
+            if(table[resourceIds[i]]!==true){
+                //!?
+                callback("ゲーム情報が不正です。",null);
+                return;
+            }
+        }
+        //ファイルはOKだ
+        var gameobj:GameData = {
+            id: null,
+            version: game.version,
+            params: game.params,
+            resources: game.resources.map((obj)=>{
+                return {
+                    target: obj.target,
+                    id: obj.id
+                };
+            })
+        };
+        var metadataobj: GameMetadata = {
+            id: null,
+            owner: req.session.user,
+            title: metadata.title,
+            description: metadata.description,
+            created: null,
+            updated: null
+        };
+        callback(null,{
+            game: gameobj,
+            metadata: metadataobj
+        });
+    });
 }

@@ -274,8 +274,9 @@ export default class GameController{
                             return;
                         }
 
-                        //過去ログを作成
+                        //作成時刻はコピー
                         metadata.created=metadatadoc.created;
+                        //過去ログを作成
                         var pastdata: GamePastData={
                             id,
                             created: metadatadoc.updated,
