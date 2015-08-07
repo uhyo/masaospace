@@ -74,6 +74,12 @@ export interface FileData{
     owner:string;
     //もともとのファイル名
     name:string;
+    //用途
+    usage:string;
+    //説明
+    description:string;
+    //サイズ
+    size:number;
     //アップロード日時
     created:Date;
 }
@@ -84,7 +90,9 @@ export interface File extends FileData{
 //ファイルを探すクエリ
 export interface FileQuery{
     id?:string;
+    ids?:Array<string>;
     owner?:string;
+    usage?:string;
 }
 
 //正男（各種メタデータ）

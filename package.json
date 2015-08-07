@@ -36,6 +36,7 @@
     "mime": "^1.3.4",
     "mkdirp": "^0.5.1",
     "mongodb": "^2.0.33",
+    "multer": "^1.0.3",
     "my-router": "^1.1.0",
     "my-user-mongo": "^0.1.1",
     "my-validator": "^0.1.0",

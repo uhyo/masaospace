@@ -487,6 +487,7 @@ declare module "mongodb"{
         writeConcern:any;
         hint:any;
         //一部だけ
+        aggregate(pipeline:Array<any>,callback:(error:any,result:Array<any>)=>void):void;
         count(query:any,options:{
             limit?:number;
             skip?:number;
@@ -862,6 +863,18 @@ declare module "express"{
             validateQuery(field:string):Validation;
             _validationErrors:Array<ValidationError>;
             throwValidationErrors():void;
+            ////multer
+            file:{
+                fieldName:string;
+                originalName:string;
+                encoding:string;
+                mimetype:string;
+                size:number;
+                destination?:string;
+                filename?:string;
+                path?:string;
+                buffer?:any;
+            };
 
         }
         class Response extends stream.Writable{
@@ -1187,6 +1200,32 @@ declare module "cron"{
     }
     export class CronTime{
         constructor(time:string|Date);
+    }
+}
+declare module "multer"{
+    export = _m;
+    function _m(options?:{
+        dest?: string;
+        storage?: any;
+        fileFilter?: Function;
+        limits?: {
+            fieldNameSize?: number;
+            fieldSize?: number;
+            fields?: number;
+            fileSize?: number;
+            files?: number;
+            parts?: number;
+            headerPairts?: number;
+        };
+    }):Multer;
+    interface Multer{
+        (req:any,res:any,next:any):void;
+        single(fieldname:string):any;
+        array(fieldname:string,maxCount?:number):any;
+        fields(fields:Array<{
+            name:string;
+            maxCount?:number;
+        }>):any;
     }
 }
 

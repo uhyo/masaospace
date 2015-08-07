@@ -1,6 +1,8 @@
 //ゲームをアレする
-var deepExtend=require('deep-extend');
+var extend=require('extend');
 var React=require('react/addons');
+
+var masao=require('../../../lib/masao');
 
 module.exports = React.createClass({
     displayName:"GameView",
@@ -23,19 +25,56 @@ module.exports = React.createClass({
         this.setGame(this.props.game);
     },
     setGame:function(game){
-        var p=deepExtend({},game.params);
+        var p=extend({},game.params);
         if(this.gameid==null){
             this.gameid=Math.random().toString(36).slice(2);
         }
         React.findDOMNode(this).id=this.gameid;
-        /* set images */
-        //TODO: custom images
-        p["filename_title"]="/static/title.gif";
-        p["filename_ending"]="/static/ending.gif";
-        p["filename_gameover"]="/static/gameover.gif";
-        p["filename_pattern"]="/static/pattern.gif";
-        p["filename_haikei"]="/static/haikei.gif";
+        //disable SE (SE is TODO)
         p["se_switch"]="2";
+        //デフォルトのリソースをセットする
+        for(var key in masao.resourceToKind){
+            var kind=masao.resourceToKind[key];
+            //kindの一覧はlib/masao.jsのresourceKindsに
+            var value;
+            switch(kind){
+                case "pattern":
+                    value="/static/pattern.gif";
+                break;
+                case "title":
+                    value="/static/title.gif";
+                break;
+                case "ending":
+                    value="/static/ending.gif";
+                break;
+                case "gameover":
+                    value="/static/gameover.gif";
+                break;
+                case "mapchip":
+                    value="/static/mapchip.gif";
+                break;
+                case "chizu":
+                    value="/static/chizu.gif";
+                break;
+                case "haikei":
+                    value="/static/haikei.gif";
+                break;
+                case "bgm":
+                case "se":
+                case "other":
+                    //TODO
+                    value="";
+                break;
+            }
+            p[key]=value;
+        }
+        //カスタムリソースをセット
+        var resources=game.resources;
+        for(var i=0;i < resources.length; i++){
+            if(resources[i].target in masao.resources){
+                p[resources[i].target] = "/uploaded/"+resources[i].id;
+            }
+        }
         this.game=new CanvasMasao.Game(p,this.gameid);
     },
     endGame:function(){

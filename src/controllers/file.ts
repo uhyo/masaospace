@@ -27,7 +27,7 @@ export default class FileController{
                 return;
             }
             //next prepare databases
-            this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+            this.getCollection((err,coll)=>{
                 if(err){
                     callback(err);
                     return;
@@ -59,19 +59,22 @@ export default class FileController{
     }
     addFile(f:FileData,filepath:string,callback:Callback<File>):void{
         //add file to db
-        this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+        this.getCollection((err,coll)=>{
             if(err){
                 callback(err,null);
                 return;
             }
             var baseid=uniqueToken(config.get("file.idLength"));
             //新しいファイル名をつくる
-            var id=baseid+"."+mime.extension(fi.type);
+            var id=baseid+"."+mime.extension(f.type);
             var fi:File={
                 id:id,
                 type: f.type,
                 owner: f.owner,
+                usage: f.usage,
                 name: f.name,
+                description: f.description,
+                size: f.size,
                 created: f.created
             };
             var newpath = path.join(config.get("file.path"),id);
@@ -109,7 +112,13 @@ export default class FileController{
         });
     }
     getFiles(q:FileQuery,callback:Callback<Array<File>>):void{
-        this.db.mongo.collection(config.get("mongo.collection.file"),(err,coll)=>{
+        if(Array.isArray(q.ids)){
+            q.id = <any>{
+                $in: q.ids
+            };
+            delete q.ids;
+        }
+        this.getCollection((err,coll)=>{
             if(err){
                 callback(err,null);
                 return;
@@ -122,6 +131,41 @@ export default class FileController{
                 }
                 callback(null,docs);
             });
+        });
+    }
+    //ファイルの合計サイズ
+    sumFileSize(q:FileQuery,callback:Callback<number>):void{
+        this.getCollection((err,coll)=>{
+            coll.aggregate([
+                {$match: q},
+                {$project:{size:1}},
+                {$group:{
+                    "_id": "a",
+                    "sum": {$sum: "$size"}
+                }}
+            ],(err,result)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                    return;
+                }
+                if(result.length===0){
+                    //何もなかった
+                    callback(null,0);
+                    return;
+                }
+                callback(null,result[0].sum);
+            });
+        });
+    }
+    //コレクションを得る
+    private getCollection(callback:Callback<db.Collection>):void{
+        this.db.mongo.collection(config.get("mongodb.collection.file"),(err,col)=>{
+            if(err){
+                logger.critical(err);
+                callback(err,null);
+            }
+            callback(null,col);
         });
     }
 

@@ -3,24 +3,37 @@
 module.exports = api;
 
 //returns Promise!
-function api(path,params){
-    var Promise = Promise ? Promise : require('native-promise-only');
+function api(path,params,contentType){
+    var Promise = require('native-promise-only');
     if(params == null){
         params = {};
     }
-    var ps=[];
-    ps.push("_csrf="+encodeURIComponent(_g_csrfToken));
-    for(var key in params){
-        if(params[key]!=undefined){
-            ps.push(encodeURIComponent(key)+"="+encodeURIComponent(params[key]));
-        }
-    }
     var xhr=new XMLHttpRequest();
     xhr.open("POST",path);
-    xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-    xhr.send(ps.join("&"));
+    var requestBody;
+    if(contentType==="multipart/form-data"){
+        //FormDataを使ってあれする
+        requestBody=new FormData;
+        xhr.setRequestHeader("X-CSRF-Token",_g_csrfToken);
+        for(var key in params){
+            if(params[key]!=null){
+                requestBody.append(key,params[key]);
+            }
+        }
+    }else{
+        var ps=[];
+        ps.push("_csrf="+encodeURIComponent(_g_csrfToken));
+        for(var key in params){
+            if(params[key]!=undefined){
+                ps.push(encodeURIComponent(key)+"="+encodeURIComponent(params[key]));
+            }
+        }
+        requestBody=ps.join("&");
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    }
+    xhr.send(requestBody);
 
-    console.log("API call! ",path,params,ps.join("&"));
+    console.log("API call! ",path,params,requestBody);
 
     var p=new Promise(function(resolve,reject){
         xhr.addEventListener("load",function(e){

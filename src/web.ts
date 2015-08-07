@@ -74,11 +74,19 @@ export class WebServer{
             extended: false
         }));
         //static files
-        this.app.use(st({
-            path:path.resolve(__dirname,"..","dist"),
-            url:"/static",
-            index:false
-        }));
+        if(config.get("webserver.externalstatic")!==true){
+            this.app.use(st({
+                path:path.resolve(__dirname,"..","dist"),
+                url:"/static",
+                index:false
+            }));
+            //uploaded files
+            this.app.use(st({
+                path:config.get("file.path"),
+                url:"/uploaded",
+                index:false
+            }));
+        }
         //validator
         this.app.use(validator.forExpress);
         //session
@@ -229,7 +237,8 @@ export class WebServer{
             service: config.get("service"),
             user: config.get("user"),
             game: config.get("game"),
-            comment: config.get("comment")
+            comment: config.get("comment"),
+            filedata: config.get("filedata")
         };
     }
 }

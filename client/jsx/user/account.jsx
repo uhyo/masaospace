@@ -6,10 +6,12 @@ var errorStore=require('../../stores/error');
 var api=require('../../actions/api');
 
 var NeedLogin = require('../commons/need-login.jsx'),
-    Loading = require('../commons/loading.jsx');
+    Loading = require('../commons/loading.jsx'),
+    HorizontalMenu = require('../commons/horizontal-menu.jsx');
 
 var Account=React.createClass({
     displayName:"Account",
+    mixins:[React.addons.LinkedStateMixin],
     propTypes:{
         config: React.PropTypes.object.isRequired,
         session: React.PropTypes.object.isRequired
@@ -49,13 +51,6 @@ var Account=React.createClass({
         .catch(errorStore.emit);
 
     },
-    handleClick:function(e){
-        var t=e.target;
-        var n=t.dataset.menu;
-        this.setState({
-            page: n
-        });
-    },
     render:function(){
         return (
             <section>
@@ -65,23 +60,21 @@ var Account=React.createClass({
         );
     },
     content:function(){
+        var pages=[{
+            id:"profile",
+            name:"プロフィール"
+        },{
+            id:"password",
+            name:"パスワード変更"
+        },{
+            id:"mail",
+            name:"メールアドレス変更"
+        }];
         return (
             <div>
-                {this.menu()}
+                <HorizontalMenu contents={pages} pageLink={this.linkState("page")} />
                 {this.main()}
             </div>
-        );
-    },
-    menu(){
-        var pages=[["profile","プロフィール"],["password","パスワード変更"],["mail","メールアドレス変更"]];
-        var current=this.state.page;
-        return (
-            <ul className="user-account-menu">{
-                pages.map(([pageid,pagename])=>{
-                    var className = current===pageid ? "user-account-menu-current" : null;
-                    return <li key={pageid} className={className} onClick={this.handleClick} data-menu={pageid}>{pagename}</li>;
-                })
-            }</ul>
         );
     },
     main(){
