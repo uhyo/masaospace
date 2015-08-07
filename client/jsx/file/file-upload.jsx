@@ -119,12 +119,12 @@ module.exports = React.createClass({
         },"multipart/form-data")
         .then(({id})=>{
             //アップロード成功
-            if("function"===typeof this.props.onUpload){
-                this.props.onUpload(id);
-            }
             this.setState({
                 status: "uploaded"
             });
+            if("function"===typeof this.props.onUpload){
+                this.props.onUpload(id);
+            }
         })
         .catch(errorStore.emit);
         //アップロード中

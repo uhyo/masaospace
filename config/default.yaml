@@ -22,6 +22,8 @@ redis:
 file:
   # path to store user-uploaded files
   path: /home/no/masaopost/data
+  # temporary directory
+  temporary: /tmp
   # file id length
   idLength: 16
 # file data

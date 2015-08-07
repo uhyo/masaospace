@@ -4,15 +4,17 @@ module.exports = api;
 
 //returns Promise!
 function api(path,params,contentType){
-    var Promise = Promise ? Promise : require('native-promise-only');
+    var Promise = require('native-promise-only');
     if(params == null){
         params = {};
     }
+    var xhr=new XMLHttpRequest();
+    xhr.open("POST",path);
     var requestBody;
     if(contentType==="multipart/form-data"){
         //FormDataを使ってあれする
         requestBody=new FormData;
-        requestBody.append("_csrf",_g_csrfToken);
+        xhr.setRequestHeader("X-CSRF-Token",_g_csrfToken);
         for(var key in params){
             if(params[key]!=null){
                 requestBody.append(key,params[key]);
@@ -26,11 +28,9 @@ function api(path,params,contentType){
                 ps.push(encodeURIComponent(key)+"="+encodeURIComponent(params[key]));
             }
         }
-        requestBody=rs.join("&");
+        requestBody=ps.join("&");
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
     }
-    var xhr=new XMLHttpRequest();
-    xhr.open("POST",path);
-    xhr.setRequestHeader("Content-Type",contentType || "application/x-www-form-urlencoded");
     xhr.send(requestBody);
 
     console.log("API call! ",path,params,requestBody);

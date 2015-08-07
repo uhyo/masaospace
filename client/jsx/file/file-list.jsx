@@ -37,18 +37,24 @@ module.exports = React.createClass({
         if(oldQuery.owner!==newQuery.owner || oldQuery.usage!==newQuery.usage){
             this.load(nextProps.query);
         }
+        this.setState({
+            file_upload: false
+        });
     },
-    load(query){
+    load(query,cb){
         this.setState({
             loading: true
         });
-        api("/api/file/list",this.props.query)
+        api("/api/file/list",query)
         .then(({files})=>{
             //filesがきた
             this.setState({
                 loading: false,
                 files: files
             });
+            if(cb){
+                cb();
+            }
         })
         .catch(errorStore.emit);
     },
@@ -91,7 +97,7 @@ module.exports = React.createClass({
                         if(current===file.id){
                             className+=" file-list-current";
                         }
-                        handleClick = this.clickhandler(file.id);
+                        handleClick = this.clickHandler(file.id);
                         return <div key={i} className={className} onClick={handleClick}>
                             <div className="file-list-file-name">{file.name}</div>
                             <p className="file-list-file-description">{file.description}</p>
@@ -114,6 +120,11 @@ module.exports = React.createClass({
         //ファイルアップロードボタンが押された
         this.setState({
             file_upload: true
+        });
+    },
+    handleFileUpload(fileid){
+        this.load(this.props.query,()=>{
+            this.props.fileLink.requestChange(fileid);
         });
     },
     fileUpload(){

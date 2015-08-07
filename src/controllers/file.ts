@@ -66,7 +66,7 @@ export default class FileController{
             }
             var baseid=uniqueToken(config.get("file.idLength"));
             //新しいファイル名をつくる
-            var id=baseid+"."+mime.extension(fi.type);
+            var id=baseid+"."+mime.extension(f.type);
             var fi:File={
                 id:id,
                 type: f.type,

@@ -25,7 +25,10 @@ class C{
         //IN description: 説明
         //OUT id: ファイルID
         router.post("/upload",util.apim.useUser,multer({
-            fileSize: config.get("filedata.maxSize")
+            dest: config.get("file.temporary"),
+            limits: {
+                fileSize: config.get("filedata.maxSize")
+            }
         }).single("file"),(req,res)=>{
             //validation
             req.validateBody("name").length(config.get("filedata.name.maxLength"));

@@ -57,17 +57,20 @@ class Controller{
         this.user.init(d.intercept(()=>{
             this.initUser(d.intercept(()=>{
                 logger.debug("Controller.user initialized.");
-                this.ticket.init(d.intercept(()=>{
-                    logger.debug("Controller.ticket initialized.");
-                    this.session.init(d.intercept(()=>{
-                        logger.debug("Controller.session initialized.");
-                        this.game.init(d.intercept(()=>{
-                            logger.debug("Controller.game initialized.");
-                            this.comment.init(d.intercept(()=>{
-                                logger.debug("Controller.comment initialized.");
-                                this.mail.init(d.intercept(()=>{
-                                    logger.debug("Controller.mail initialized.");
-                                    callback(null);
+                this.file.init(d.intercept(()=>{
+                    logger.debug("Controller.file initialized.");
+                    this.ticket.init(d.intercept(()=>{
+                        logger.debug("Controller.ticket initialized.");
+                        this.session.init(d.intercept(()=>{
+                            logger.debug("Controller.session initialized.");
+                            this.game.init(d.intercept(()=>{
+                                logger.debug("Controller.game initialized.");
+                                this.comment.init(d.intercept(()=>{
+                                    logger.debug("Controller.comment initialized.");
+                                    this.mail.init(d.intercept(()=>{
+                                        logger.debug("Controller.mail initialized.");
+                                        callback(null);
+                                    }));
                                 }));
                             }));
                         }));
