@@ -42,6 +42,8 @@ webserver:
   port: 8080
   # connection is secure
   secure: false
+  # external static files distribution
+  externalstatic: false
 
 # service
 service:

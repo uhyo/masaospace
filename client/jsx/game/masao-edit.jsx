@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var extend= require('extend');
 //masao edit component
+var masao = require('../../../lib/masao');
 
 var MasaoSelector = require('./masao-selector.jsx'),
     GameMetadataForm = require('./game-metadata-form.jsx'),
@@ -8,6 +9,9 @@ var MasaoSelector = require('./masao-selector.jsx'),
     GameView = require('./game-view.jsx'),
     HorizontalMenu = require('../commons/horizontal-menu.jsx'),
     FileList = require('../file/file-list.jsx');
+
+//とりあえずよく使うやつ
+var major=["filename_pattern","filename_title","filename_ending","filename_gameover","filename_haikei","filename_mapchip"];
 
 module.exports = React.createClass({
     displayName:"MasaoEdit",
@@ -78,36 +82,36 @@ module.exports = React.createClass({
         </section>;
     },
     files:function(){
-        var contents=[{
-            id: "filename_pattern",
-            name: "パターン画像"
-        },{
-            id: "filename_title",
-            name: "タイトル画像"
-        },{
-            id: "filename_ending",
-            name: "エンディング画像"
-        },{
-            id: "filename_gameover",
-            name: "ゲームオーバー画像"
-        },{
-            id: "filename_haikei",
-            name: "背景画像",
-        },{
-            id: "filename_mapchip",
-            name: "マップチップ（背景レイヤー）"
-            //},{
-            //id: "-",
-            //name: "その他"
-        }];
+        //TODO
+        var contents=major.map((key)=>{
+            return {
+                id: key,
+                name: masao.resources[key]
+            };
+        });
         var query={
             owner: this.props.session.user,
-            usage: this.state.filesPage
+            usage: masao.resourceToKind[this.state.filesPage]
+        };
+
+        //今どのファイルが選択されているか調べる
+        var fileValue=null;
+        var resources = this.state.game.resources;
+        for(var i=0;i < resources.length;i++){
+            if(resources[i].target===this.state.filesPage){
+                fileValue=resources[i].id;
+                break;
+            }
+        }
+
+        var fileLink={
+            value: fileValue,
+            requestChange: this.fileHandler(this.state.filesPage)
         };
         return <section className="game-files">
             <h1>ファイル選択</h1>
             <HorizontalMenu contents={contents} pageLink={this.linkState("filesPage")} />
-            <FileList config={this.props.config} query={query} fileLink={this.linkState(this.state.filesPage)} />
+            <FileList config={this.props.config} query={query} fileLink={fileLink} />
         </section>;
     },
     form:function(){
@@ -135,5 +139,49 @@ module.exports = React.createClass({
 
         if(metadata.title && metadata.description)return false;
         return true;
+    },
+    //ファイルが替わった
+    fileHandler(param){
+        return (fileid)=>{
+            //ゲームがかきかわる
+            var game=this.state.game;
+            var resources = game.resources.concat([]);
+            var flag=false;
+            if(!fileid){
+                //リソースを削除
+                for(var i=0;i < resources.length;i++){
+                    if(resources[i].target===param){
+                        resources.splice(i,1);
+                        i--;
+                    }
+                }
+            }else{
+                //リソースを追加
+                for(var i=0;i < resources.length;i++){
+                    if(resources[i].target===param){
+                        //すでにあったので置き換え
+                        resources[i] = extend({},resources[i], {
+                            id: fileid
+                        });
+                        flag=true;
+                        break;
+                    }
+                }
+                if(flag===false){
+                    //なかったので追加する
+                    resources.push({
+                        target: param,
+                        id: fileid
+                    });
+                }
+            }
+            //これが新しいゲームだ
+            var newGame = extend({},game,{
+                resources
+            });
+            this.setState({
+                game: newGame
+            });
+        };
     }
 });

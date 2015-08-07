@@ -2,6 +2,8 @@ var React=require('react/addons');
 var mime=require('mime');
 //file upload form
 
+var masao=require('../../../lib/masao');
+
 var api=require('../../actions/api');
 
 var errorStore=require('../../stores/error');
@@ -42,16 +44,9 @@ module.exports = React.createClass({
     },
     fileData(){
         //ファイルの情報をアレする
-        //TODO
-        var usages=[
-            ['filename_pattern','パターン画像'],
-            ['filename_title','タイトル画像'],
-            ['filename_ending','エンディング画像'],
-            ['filename_gameover','ゲームオーバー画像'],
-            ['filename_mapchip','マップチップ（背景レイヤー）画像'],
-            ['filename_haikei','背景画像'],
-            ['','その他']
-        ];
+        var usages=Object.keys(masao.resourceKinds).map((key)=>{
+            return [key, masao.resourceKinds[key]];
+        });
         var config=this.props.config.filedata;
         var uploadbutton, disabled, uploadtext;
         if(this.state.status==="uploadable"){
@@ -72,7 +67,6 @@ module.exports = React.createClass({
                 </div>
             </div>;
         }
-
 
         return <div className="file-upload-data">
             {preview}

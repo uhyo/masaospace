@@ -101,6 +101,9 @@ module.exports = React.createClass({
                         return <div key={i} className={className} onClick={handleClick}>
                             <div className="file-list-file-name">{file.name}</div>
                             <p className="file-list-file-description">{file.description}</p>
+                            <p className="file-list-file-preview-link">
+                                <a href={"/uploaded/"+file.id} className="external" target="_blank">プレビュー</a>
+                            </p>
                         </div>;
                     }
                 })

@@ -37,9 +37,13 @@ class C{
             if(req.validationErrorResponse(res)){
                 return;
             }
-            //TODO: MIMEタイプのバリデーションとusageのバリデーション
-            //TODO: ファイルの合計サイズに制限をかける
-            //
+            if(!masao.validateResourceKind(req.body.type)){
+                res.json({
+                    error: "ファイルタイプが不正です。"
+                });
+                return;
+            }
+            //TODO: MIMEタイプのバリデーション
             var file=req.file;
             if(file==null){
                 res.json({
