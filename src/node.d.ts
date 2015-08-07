@@ -487,6 +487,7 @@ declare module "mongodb"{
         writeConcern:any;
         hint:any;
         //一部だけ
+        aggregate(pipeline:Array<any>,callback:(error:any,result:Array<any>)=>void):void;
         count(query:any,options:{
             limit?:number;
             skip?:number;

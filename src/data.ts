@@ -78,6 +78,8 @@ export interface FileData{
     usage:string;
     //説明
     description:string;
+    //サイズ
+    size:number;
     //アップロード日時
     created:Date;
 }

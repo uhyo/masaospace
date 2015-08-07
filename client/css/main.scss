@@ -133,7 +133,7 @@ section {
 
     font-size: 1.5rem;
     border-bottom: 1px solid #bbbbbb;
-    color: #444444;
+    color: $color-boldcolor;
   }
 
   p {
@@ -311,6 +311,29 @@ ul.horizontal-menu {
       }
     }
 
+  }
+}
+.file-upload {
+  @include legendsection;
+}
+.file-upload-data {
+  display: flex;
+
+  .file-upload-preview {
+    flex: auto 0 1;
+    padding: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: $color-lightcolor;
+
+    img {
+      align-self: center;
+      max-width: 180px;
+    }
+  }
+
+  form {
+    flex: auto 1 1;
   }
 }
 

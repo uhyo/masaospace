@@ -74,6 +74,7 @@ export default class FileController{
                 usage: f.usage,
                 name: f.name,
                 description: f.description,
+                size: f.size,
                 created: f.created
             };
             var newpath = path.join(config.get("file.path"),id);
@@ -123,6 +124,31 @@ export default class FileController{
                     return;
                 }
                 callback(null,docs);
+            });
+        });
+    }
+    //ファイルの合計サイズ
+    sumFileSize(q:FileQuery,callback:Callback<number>):void{
+        this.getCollection((err,coll)=>{
+            coll.aggregate([
+                {$match: q},
+                {$project:{size:1}},
+                {$group:{
+                    "_id": "a",
+                    "sum": {$sum: "$size"}
+                }}
+            ],(err,result)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                    return;
+                }
+                if(result.length===0){
+                    //何もなかった
+                    callback(null,0);
+                    return;
+                }
+                callback(null,result[0].sum);
             });
         });
     }

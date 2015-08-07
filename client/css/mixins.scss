@@ -7,6 +7,8 @@ $color-box-background : rgba(#000000,0.07);
 
 //薄い文字色
 $color-lightcolor : #727272;
+//見出しとかの文字色
+$color-boldcolor : #444444;
 
 //マウスを載せたときの色
 $color-hovermask : rgba(#000000,0.05);
@@ -26,3 +28,19 @@ $color-hovermask : rgba(#000000,0.05);
   }
 }
 
+@mixin legendsection {
+  margin: 0.5rem;
+  border: 1px dashed #888888;
+  padding: 0.5rem;
+
+  & > h3 {
+    position: relative;
+    display: inline-block;
+    top: -1rem;
+    left: 0.5rem;
+    font-size: 1rem;
+
+    background-color: $color-background;
+    color: $color-boldcolor;
+  }
+}

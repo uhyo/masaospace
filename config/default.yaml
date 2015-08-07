@@ -30,6 +30,8 @@ file:
 filedata:
   # max file size in bytes
   maxSize: 1048576
+  # disk space per user (3MB)
+  diskSpace: 3145728
   name:
     maxLength: 250
   description:

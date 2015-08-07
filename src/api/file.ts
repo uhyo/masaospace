@@ -48,24 +48,44 @@ class C{
                 return;
             }
 
-            var fd:FileData = {
-                type: req.body.type,
-                owner: req.session.user,
-                name: req.body.name,
-                usage: req.body.usage,
-                description: req.body.description,
-                created: new Date()
-            };
-
-            c.file.addFile(fd, file.path, (err,f)=>{
+            //ファイルの合計サイズが制限を超えないか確かめる
+            c.file.sumFileSize({
+                owner: req.session.user
+            },(err,size)=>{
                 if(err){
                     res.json({
                         error: String(err)
                     });
                     return;
                 }
-                res.json({
-                    id: f.id
+                //TODO: クリティカルセクションじゃね？
+                if(size+file.size >= config.get("filedata.diskSpace")){
+                    //与えられた容量をオーバーしている
+                    res.json({
+                        error: "アカウントの空き容量が不足しています。"
+                    });
+                    return;
+                }
+                var fd:FileData = {
+                    type: req.body.type,
+                    owner: req.session.user,
+                    name: req.body.name,
+                    usage: req.body.usage,
+                    description: req.body.description,
+                    size: file.size,
+                    created: new Date()
+                };
+
+                c.file.addFile(fd, file.path, (err,f)=>{
+                    if(err){
+                        res.json({
+                            error: String(err)
+                        });
+                        return;
+                    }
+                    res.json({
+                        id: f.id
+                    });
                 });
             });
         });

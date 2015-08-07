@@ -34,10 +34,11 @@ module.exports = React.createClass({
         };
     },
     render(){
-        return <div>
+        return <section className="file-upload">
+            <h3>新しいファイルを追加</h3>
             <FileSelector onSelect={this.handleFile} />
             {this.state.file!=null ? this.fileData() : null}
-        </div>;
+        </section>;
     },
     fileData(){
         //ファイルの情報をアレする
@@ -61,46 +62,66 @@ module.exports = React.createClass({
             disabled=true, uploadtext="アップロード完了"
         }
         uploadbutton = <input className="form-single form-button" type="submit" disabled={disabled} value={uploadtext} />;
+        //プレビュー
+        var preview=null;
+        if(this.state.url!=null){
+            preview=<div className="file-upload-preview">
+                <p>プレビュー</p>
+                <div>
+                    <img src={this.state.url} />
+                </div>
+            </div>;
+        }
 
-        return <form className="form" onSubmit={this.handleSubmit}>
-            <p>
-                <label className="form-row">
-                    <span>ファイル名</span>
-                    <input type="text" required maxLength={config.name.maxLength} valueLink={this.linkState("name")} />
-                </label>
-            </p>
-            <p>
-                <label className="form-row">
-                    <span>種類</span>
-                    <input type="text" readOnly value={this.state.type} />
-                </label>
-            </p>
-            <p>
-                <label className="form-row">
-                    <span>用途</span>
-                    <select valueLink={this.linkState("usage")}>
-                        {
-                            usages.map(([value,name])=>{
-                                return <option key={value} value={value}>{name}</option>;
-                            })
-                        }
-                    </select>
-                </label>
-            </p>
-            <p>
-                <label className="form-row">
-                    <span>説明</span>
-                    <textarea maxLength={config.description.maxLength} valueLink={this.linkState("description")} />
-                </label>
-            </p>
-            <p>
-                {uploadbutton}
-            </p>
-        </form>;
+
+        return <div className="file-upload-data">
+            {preview}
+            <form className="form" onSubmit={this.handleSubmit}>
+                <p>
+                    <label className="form-row">
+                        <span>ファイル名</span>
+                        <input type="text" required maxLength={config.name.maxLength} valueLink={this.linkState("name")} />
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>種類</span>
+                        <input type="text" readOnly value={this.state.type} />
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>用途</span>
+                        <select valueLink={this.linkState("usage")}>
+                            {
+                                usages.map(([value,name])=>{
+                                    return <option key={value} value={value}>{name}</option>;
+                                })
+                            }
+                        </select>
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>説明</span>
+                        <textarea maxLength={config.description.maxLength} valueLink={this.linkState("description")} />
+                    </label>
+                </p>
+                <p>
+                    {uploadbutton}
+                </p>
+            </form>
+        </div>;
     },
     handleFile(file){
+        var url=null;
+        if(/^image\//i.test(file.type)){
+            //画像なのでプレビューしてみる
+            url=URL.createObjectURL(file);
+        }
         this.setState({
             file: file,
+            url: url,
             status: "uploadable",
             type: mime.lookup(file.name),
             name: file.name,
