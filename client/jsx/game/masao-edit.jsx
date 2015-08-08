@@ -67,7 +67,6 @@ module.exports = React.createClass({
         return <div>
             <div className="warning">
                 <p>現在はJava版またはcanvas版の正男が記述されたHTMLファイルの読み込みのみ対応しています。ご了承ください。</p>
-                <p>まだ画像はデフォルトのものしか使用できません。</p>
             </div>
             <MasaoSelector onSelect={this.masaoSelected} />
             {game!=null ? this.preview() : null}
