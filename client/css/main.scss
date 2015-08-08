@@ -279,6 +279,9 @@ ul.horizontal-menu {
 
 //file-list
 .file-list-container {
+  .file-list-info {
+    color: $color-lightcolor;
+  }
   .file-list-main {
     display: flex;
     flex-wrap: wrap;
@@ -314,6 +317,7 @@ ul.horizontal-menu {
         font-weight: bold;
       }
       .file-list-file-description {
+        white-space: pre-line;
         font-size: 0.9rem;
       }
     }
@@ -328,13 +332,13 @@ ul.horizontal-menu {
 
   .file-upload-preview {
     flex: auto 0 1;
+    align-self: center;
     padding: 10px;
     font-size: 0.9rem;
     text-align: center;
     color: $color-lightcolor;
 
     img {
-      align-self: center;
       max-width: 180px;
     }
   }

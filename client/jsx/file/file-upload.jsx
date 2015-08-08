@@ -8,7 +8,8 @@ var api=require('../../actions/api');
 
 var errorStore=require('../../stores/error');
 
-var FileSelector = require('./file-selector.jsx');
+var FileSelector = require('./file-selector.jsx'),
+    FileDataForm = require('./file-data-form.jsx');
 
 module.exports = React.createClass({
     displayName: "FileUpload",
@@ -28,27 +29,18 @@ module.exports = React.createClass({
             file: null,
             //処理状態
             status: "",
-            //ファイルのメタデーーーーーーーータ
-            type: "",
-            name: "",
-            usage: this.props.usage,
-            description: ""
         };
     },
     render(){
         return <section className="file-upload">
             <h3>新しいファイルを追加</h3>
             <FileSelector onSelect={this.handleFile} />
-            {this.state.file!=null ? this.fileData() : null}
+            {this.state.file!=null ? this.fileDataForm() : null}
         </section>;
     },
-    fileData(){
+    fileDataForm(){
         //ファイルの情報をアレする
-        var usages=Object.keys(masao.resourceKinds).map((key)=>{
-            return [key, masao.resourceKinds[key]];
-        });
-        var config=this.props.config.filedata;
-        var uploadbutton, disabled, uploadtext;
+        var disabled, uploadtext;
         if(this.state.status==="uploadable"){
             disabled=false, uploadtext="アップロード"
         }else if(this.state.status==="uploading"){
@@ -56,56 +48,14 @@ module.exports = React.createClass({
         }else if(this.state.status==="uploaded"){
             disabled=true, uploadtext="アップロード完了"
         }
-        uploadbutton = <input className="form-single form-button" type="submit" disabled={disabled} value={uploadtext} />;
-        //プレビュー
-        var preview=null;
-        if(this.state.url!=null){
-            preview=<div className="file-upload-preview">
-                <p>プレビュー</p>
-                <div>
-                    <img src={this.state.url} />
-                </div>
-            </div>;
-        }
-
-        return <div className="file-upload-data">
-            {preview}
-            <form className="form" onSubmit={this.handleSubmit}>
-                <p>
-                    <label className="form-row">
-                        <span>ファイル名</span>
-                        <input type="text" required maxLength={config.name.maxLength} valueLink={this.linkState("name")} />
-                    </label>
-                </p>
-                <p>
-                    <label className="form-row">
-                        <span>種類</span>
-                        <input type="text" readOnly value={this.state.type} />
-                    </label>
-                </p>
-                <p>
-                    <label className="form-row">
-                        <span>用途</span>
-                        <select valueLink={this.linkState("usage")}>
-                            {
-                                usages.map(([value,name])=>{
-                                    return <option key={value} value={value}>{name}</option>;
-                                })
-                            }
-                        </select>
-                    </label>
-                </p>
-                <p>
-                    <label className="form-row">
-                        <span>説明</span>
-                        <textarea maxLength={config.description.maxLength} valueLink={this.linkState("description")} />
-                    </label>
-                </p>
-                <p>
-                    {uploadbutton}
-                </p>
-            </form>
-        </div>;
+        var file=this.state.file;
+        var defaultData={
+            type: mime.lookup(file.name),
+            name: file.name,
+            usage: this.props.usage,
+            descripiton: ""
+        };
+        return <FileDataForm config={this.props.config} submitButton={uploadtext} submitDisabled={disabled} previewURL={this.state.url} defaultFile={defaultData} onSubmit={this.handleSubmit} />;
     },
     handleFile(file){
         var url=null;
@@ -117,20 +67,16 @@ module.exports = React.createClass({
             file: file,
             url: url,
             status: "uploadable",
-            type: mime.lookup(file.name),
-            name: file.name,
-            description: ""
         });
     },
-    handleSubmit(e){
-        e.preventDefault();
+    handleSubmit(filedata){
         //ファイルをアップロードするぞーーーーーー
         api("/api/file/upload",{
             file: this.state.file,
-            name: this.state.name,
-            type: this.state.type,
-            usage: this.state.usage,
-            description: this.state.description,
+            name: filedata.name,
+            type: filedata.type,
+            usage: filedata.usage,
+            description: filedata.description,
         },"multipart/form-data")
         .then(({id})=>{
             //アップロード成功

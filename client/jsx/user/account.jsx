@@ -7,7 +7,9 @@ var api=require('../../actions/api');
 
 var NeedLogin = require('../commons/need-login.jsx'),
     Loading = require('../commons/loading.jsx'),
-    HorizontalMenu = require('../commons/horizontal-menu.jsx');
+    HorizontalMenu = require('../commons/horizontal-menu.jsx'),
+    FileList = require('../file/file-list.jsx'),
+    FileDataForm = require('../file/file-data-form.jsx');
 
 var Account=React.createClass({
     displayName:"Account",
@@ -69,6 +71,9 @@ var Account=React.createClass({
         },{
             id:"mail",
             name:"メールアドレス変更"
+        },{
+            id:"file",
+            name:"ファイル管理"
         }];
         return (
             <div>
@@ -86,6 +91,8 @@ var Account=React.createClass({
             return <ChangePasswordForm config={this.props.config}/>;
         }else if(page==="mail"){
             return <MailForm userdata={this.state.userdata}/>;
+        }else if(page==="file"){
+            return <FilePage config={this.props.config} session={this.props.session}/>;
         }
         return null;
     }
@@ -314,6 +321,78 @@ var MailForm=React.createClass({
                 </form>
             </div>
         );
+    }
+});
+
+var FilePage=React.createClass({
+    displayName:"FilePage",
+    mixins:[React.addons.LinkedStateMixin],
+    propTypes:{
+        session: React.PropTypes.object.isRequired,
+        config: React.PropTypes.object.isRequired
+    },
+    getInitialState(){
+        return {
+            saving: false,
+            load: false,
+            //選択されたファイル
+            file:null
+        };
+    },
+    render(){
+        var query={
+            owner: this.props.session.user
+        };
+        return <div>
+            <FileList config={this.props.config} query={query} forceLoad={this.state.load} diskSpace fileLink={this.linkState("file")}/>
+            {this.form()}
+        </div>;
+    },
+    form(){
+        var file=this.state.file;
+        if(file==null){
+            //ファイルが選択されていなかったらなにも表示しない
+            return null;
+        }
+        var fileData={
+            type: file.type,
+            name: file.name,
+            usage: file.usage,
+            description: file.description
+        };
+        var submit,disabled;
+        if(this.state.saving===true){
+            submit="保存中……";
+            disabled=true;
+        }else{
+            submit="保存";
+            disabled=false;
+        }
+        var fileurl="/uploaded/"+file.id;
+        return <FileDataForm config={this.props.config} submitButton={submit} submitDisabled={disabled} previewURL={fileurl} previewLink={fileurl} defaultFile={fileData} onSubmit={this.handleSubmit} />;
+    },
+    handleSubmit(file){
+        //ファイルのメタデータを編集するぞーーーーーーーーーーーーーーー
+        var filedata={
+            id: this.state.file.id,
+            name: file.name,
+            type: file.type,
+            usage: file.usage,
+            description: file.description
+        };
+        api("/api/file/edit",filedata)
+        .then(()=>{
+            this.setState({
+                saving: false,
+                load: true
+            });
+        })
+        .catch(errorStore.emit);
+        this.setState({
+            saving: true,
+            load: false,
+            file: filedata
+        });
     }
 });
 

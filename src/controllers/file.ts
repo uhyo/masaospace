@@ -121,6 +121,25 @@ export default class FileController{
             });
         });
     }
+    //ファイルを書き換える
+    saveFile(fileid:string,f:File,callback:Cont):void{
+        this.getCollection((err,coll)=>{
+            if(err){
+                callback(err);
+                return;
+            }
+            //念の為IDをセット
+            f.id=fileid;
+            coll.replaceOne({id: fileid},f,(err,result)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err);
+                }else{
+                    callback(null);
+                }
+            });
+        });
+    }
     getFiles(q:FileQuery,callback:Callback<Array<File>>):void{
         if(Array.isArray(q.ids)){
             q.id = <any>{
@@ -133,7 +152,9 @@ export default class FileController{
                 callback(err,null);
                 return;
             }
-            coll.find(q).toArray((err,docs)=>{
+            coll.find(q).sort({
+                created: -1
+            }).toArray((err,docs)=>{
                 if(err){
                     logger.error(err);
                     callback(err,[]);
