@@ -93,6 +93,59 @@ class C{
                 });
             });
         });
+        //ファイルのメタデータを変更
+        //IN id: ファイルID
+        //IN name: オリジナルのファイル名
+        //IN type: ファイルのMIMEタイプ
+        //IN usage: 用途
+        //IN description: 説明
+        router.post("/edit",util.apim.useUser,(req,res)=>{
+            req.validateBody("name").length(config.get("filedata.name.maxLength"));
+            req.validateBody("description").length(config.get("filedata.description.maxLength"));
+
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+            if(!masao.validateResourceKind(req.body.usage)){
+                res.json({
+                    error: "ファイルタイプが不正です。"
+                });
+                return;
+            }
+            //まずファイルを取得
+            c.file.getFiles({id: req.body.id, owner: req.session.user},(err,files)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(files.length===0){
+                    res.json({
+                        error: "ファイルが存在しません。"
+                    });
+                    return;
+                }
+                var file:File=files[0];
+                //新しいデータを入れる
+                file.type=req.body.type;
+                file.name=req.body.name;
+                file.usage=req.body.usage;
+                file.description=req.body.description;
+
+                c.file.saveFile(req.body.id, file, (err)=>{
+                    if(err){
+                        res.json({
+                            error: String(err)
+                        });
+                    }else{
+                        res.json({
+                            success: true
+                        });
+                    }
+                });
+            });
+        });
         //ファイルのリストを得る
         //IN owner: ファイルのもちぬし
         //IN usage: ファイルの種類
