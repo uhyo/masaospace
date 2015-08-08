@@ -17,6 +17,7 @@ module.exports = React.createClass({
             owner: React.PropTypes.string,
             usage: React.PropTypes.string
         }).isRequired,
+        forceLoad: React.PropTypes.bool,
         fileLink: React.PropTypes.shape({
             value: React.PropTypes.oneOfType([
                 React.PropTypes.string,
@@ -44,7 +45,7 @@ module.exports = React.createClass({
     componentWillReceiveProps(nextProps){
         //検索条件が違うときだけ再読み込み
         var oldQuery=this.props.query, newQuery=nextProps.query;
-        if(oldQuery.owner!==newQuery.owner || oldQuery.usage!==newQuery.usage){
+        if(nextProps.forceLoad===true || oldQuery.owner!==newQuery.owner || oldQuery.usage!==newQuery.usage){
             this.load(nextProps.query);
         }
         this.setState({

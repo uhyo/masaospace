@@ -333,6 +333,8 @@ var FilePage=React.createClass({
     },
     getInitialState(){
         return {
+            saving: false,
+            load: false,
             //選択されたファイル
             file:null
         };
@@ -342,7 +344,7 @@ var FilePage=React.createClass({
             owner: this.props.session.user
         };
         return <div>
-            <FileList config={this.props.config} query={query} diskSpace fileLink={this.linkState("file")}/>
+            <FileList config={this.props.config} query={query} forceLoad={this.state.load} diskSpace fileLink={this.linkState("file")}/>
             {this.form()}
         </div>;
     },
@@ -358,12 +360,39 @@ var FilePage=React.createClass({
             usage: file.usage,
             description: file.description
         };
+        var submit,disabled;
+        if(this.state.saving===true){
+            submit="保存中……";
+            disabled=true;
+        }else{
+            submit="保存";
+            disabled=false;
+        }
         var fileurl="/uploaded/"+file.id;
-        return <FileDataForm config={this.props.config} submitButton="保存" previewURL={fileurl} previewLink={fileurl} defaultFile={fileData} onSubmit={this.handleSubmit} />;
+        return <FileDataForm config={this.props.config} submitButton={submit} submitDisabled={disabled} previewURL={fileurl} previewLink={fileurl} defaultFile={fileData} onSubmit={this.handleSubmit} />;
     },
     handleSubmit(file){
         //ファイルのメタデータを編集するぞーーーーーーーーーーーーーーー
-        //TODO
+        var filedata={
+            id: this.state.file.id,
+            name: file.name,
+            type: file.type,
+            usage: file.usage,
+            description: file.description
+        };
+        api("/api/file/edit",filedata)
+        .then(()=>{
+            this.setState({
+                saving: false,
+                load: true
+            });
+        })
+        .catch(errorStore.emit);
+        this.setState({
+            saving: true,
+            load: false,
+            file: filedata
+        });
     }
 });
 

@@ -152,7 +152,9 @@ export default class FileController{
                 callback(err,null);
                 return;
             }
-            coll.find(q).toArray((err,docs)=>{
+            coll.find(q).sort({
+                created: -1
+            }).toArray((err,docs)=>{
                 if(err){
                     logger.error(err);
                     callback(err,[]);
