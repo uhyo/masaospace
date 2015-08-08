@@ -86,6 +86,8 @@ export interface FileData{
 export interface File extends FileData{
     //ファイルID
     id:string;
+    //md5
+    md5:string;
 }
 //ファイルを探すクエリ
 export interface FileQuery{

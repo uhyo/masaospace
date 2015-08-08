@@ -5,6 +5,7 @@ import path=require('path');
 
 import mkdirp=require('mkdirp');
 import mime=require('mime');
+import md5file=require('md5-file');
 
 import config=require('config');
 import logger=require('../logger');
@@ -64,37 +65,32 @@ export default class FileController{
                 callback(err,null);
                 return;
             }
-            var baseid=uniqueToken(config.get("file.idLength"));
-            //新しいファイル名をつくる
-            var id=baseid+"."+mime.extension(f.type);
-            var fi:File={
-                id:id,
-                type: f.type,
-                owner: f.owner,
-                usage: f.usage,
-                name: f.name,
-                description: f.description,
-                size: f.size,
-                created: f.created
-            };
-            var newpath = path.join(config.get("file.path"),id);
-            fs.rename(filepath,newpath,(err)=>{
+            //まずmd5をとる
+            md5file(filepath,(err,md5)=>{
                 if(err){
                     logger.error(err);
-                    fs.unlink(filepath,(err2)=>{
-                        if(err2){
-                            logger.error(err2);
-                            callback(err2,null);
-                            return;
-                        }
-                        callback(err,null);
-                    });
+                    callback(err,null);
                     return;
                 }
-                coll.insertOne(fi,(err,result)=>{
+                var baseid=uniqueToken(config.get("file.idLength"));
+                //新しいファイル名をつくる
+                var id=baseid+"."+mime.extension(f.type);
+                var fi:File={
+                    id:id,
+                    type: f.type,
+                    owner: f.owner,
+                    usage: f.usage,
+                    name: f.name,
+                    description: f.description,
+                    size: f.size,
+                    md5: md5,
+                    created: f.created
+                };
+                var newpath = path.join(config.get("file.path"),id);
+                fs.rename(filepath,newpath,(err)=>{
                     if(err){
                         logger.error(err);
-                        fs.unlink(newpath,(err2)=>{
+                        fs.unlink(filepath,(err2)=>{
                             if(err2){
                                 logger.error(err2);
                                 callback(err2,null);
@@ -102,11 +98,25 @@ export default class FileController{
                             }
                             callback(err,null);
                         });
-                        callback(err,null);
                         return;
                     }
-                    //入った
-                    callback(null,fi);
+                    coll.insertOne(fi,(err,result)=>{
+                        if(err){
+                            logger.error(err);
+                            fs.unlink(newpath,(err2)=>{
+                                if(err2){
+                                    logger.error(err2);
+                                    callback(err2,null);
+                                    return;
+                                }
+                                callback(err,null);
+                            });
+                            callback(err,null);
+                            return;
+                        }
+                        //入った
+                        callback(null,fi);
+                    });
                 });
             });
         });

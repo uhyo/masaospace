@@ -37,7 +37,7 @@ class C{
             if(req.validationErrorResponse(res)){
                 return;
             }
-            if(!masao.validateResourceKind(req.body.type)){
+            if(!masao.validateResourceKind(req.body.usage)){
                 res.json({
                     error: "ファイルタイプが不正です。"
                 });

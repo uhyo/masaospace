@@ -1228,6 +1228,11 @@ declare module "multer"{
         }>):any;
     }
 }
+declare module "md5-file"{
+    export = _m;
+    function _m(path:string):string;
+    function _m(path:string,callback?:(error:any,result:string)=>void):void;
+}
 
 // something useful for me
 interface Callback<T>{
