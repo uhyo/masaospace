@@ -18,7 +18,10 @@ module.exports = React.createClass({
             usage: React.PropTypes.string
         }).isRequired,
         fileLink: React.PropTypes.shape({
-            value: React.PropTypes.string,
+            value: React.PropTypes.oneOfType([
+                React.PropTypes.string,
+                React.PropTypes.object
+            ]),
             requestChange: React.PropTypes.func.isRequired
         }).isRequired,
         //「デフォルトの画像を使用する」を選択できるかどうか
@@ -67,11 +70,16 @@ module.exports = React.createClass({
         if(this.state.loading===true){
             return <Loading />;
         }
-        var current = this.props.fileLink.value;
+        var currentFile = this.props.fileLink.value;
+        var current;
         if(this.state.file_upload===true){
             current="file";
-        }else if(!current){
+        }else if(!currentFile){
             current="default";
+        }else if("string"===typeof currentFile){
+            current=currentFile;
+        }else{
+            current=currentFile.id;
         }
         var files=this.state.files;
 
@@ -103,7 +111,7 @@ module.exports = React.createClass({
                         if(current==="default"){
                             className+=" file-list-current";
                         }
-                        handleClick = this.clickHandler("");
+                        handleClick = this.clickHandler(null);
                         return <div key={i} className={className} onClick={handleClick}>デフォルトの画像を使用する</div>;
                     }else if(file==="file"){
                         //ファイルアップロード
@@ -122,7 +130,7 @@ module.exports = React.createClass({
                         if(current===file.id){
                             className+=" file-list-current";
                         }
-                        handleClick = this.clickHandler(file.id);
+                        handleClick = this.clickHandler(file);
                         return <div key={i} className={className} onClick={handleClick}>
                             <div className="file-list-file-name">{file.name}</div>
                             <p className="file-list-file-description">{file.description}</p>
@@ -136,11 +144,11 @@ module.exports = React.createClass({
             { this.state.file_upload ? this.fileUpload() : null}
         </div>;
     },
-    clickHandler(fileid){
+    clickHandler(file){
         return ()=>{
             var fl=this.props.fileLink;
             if(fl){
-                fl.requestChange(fileid);
+                fl.requestChange(file);
             }
         };
     },
@@ -152,7 +160,16 @@ module.exports = React.createClass({
     },
     handleFileUpload(fileid){
         this.load(this.props.query,()=>{
-            this.props.fileLink.requestChange(fileid);
+            //該当ファイルを探す
+            var rc=this.props.fileLink.requestChange, files=this.state.files;
+            for(var i=0;i < files.length;i++){
+                if(files[i].id===fileid){
+                    rc(files[i]);
+                    return;
+                }
+            }
+            //せっかくアップロードしたのに該当ファイルがない？
+            rc(null);
         });
     },
     fileUpload(){

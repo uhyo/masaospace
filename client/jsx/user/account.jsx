@@ -342,8 +342,17 @@ var FilePage=React.createClass({
         };
         return <div>
             <FileList config={this.props.config} query={query} diskSpace fileLink={this.linkState("file")}/>
+            {this.form()}
         </div>;
-    }
+    },
+    form(){
+        var file=this.state.file;
+        if(!file){
+            //ファイルが選択されていなかったらなにも表示しない
+            return null;
+        }
+        //ファイルを探す
+    },
 });
 
 module.exports = Account;

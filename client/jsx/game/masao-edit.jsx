@@ -141,12 +141,12 @@ module.exports = React.createClass({
     },
     //ファイルが替わった
     fileHandler(param){
-        return (fileid)=>{
+        return (file)=>{
             //ゲームがかきかわる
             var game=this.state.game;
             var resources = game.resources.concat([]);
             var flag=false;
-            if(!fileid){
+            if(!file){
                 //リソースを削除
                 for(var i=0;i < resources.length;i++){
                     if(resources[i].target===param){
@@ -160,7 +160,7 @@ module.exports = React.createClass({
                     if(resources[i].target===param){
                         //すでにあったので置き換え
                         resources[i] = extend({},resources[i], {
-                            id: fileid
+                            id: file.id
                         });
                         flag=true;
                         break;
@@ -170,7 +170,7 @@ module.exports = React.createClass({
                     //なかったので追加する
                     resources.push({
                         target: param,
-                        id: fileid
+                        id: file.id
                     });
                 }
             }
