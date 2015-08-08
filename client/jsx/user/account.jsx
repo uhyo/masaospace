@@ -7,7 +7,8 @@ var api=require('../../actions/api');
 
 var NeedLogin = require('../commons/need-login.jsx'),
     Loading = require('../commons/loading.jsx'),
-    HorizontalMenu = require('../commons/horizontal-menu.jsx');
+    HorizontalMenu = require('../commons/horizontal-menu.jsx'),
+    FileList = require('../file/file-list.jsx');
 
 var Account=React.createClass({
     displayName:"Account",
@@ -69,6 +70,9 @@ var Account=React.createClass({
         },{
             id:"mail",
             name:"メールアドレス変更"
+        },{
+            id:"file",
+            name:"ファイル管理"
         }];
         return (
             <div>
@@ -86,6 +90,8 @@ var Account=React.createClass({
             return <ChangePasswordForm config={this.props.config}/>;
         }else if(page==="mail"){
             return <MailForm userdata={this.state.userdata}/>;
+        }else if(page==="file"){
+            return <FilePage config={this.props.config} session={this.props.session}/>;
         }
         return null;
     }
@@ -314,6 +320,29 @@ var MailForm=React.createClass({
                 </form>
             </div>
         );
+    }
+});
+
+var FilePage=React.createClass({
+    displayName:"FilePage",
+    mixins:[React.addons.LinkedStateMixin],
+    propTypes:{
+        session: React.PropTypes.object.isRequired,
+        config: React.PropTypes.object.isRequired
+    },
+    getInitialState(){
+        return {
+            //選択されたファイル
+            file:""
+        };
+    },
+    render(){
+        var query={
+            owner: this.props.session.user
+        };
+        return <div>
+            <FileList config={this.props.config} query={query} diskSpace fileLink={this.linkState("file")}/>
+        </div>;
     }
 });
 

@@ -1,4 +1,5 @@
 var React=require('react');
+var bytes=require('bytes');
 //file list
 
 var api=require('../../actions/api');
@@ -19,7 +20,11 @@ module.exports = React.createClass({
         fileLink: React.PropTypes.shape({
             value: React.PropTypes.string,
             requestChange: React.PropTypes.func.isRequired
-        }).isRequired
+        }).isRequired,
+        //「デフォルトの画像を使用する」を選択できるかどうか
+        useDefault: React.PropTypes.bool,
+        //合計容量を表示するかどうか
+        diskSpace: React.PropTypes.bool
     },
     getInitialState(){
         return {
@@ -68,9 +73,29 @@ module.exports = React.createClass({
         }else if(!current){
             current="default";
         }
+        var files=this.state.files;
+
+        var additional = ["file"];
+        if(this.props.useDefault===true){
+            //デフォルト("")あり
+            additional.unshift("default");
+        }
+        var diskInfo = null;
+        if(this.props.diskSpace===true){
+            //容量計算あり
+            var disk=0;
+            for(var i=0;i < files.length; i++){
+                disk+=files[i].size;
+            }
+            diskInfo = <div className="file-list-info">
+                <p>使用中: {bytes.format(disk)} / {bytes.format(this.props.config.filedata.diskSpace)}</p>
+            </div>;
+        }
+
         return <div className="file-list-container">
+            {diskInfo}
             <div className="file-list-main">{
-                ["default","file"].concat(this.state.files).map((file,i)=>{
+                additional.concat(files).map((file,i)=>{
                     var className="file-list-file", handleClick;
                     if(file==="default"){
                         //デフォルトを使用するボタん
