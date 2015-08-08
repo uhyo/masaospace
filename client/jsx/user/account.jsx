@@ -8,7 +8,8 @@ var api=require('../../actions/api');
 var NeedLogin = require('../commons/need-login.jsx'),
     Loading = require('../commons/loading.jsx'),
     HorizontalMenu = require('../commons/horizontal-menu.jsx'),
-    FileList = require('../file/file-list.jsx');
+    FileList = require('../file/file-list.jsx'),
+    FileDataForm = require('../file/file-data-form.jsx');
 
 var Account=React.createClass({
     displayName:"Account",
@@ -333,7 +334,7 @@ var FilePage=React.createClass({
     getInitialState(){
         return {
             //選択されたファイル
-            file:""
+            file:null
         };
     },
     render(){
@@ -347,12 +348,23 @@ var FilePage=React.createClass({
     },
     form(){
         var file=this.state.file;
-        if(!file){
+        if(file==null){
             //ファイルが選択されていなかったらなにも表示しない
             return null;
         }
-        //ファイルを探す
+        var fileData={
+            type: file.type,
+            name: file.name,
+            usage: file.usage,
+            description: file.description
+        };
+        var fileurl="/uploaded/"+file.id;
+        return <FileDataForm config={this.props.config} submitButton="保存" previewURL={fileurl} previewLink={fileurl} defaultFile={fileData} onSubmit={this.handleSubmit} />;
     },
+    handleSubmit(file){
+        //ファイルのメタデータを編集するぞーーーーーーーーーーーーーーー
+        //TODO
+    }
 });
 
 module.exports = Account;

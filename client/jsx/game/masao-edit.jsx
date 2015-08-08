@@ -110,7 +110,7 @@ module.exports = React.createClass({
         return <section className="game-files">
             <h1>ファイル選択</h1>
             <HorizontalMenu contents={contents} pageLink={this.linkState("filesPage")} />
-            <FileList config={this.props.config} query={query} useDefault fileLink={fileLink} />
+            <FileList config={this.props.config} query={query} useDefault usePreviewLink fileLink={fileLink} />
         </section>;
     },
     form:function(){

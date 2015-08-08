@@ -331,13 +331,13 @@ ul.horizontal-menu {
 
   .file-upload-preview {
     flex: auto 0 1;
+    align-self: center;
     padding: 10px;
     font-size: 0.9rem;
     text-align: center;
     color: $color-lightcolor;
 
     img {
-      align-self: center;
       max-width: 180px;
     }
   }

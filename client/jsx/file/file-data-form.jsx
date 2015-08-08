@@ -29,7 +29,15 @@ module.exports = React.createClass({
         onSubmit: React.PropTypes.func
     },
     getInitialState(){
-        var f=this.props.defaultFile;
+        return this.getStateFromProps(this.props);
+    },
+    componentWillReceiveProps(nextProps){
+        if(this.props!==nextProps){
+            this.setState(this.getStateFromProps(nextProps));
+        }
+    },
+    getStateFromProps(props){
+        var f=props.defaultFile;
         if(f){
             return {
                 type: f.type,

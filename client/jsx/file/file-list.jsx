@@ -27,7 +27,9 @@ module.exports = React.createClass({
         //「デフォルトの画像を使用する」を選択できるかどうか
         useDefault: React.PropTypes.bool,
         //合計容量を表示するかどうか
-        diskSpace: React.PropTypes.bool
+        diskSpace: React.PropTypes.bool,
+        //プレビューリンクを表示するかどうか
+        usePreviewLink: React.PropTypes.bool
     },
     getInitialState(){
         return {
@@ -131,12 +133,16 @@ module.exports = React.createClass({
                             className+=" file-list-current";
                         }
                         handleClick = this.clickHandler(file);
-                        return <div key={i} className={className} onClick={handleClick}>
-                            <div className="file-list-file-name">{file.name}</div>
-                            <p className="file-list-file-description">{file.description}</p>
+                        var previewLink = this.props.usePreviewLink===true ?
                             <p className="file-list-file-preview-link">
                                 <a href={"/uploaded/"+file.id} className="external" target="_blank">プレビュー</a>
                             </p>
+                            : null;
+
+                        return <div key={i} className={className} onClick={handleClick}>
+                            <div className="file-list-file-name">{file.name}</div>
+                            <p className="file-list-file-description">{file.description}</p>
+                            {previewLink}
                         </div>;
                     }
                 })
