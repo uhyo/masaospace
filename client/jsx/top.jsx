@@ -17,9 +17,9 @@ module.exports = React.createClass({
                 <div className="information">
                     <p>最近の更新：</p>
                     <ul>
-                        <li>2015-07-30: コメント機能を追加しました。</li>
                         <li>2015-07-31: 投稿した正男を編集できるようになりました。</li>
                         <li>2015-08-08: 画像をアップロードして正男に使用できるようになりました。</li>
+                        <li>2015-08-09: プロフィールにアイコンとURLを登録できるようになりました。</li>
                     </ul>
                 </div>
                 <section>
