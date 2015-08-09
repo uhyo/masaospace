@@ -235,6 +235,7 @@ var IconEdit = React.createClass({
                     <UserIcon icon={icon} size={128} />
                 </div>
                 <div>
+                    <p>アイコンは最大128×128で表示されることがあります。</p>
                     {icon ? null : <p>アイコンが設定されていません。</p>}
                     {this.state.edit ? <p>アイコンを変更したら、下の保存ボタンを押してください。</p> : null}
                 </div>
@@ -429,7 +430,7 @@ var FilePage=React.createClass({
             //ファイルが選択されていなかったらなにも表示しない
             return null;
         }
-        var fileData={
+       var fileData={
             type: file.type,
             name: file.name,
             usage: file.usage,

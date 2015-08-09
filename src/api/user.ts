@@ -1,6 +1,7 @@
 ///<reference path="../node.d.ts" />
 import express=require('express');
 import extend=require('extend');
+import typeis=require('type-is');
 import Controller=require('../controllers/index');
 
 import logger=require('../logger');
@@ -34,7 +35,7 @@ class C{
                     return;
                 }
                 //ユーザーの情報をあげるけど……
-                var data=extend(user.getData(),{
+                var data=extend({},user.getData(),{
                     id: user.id
                 });
                 res.json({
@@ -62,6 +63,8 @@ class C{
                 name:req.body.name,
                 mail:req.body.mail,
                 profile:"",
+                icon:null,
+                url:"",
 
                 created:new Date()
             };
@@ -278,6 +281,7 @@ class C{
         router.post("/update",util.apim.useUser,(req,res)=>{
             req.validateBody("name").isUserName();
             req.validateBody("profile").isUserProfile();
+            req.validateBody("url").isUserURL();
 
             if(req.validationErrorResponse(res)){
                 return;
@@ -296,24 +300,55 @@ class C{
                     });
                     return;
                 }
-                user.writeData({
-                    name:req.body.name,
-                    profile:req.body.profile
-                });
-                c.user.user.saveUser(user,(err,result)=>{
-                    if(err){
-                        logger.error(err);
-                        throw err;
-                    }
-                    req.session.name = req.body.name;
-                    req.session.profile = req.body.profile;
-                    req.session.save((err)=>{
+                //iconがある場合は自分のアイコンか確認する
+                (!req.body.icon ? ((callback:Cont)=>{
+                    callback(null);
+                }) : (callback:Cont)=>{
+                    c.file.getFiles({
+                        id: req.body.icon,
+                        owner: req.session.user
+                    },(err,files)=>{
                         if(err){
                             throw err;
                         }
-                        res.json(util.writeUserInfo(req.session,{
-                            success:true
-                        }));
+                        if(files.length===0){
+                            throw "アイコンのファイルが存在しません。";
+                        }
+                        var file=files[0];
+                        //typeをチェック
+                        if(!typeis.is(file.type,["image/*"])){
+                            throw "アイコンファイルが画像ではありません。";
+                        }
+                        //OK!
+                        callback(null);
+                    });
+                })((err)=>{
+                    if(err){
+                        throw err;
+                    }
+                    user.writeData({
+                        name:req.body.name,
+                        profile:req.body.profile,
+                        icon:req.body.icon || null,
+                        url:req.body.url
+                    });
+                    c.user.user.saveUser(user,(err,result)=>{
+                        if(err){
+                            logger.error(err);
+                            throw err;
+                        }
+                        req.session.name = req.body.name;
+                        req.session.profile = req.body.profile;
+                        req.session.icon = req.body.icon || null;
+                        req.session.url = req.body.url;
+                        req.session.save((err)=>{
+                            if(err){
+                                throw err;
+                            }
+                            res.json(util.writeUserInfo(req.session,{
+                                success:true
+                            }));
+                        });
                     });
                 });
             });

@@ -13,7 +13,9 @@ var api=require('./api');
  *   user: <string>,
  *   screen_name: <string>,
  *   name: <string>,
- *   profile: <string>
+ *   profile: <string>,
+ *   icon: <string>,
+ *   url: <string>
  * });
  * login.failed(error message);
  */
@@ -58,7 +60,9 @@ exports.logout = logout;
  *   user: <string>,
  *   screen_name: <string>,
  *   name: <string>,
- *   profile: <string>
+ *   profile: <string>,
+ *   icon: <string>,
+ *   url: <string>
  * });
  *
  * //logged out
@@ -73,12 +77,16 @@ exports.init = init;
  *
  * update({
  *   name: <string>,
- *   profile: <string>
+ *   profile: <string>,
+ *   icon: <string>,
+ *   url: <string>
  * });
  *
  * update.completed({
  *   name: <string>,
- *   profile: <string>
+ *   profile: <string>,
+ *   icon: <string>,
+ *   url: <string>
  * });
  * update.failed(error message);
  */
@@ -90,11 +98,15 @@ var update = Reflux.createAction({
 update.listen(function(params){
     update.promise(api("/api/user/update",{
         name: params.name,
-        profile: params.profile
+        profile: params.profile,
+        icon: params.icon,
+        url: params.url
     }).then(function(result){
         return {
             name: result.name,
-            profile: result.profile
+            profile: result.profile,
+            icon: result.icon,
+            url: result.url
         };
     }));
 });
