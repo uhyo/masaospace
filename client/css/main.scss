@@ -118,9 +118,16 @@ a:active {
   .root-header-session {
     position: absolute;
     right: 0;
-    top: 1rem;
+    top: 0;
 
     color: #aaaaaa;
+
+    .root-header-session-loggedin > * {
+      display: inline-block;
+    }
+    .root-header-session-loggedin > .user-icon {
+      margin-top: 2px;
+    }
   }
 }
 
@@ -346,12 +353,6 @@ ul.horizontal-menu {
   form {
     flex: auto 1 1;
   }
-}
-
-.user-icon {
-  border: 3px solid white;
-  border-radius: 3px;
-  box-shadow: 0 0 2px $color-box-background;
 }
 
 

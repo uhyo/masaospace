@@ -4,7 +4,8 @@ var Reflux=require('reflux');
 var userAction=require('../actions/user');
 var errorStore=require('../stores/error');
 
-var LoginForm=require('./commons/login-form.jsx');
+var LoginForm=require('./commons/login-form.jsx'),
+    UserIcon=require('./commons/user-icon.jsx');
 
 var Header = React.createClass({
     displayName: "Header",
@@ -78,9 +79,12 @@ var Header = React.createClass({
     },
     loggedin:function(){
         var session=this.props.session;
-        return (
-            <p>{session.name} さん</p>
-        );
+        return <a href="/my/account">
+            <div className="root-header-session-loggedin">
+                <UserIcon icon={session.icon} size={32} />
+                <p>{session.name} さん</p>
+            </div>
+        </a>;
     },
     notLoggedin:function(){
         return null;
