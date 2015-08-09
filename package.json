@@ -31,7 +31,9 @@
     "express": "^4.12.3",
     "express-session": "^1.10.4",
     "extend": "^2.0.1",
+    "gulp-duration": "0.0.0",
     "gulp-sass": "^2.0.4",
+    "gulp-util": "^3.0.6",
     "js-yaml": "^3.2.7",
     "log": "^1.4.0",
     "md5-file": "^2.0.3",
@@ -50,7 +52,9 @@
     "redis": "^0.12.1",
     "reflux": "^0.2.8",
     "st": "^0.5.4",
-    "type-is": "^1.6.6"
+    "type-is": "^1.6.6",
+    "uglifyify": "^3.0.1",
+    "watchify": "^3.3.1"
   },
   "devDependencies": {
     "babelify": "^6.1.2",
