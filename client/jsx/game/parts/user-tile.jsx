@@ -8,8 +8,8 @@ module.exports = React.createClass({
         id:React.PropTypes.string.isRequired,
         screen_name:React.PropTypes.string.isRequired,
         name:React.PropTypes.string.isRequired,
-        icon:React.PropTypes.string.isRequired,
-        url:React.PropTypes.string.isRequired,
+        icon:React.PropTypes.string,
+        url:React.PropTypes.string,
 
         label:React.PropTypes.string.isRequired,
         fullWidth:React.PropTypes.bool
@@ -22,14 +22,11 @@ module.exports = React.createClass({
         }
         var url=null;
         if(this.props.url){
-            //長すぎるURLは短縮
+            //プロトコルを除去
             var urlStr=this.props.url;
             try{
                 var urlObj=new URL(urlStr);
-                urlStr=urlObj.host+urlObj.pathname+urlObj.search;
-                if(urlStr.length>25){
-                    urlStr=urlStr.slice(0,23)+"…";
-                }
+                urlStr=urlObj.host+urlObj.pathname+urlObj.search+urlObj.hash;
             }catch(e){
             }
 
