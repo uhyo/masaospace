@@ -18,6 +18,10 @@ validator.addCustomValidator("isPassword",(value:string)=>{
 validator.addCustomValidator("isUserProfile",(value:string)=>{
     return !funcs.length(value,config.get("user.profile.maxLength"));
 });
+validator.addCustomValidator("isUserURL",(value:string)=>{
+    //簡易的な
+    return !funcs.length(value,config.get("user.url.maxLength"));
+});
 ////////// game
 validator.addCustomValidator("isGameTitle",(value:string)=>{
     return !funcs.length(value,1,config.get("game.title.maxLength"));

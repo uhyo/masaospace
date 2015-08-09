@@ -17,8 +17,8 @@
     background-color: rgba(#000000,0.04);
     color: #666666;
     font-size: 0.9rem;
-    margin: 0 0.8rem 0 0;
-    padding: 0.2rem;
+    margin: 0 10px 0 0;
+    padding: 3px;
     flex: 240px 0 0;
   }
   .game-play-info-description {
@@ -35,31 +35,50 @@
 }
 
 //user tile
-a.user-tile {
+.user-tile {
   border: 1px solid #eeeeee;
   box-shadow: 1px 1px 0 0 #dedede;
 
   text-decoration: none;
   background-color: $color-background;
-  color: inherit;
+  color: #666666;
+  font-size: 1rem;
 
   display: inline-block;
-  width: 160px;
+  width: 220px;
   min-height: 2.5rem;
 
   margin: 0;
-  padding: 0;
+  padding: 4px 0;
+
+  &.user-tile-fullwidth {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
 
   .user-tile-name {
-    display: block;
     width: 100%;
-    height: 1.1rem;
-    color: #666666;
     font-size: 0.85rem;
+    height: 1.1rem;
   }
   .user-tile-user {
     display: block;
     padding: 3px 0 0 3px;
+    text-decoration: none;
+    min-height: 48px;
+
+    .user-icon {
+      float: left;
+      margin-right: 3px;
+    }
+  }
+  .user-tile-url {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    clear: both;
+    font-size: 0.85rem;
   }
 }
 

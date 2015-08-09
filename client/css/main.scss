@@ -118,9 +118,16 @@ a:active {
   .root-header-session {
     position: absolute;
     right: 0;
-    top: 1rem;
+    top: 0;
 
     color: #aaaaaa;
+
+    .root-header-session-loggedin > * {
+      display: inline-block;
+    }
+    .root-header-session-loggedin > .user-icon {
+      margin-top: 2px;
+    }
   }
 }
 

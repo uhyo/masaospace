@@ -14,6 +14,10 @@ export interface UserOpenData{
     name:string;
     //自己紹介
     profile:string;
+    //アイコン（ファイルID）
+    icon:string;
+    //URL
+    url:string;
 }
 
 export interface UserData extends UserOpenData{
@@ -34,15 +38,9 @@ export interface UserOneQuery{
 }
 
 //セッション
-export interface Session{
+export interface Session extends UserOpenData{
     //user id. ログインしていなかったらnull
     user:string;
-    //screen name
-    screen_name:string;
-    //user name
-    name:string;
-    //user profile
-    profile:string;
 
     //methods provided by express-session
     regenerate(callback:Cont):void;

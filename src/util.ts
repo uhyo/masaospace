@@ -23,6 +23,8 @@ export function writeUserInfo(session:Session,obj?:any):any{
     obj.screen_name=session.screen_name;
     obj.name=session.name;
     obj.profile=session.profile;
+    obj.icon=session.icon;
+    obj.url=session.url;
     return obj;
 }
 //外に出していいユーザー情報
@@ -30,7 +32,9 @@ export function outUserData(data:UserData):UserOpenData{
     return {
         screen_name: data.screen_name,
         name: data.name,
-        profile: data.profile
+        profile: data.profile,
+        icon: data.icon,
+        url: data.url
     };
 }
 

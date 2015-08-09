@@ -22,7 +22,7 @@ module.exports = React.createClass({
             <div className="game-tile">
                 <p className="game-tile-title"><a href={"/play/"+metadata.id}>{metadata.title}</a></p>
                 <p className="game-tile-time">投稿日時：<Datetime date={new Date(this.props.metadata.created)} /></p>
-                {metadata.user ? <UserTile id={metadata.owner} label="投稿者" {...metadata.user} /> : null}
+                {metadata.user ? <UserTile id={metadata.owner} label="投稿者" {...metadata.user} fullWidth/> : null}
             </div>
         );
     },

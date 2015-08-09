@@ -9,7 +9,9 @@ var userAction=require('../actions/user');
  *   loggedin: <boolean>,
  *   user: <string>,
  *   screen_name: <string>,
- *   name: <string>
+ *   name: <string>,
+ *   icon: <string>,
+ *   url: <string>
  * }
  */
 var sessionStore=Reflux.createStore({
@@ -34,7 +36,9 @@ var sessionStore=Reflux.createStore({
             user: loginresult.user,
             screen_name: loginresult.screen_name,
             name: loginresult.name,
-            profile: loginresult.profile
+            profile: loginresult.profile,
+            icon: loginresult.icon,
+            url: loginresult.url
         });
     },
     onLogout:function(){
@@ -43,13 +47,17 @@ var sessionStore=Reflux.createStore({
             user: null,
             screen_name: null,
             name: null,
-            profile: null
+            profile: null,
+            icon: null,
+            url: null
         });
     },
     onUpdate:function(updateresult){
         this.trigger(this.state=extend({},this.state,{
             name:updateresult.name,
-            profile:updateresult.profile
+            profile:updateresult.profile,
+            icon:updateresult.icon,
+            url:updateresult.url
         }));
     },
 });

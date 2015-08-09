@@ -947,6 +947,7 @@ declare module "express"{
             isUserName():Validation;
             isPassword():Validation;
             isUserProfile():Validation;
+            isUserURL():Validation;
             isGameTitle():Validation;
             isGameLevel():Validation;
             isGameDescription():Validation;
@@ -1232,6 +1233,14 @@ declare module "md5-file"{
     export = _m;
     function _m(path:string):string;
     function _m(path:string,callback?:(error:any,result:string)=>void):void;
+}
+declare module "type-is"{
+    export = _m;
+    namespace _m{
+        export function hasBody(request:any):boolean;
+        export function is(mediaType:string,types:Array<string>):string|boolean;
+    }
+    function _m(request:any,types:Array<string>):string|boolean;
 }
 
 // something useful for me
