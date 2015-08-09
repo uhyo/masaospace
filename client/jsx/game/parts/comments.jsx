@@ -18,7 +18,7 @@ module.exports = React.createClass({
             comments.map((obj,i)=>{
                 return <div key={i} className="comments-comment">
                     <div className="comments-user">
-                        <UserTile id={obj.userid} {...obj.user} label="投稿者" />
+                        <UserTile id={obj.userid} {...obj.user} label="投稿者" fullWidth/>
                     </div>
                     <div className="comments-body">
                         <p className="comments-text">{obj.comment}</p>
