@@ -2,9 +2,18 @@
 
 
 //user page
+.user-page-info {
+  display: flex;
+}
+.user-page-icon {
+  flex: 128px 0 0;
+  margin:0 6px;
+}
 .user-page-profile {
+  flex: auto 1 1;
   background-color: $color-box-background;
-  padding: 0.7rem;
+  margin: 0 6px;
+  padding: 4px;
 
   &.user-page-profile-empty {
     color: $color-lightcolor;
