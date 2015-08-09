@@ -24,3 +24,16 @@
   max-width: 800px;
   margin: 0 auto;
 }
+
+.user-account-profile-icon-menu {
+  display: flex;
+
+  color: $color-lightcolor;
+
+  .user-account-profile-icon-preview {
+    flex: 134px 0 0;
+    margin: 10px 30px 10px 10px;
+
+    cursor: pointer;
+  }
+}

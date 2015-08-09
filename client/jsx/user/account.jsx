@@ -9,7 +9,8 @@ var NeedLogin = require('../commons/need-login.jsx'),
     Loading = require('../commons/loading.jsx'),
     HorizontalMenu = require('../commons/horizontal-menu.jsx'),
     FileList = require('../file/file-list.jsx'),
-    FileDataForm = require('../file/file-data-form.jsx');
+    FileDataForm = require('../file/file-data-form.jsx'),
+    UserIcon = require('../commons/user-icon.jsx');
 
 var Account=React.createClass({
     displayName:"Account",
@@ -86,7 +87,7 @@ var Account=React.createClass({
         var page=this.state.page;
         if(page==="profile"){
             //プロフィール
-            return <ProfileForm userdata={this.state.userdata}/>;
+            return <ProfileForm config={this.props.config} userdata={this.state.userdata}/>;
         }else if(page==="password"){
             return <ChangePasswordForm config={this.props.config}/>;
         }else if(page==="mail"){
@@ -102,6 +103,7 @@ var Account=React.createClass({
 var ProfileForm=React.createClass({
     displayName:"ProfileForm",
     propTypes:{
+        config: React.PropTypes.object.isRequired,
         userdata: React.PropTypes.object
     },
     getInitialState:function(){
@@ -113,6 +115,8 @@ var ProfileForm=React.createClass({
             //user data form
             name: userdata.name || "",
             profile: userdata.profile || "",
+            icon: userdata.icon || null,
+            url: userdata.url || "",
             //modified flag
             modified: false,
         };
@@ -124,7 +128,7 @@ var ProfileForm=React.createClass({
     },
     handleChange:function(e){
         var n=e.target.name;
-        if(n==="name" || n==="profile"){
+        if(n==="name" || n==="profile" || n==="url"){
             this.setState({
                 [n]: e.target.value,
                 modified: true
@@ -135,14 +139,27 @@ var ProfileForm=React.createClass({
         e.preventDefault();
         userAction.update({
             name: this.state.name,
-            profile: this.state.profile
+            profile: this.state.profile,
+            icon: this.state.icon,
+            url: this.state.url
+        });
+    },
+    handleIconChange(file){
+        this.setState({
+            icon: file ? file.id : null,
+            modified: true
         });
     },
     render(){
         if(this.props.userdata==null){
             return <Loading/>;
         }
-        return (
+        var iconLink={
+            value: this.state.icon,
+            requestChange: this.handleIconChange
+        };
+        return (<div>
+            <IconEdit config={this.props.config} userdata={this.props.userdata} iconLink={iconLink}/>
             <form className="form" onSubmit={this.handleSubmit}>
                 <p>
                     <label className="form-row">
@@ -164,14 +181,72 @@ var ProfileForm=React.createClass({
                 </p>
                 <p>
                     <label className="form-row">
+                        <span>ウェブサイトのURL</span>
+                        <input type="url" name="url" value={this.state.url} onChange={this.handleChange} />
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
                         <span>プロフィール</span>
                         <textarea name="profile" value={this.state.profile} onChange={this.handleChange} />
                     </label>
                 </p>
                 <p><input className="form-single form-button" type="submit" value={"変更を保存"+ (this.state.modified ? " …" : "")} /></p>
             </form>
+        </div>
         );
     }
+});
+var IconEdit = React.createClass({
+    displayName: "IconEdit",
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        userdata: React.PropTypes.object.isRequired,
+        iconLink: React.PropTypes.shape({
+            value: React.PropTypes.oneOfType([
+                React.PropTypes.string,
+                React.PropTypes.object
+            ]),
+            requestChange: React.PropTypes.func
+        }).isRequired
+    },
+    getInitialState(){
+        return {
+            edit: false
+        };
+    },
+    render(){
+        var filelist=null;
+        if(this.state.edit===true){
+            var query={
+                owner: this.props.userdata.id,
+                usage: "other"
+            };
+            filelist = <FileList config={this.props.config} query={query} fileLink={this.props.iconLink} useDefault usePreviewLink/>;
+        }
+        var icon=this.props.iconLink.value;
+        //ファイルIDをとりだす
+        if(icon && icon.id){
+            icon=icon.id;
+        }
+        return <div className="user-account-profile-icon-wrapper">
+            <div className="user-account-profile-icon-menu">
+                <div className="user-account-profile-icon-preview" onClick={this.handleIconEdit}>
+                    <UserIcon icon={icon} size={128} />
+                </div>
+                <div>
+                    {icon ? null : <p>アイコンが設定されていません。</p>}
+                    {this.state.edit ? <p>アイコンを変更したら、下の保存ボタンを押してください。</p> : null}
+                </div>
+            </div>
+            {filelist}
+        </div>;
+    },
+    handleIconEdit(e){
+        this.setState({
+            edit: true
+        });
+    },
 });
 
 var ChangePasswordForm = React.createClass({

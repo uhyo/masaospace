@@ -75,6 +75,10 @@ user:
   # profile
   profile:
     maxLength: 1024
+  # url
+  url:
+    maxLength: 1024
+
 
 
 
