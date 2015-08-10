@@ -72,7 +72,7 @@ gulp.task('static',function(){
 
 gulp.task('css',function(){
     return gulp.src(["client/css/index.scss"])
-    .pipe(sass({outputStyle:"compressed"}))
+    .pipe(sass({outputStyle:"compressed"}).on("error",sass.logError))
     .pipe(rename("css.css"))
     .pipe(gulp.dest("dist/"));
 });
