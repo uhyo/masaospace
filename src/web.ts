@@ -28,6 +28,8 @@ import logger=require('./logger');
 import db=require('./db');
 import validator=require('./validator');
 
+import masao=require('../lib/masao');
+
 import Controller=require('./controllers/index');
 
 nodejsx.install({
@@ -188,6 +190,31 @@ export class WebServer{
                     title: view.title,
                     page: view.page,
                     data: view.data
+                });
+            });
+        });
+        // embedding
+        this.app.get("/embed/:id",(req,res)=>{
+            var id=parseInt(req.params.id);
+            //ゲームを探してみる
+            c.game.getGame(id,(err,obj)=>{
+                if(err){
+                    logger.error(err);
+                    res.send(500);
+                    return;
+                }
+                if(obj==null){
+                    //そのゲームはなかった
+                    res.send(404);
+                    return;
+                }
+                //正男をローカライズ
+                var localGame=masao.localizeGame(obj.game);
+                res.render("embed.ect",{
+                    constructorName:  obj.game.version==="2.8" ? "CanvasMasao_v28" : "CanvasMasao",
+                    params: localGame,
+                    metadata: obj.metadata,
+                    config: config
                 });
             });
         });
