@@ -11,7 +11,7 @@ function handleEvents(root){
         for(var t=ev.target;t;t=t.parentNode){
             if(t.nodeName==="A" && t.href){
                 //internal link?
-                if(t.origin===location.origin && !t.classList.contains("external") && t.target!=="_blank"){
+                if(t.origin===location.origin && !t.classList.contains("external") && !t.classList.contains("nop") && t.target!=="_blank"){
                     ev.preventDefault();
                     pageAction.load(t.pathname+t.search);
                     break;
