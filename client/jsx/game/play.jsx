@@ -44,8 +44,46 @@ module.exports = React.createClass({
                         <p>{metadata.description}</p>
                     </div>
                 </div>
+                <GameTools config={this.props.config} metadata={metadata}/>
                 <GameComment game={metadata.id} config={this.props.config} session={session} />
             </section>
         );
+    }
+});
+
+var GameTools = React.createClass({
+    displayName:"GameTools",
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        metadata: React.PropTypes.object.isRequired
+    },
+    getInitialState(){
+        return {
+            code: false
+        };
+    },
+    render(){
+        var metadata=this.props.metadata;
+        var code=null;
+        if(this.state.code===true){
+            code=<div className="game-play-tools-code">
+                <p>正男を埋め込みたい箇所に以下のHTMLコードを貼り付けてください。</p>
+                <pre><code>{
+                    `<iframe src="${this.props.config.service.url}embed/${metadata.id}" width="514" height="434" style="border:none"></iframe>`
+                }</code></pre>
+            </div>;
+        }
+        return <div className="game-play-tools">
+            <div>
+                <a href={`/play/${metadata.id}`} className="nop" onClick={this.handleCode}>ウェブページに埋め込む...</a>
+            </div>
+            {code}
+        </div>;
+    },
+    handleCode(e){
+        e.preventDefault();
+        this.setState({
+            code: !this.state.code
+        });
     }
 });

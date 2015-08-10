@@ -12,9 +12,9 @@
 .game-play-info {
   display: flex;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 4px auto;
   .game-play-info-meta {
-    background-color: rgba(#000000,0.04);
+    background-color: $color-lightbox-background;
     color: #666666;
     font-size: 0.9rem;
     margin: 0 10px 0 0;
@@ -32,6 +32,13 @@
       white-space: pre-line;
     }
   }
+}
+.game-play-tools {
+  background-color: $color-lightbox-background;
+  max-width: 800px;
+  margin: 4px auto;
+  padding: 3px;
+  font-size: 0.9rem;
 }
 
 //user tile
