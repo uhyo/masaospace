@@ -8,6 +8,7 @@ var reactify=require('reactify');
 var babelify=require('babelify');
 var uglifyify=require('uglifyify');
 var watchify=require('watchify');
+var uglify=require('gulp-uglify');
 var globule=require('globule');
 var typescript=require('gulp-typescript');
 var del=require('del');
@@ -35,9 +36,16 @@ gulp.task('watch-jsx',function(){
     return jsxCompiler(true);
 });
 
-gulp.task('mc_canvas',function(){
-    return gulp.src(["mc_canvas/Outputs/CanvasMasao.js","mc_canvas/Samples/*.gif"])
+gulp.task("mc_canvas-static",function(){
+    return gulp.src("mc_canvas/Samples/*.gif")
     .pipe(changed("dist/"))
+    .pipe(gulp.dest("dist/"));
+});
+
+gulp.task('mc_canvas',["mc_canvas-static"],function(){
+    return gulp.src(["mc_canvas/Outputs/CanvasMasao.js","mc_canvas/Outputs/CanvasMasao_v28.js"])
+    .pipe(changed("dist/"))
+    .pipe(uglify())
     .pipe(gulp.dest("dist/"));
 });
 
