@@ -75,7 +75,12 @@ module.exports = React.createClass({
                 p[resources[i].target] = "/uploaded/"+resources[i].id;
             }
         }
-        this.game=new CanvasMasao.Game(p,this.gameid);
+        if(game.version==="2.8"){
+            //2.8だ
+            this.game=new CanvasMasao_v28.Game(p,this.gameid);
+        }else{
+            this.game=new CanvasMasao.Game(p,this.gameid);
+        }
     },
     endGame:function(){
         if(this.game==null){
