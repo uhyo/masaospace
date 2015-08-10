@@ -1,6 +1,8 @@
 var path=require('path');
+var util=require('util');
 var gulp=require('gulp');
 var gulputil=require('gulp-util');
+var gulpif=require('gulp-if');
 var duration=require('gulp-duration');
 var browserify=require('browserify');
 var source=require('vinyl-source-stream');
@@ -15,6 +17,8 @@ var del=require('del');
 var changed=require('gulp-changed');
 var sass=require('gulp-sass');
 var rename=require('gulp-rename');
+var replace=require('gulp-replace');
+var concat=require('gulp-concat');
 
 gulp.task('tsc',function(){
     return gulp.src("src/**/*.ts")
@@ -42,10 +46,19 @@ gulp.task("mc_canvas-static",function(){
     .pipe(gulp.dest("dist/"));
 });
 
-gulp.task('mc_canvas',["mc_canvas-static"],function(){
+gulp.task('mc_canvas-uglify',function(){
     return gulp.src(["mc_canvas/Outputs/CanvasMasao.js","mc_canvas/Outputs/CanvasMasao_v28.js"])
     .pipe(changed("dist/"))
     .pipe(uglify())
+    .pipe(gulpif(function(file){
+        return path.basename(file.path)==="CanvasMasao_v28.js";
+    },replace("CanvasMasao","CanvasMasao_v28")))
+    .pipe(gulp.dest("dist/"));
+});
+
+gulp.task('mc_canvas',['mc_canvas-static','mc_canvas-uglify'],function(){
+    return gulp.src(["dist/CanvasMasao.js","dist/CanvasMasao_v28.js"])
+    .pipe(concat("CanvasMasao.min.js"))
     .pipe(gulp.dest("dist/"));
 });
 
