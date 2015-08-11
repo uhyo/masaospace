@@ -26,7 +26,7 @@ class C{
             }
             var gameid:number=parseInt(req.body.game);
             //ゲームが存在するか確かめる
-            c.game.getGame(gameid,(err,obj)=>{
+            c.game.getGame(gameid,false,(err,obj)=>{
                 if(err){
                     res.json({
                         error: String(err)

@@ -79,7 +79,7 @@ class C{
                 return;
             }
 
-            c.game.getGame(parseInt(req.body.id),(err,obj)=>{
+            c.game.getGame(parseInt(req.body.id),false,(err,obj)=>{
                 if(err){
                     res.json({
                         error: String(err)

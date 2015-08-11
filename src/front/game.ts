@@ -12,7 +12,7 @@ export default function(c:Controller,r:_Router):void{
     /////play
     r.add("/play/:number",(obj,callback:Callback<View>)=>{
         var id=parseInt(obj[":number"]);
-        c.game.getGame(id,(err,obj)=>{
+        c.game.getGame(id,true,(err,obj)=>{
             if(err){
                 callback(err,null);
                 return;
@@ -43,8 +43,6 @@ export default function(c:Controller,r:_Router):void{
                         owner: data
                     }
                 });
-                //閲覧数カウント
-                c.game.addPlayCount(id);
             });
         });
     });

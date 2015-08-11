@@ -197,7 +197,7 @@ export class WebServer{
         this.app.get("/embed/:id",(req,res)=>{
             var id=parseInt(req.params.id);
             //ゲームを探してみる
-            c.game.getGame(id,(err,obj)=>{
+            c.game.getGame(id,true,(err,obj)=>{
                 if(err){
                     logger.error(err);
                     res.send(500);
@@ -216,7 +216,6 @@ export class WebServer{
                     metadata: obj.metadata,
                     config: config
                 });
-                c.game.addPlayCount(id);
             });
         });
         this.app.get("*",(req,res)=>{
