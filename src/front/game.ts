@@ -11,7 +11,8 @@ export default function(c:Controller,r:_Router):void{
 
     /////play
     r.add("/play/:number",(obj,callback:Callback<View>)=>{
-        c.game.getGame(parseInt(obj[":number"]),(err,obj)=>{
+        var id=parseInt(obj[":number"]);
+        c.game.getGame(id,true,(err,obj)=>{
             if(err){
                 callback(err,null);
                 return;
@@ -32,6 +33,7 @@ export default function(c:Controller,r:_Router):void{
                 }
                 var data:any=outUserData(usr.getData());
                 data.id=usr.id;
+                //データを返す
                 callback(null,{
                     title: obj.metadata.title,
                     page: "game.play",

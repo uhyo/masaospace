@@ -15,6 +15,7 @@ import {addUserData} from './util';
 
 //constants
 const redis_nextid_key:string = "game:nextid";
+const redis_playcount_prefix:string = "game:playcount:";
 
 export default class GameController{
     constructor(private db:db.DBAccess){
@@ -123,9 +124,10 @@ export default class GameController{
         });
     }
     //ゲームをロードする
+    //playcount: ゲームの閲覧数を1増やす
     //そのゲームが存在しない場合はnull
-    getGame(id:number,callback:Callback<{game:GameData; metadata:GameMetadata}>):void{
-        var _this, game:GameData, metadata:GameMetadata, errend=false;
+    getGame(id:number,playcount:boolean,callback:Callback<{game:GameData; metadata:GameMetadata}>):void{
+        var _this=this, game:GameData, metadata:GameMetadata, errend=false;
         //並列な感じで読み込む
         this.getMetadataCollection((err,collm)=>{
             if(err){
@@ -174,7 +176,27 @@ export default class GameController{
             }
             if(game!=null && metadata!=null){
                 //データ揃った
-                callback(null,{game,metadata});
+                if(playcount){
+                    _this.addPlayCount(id,(err,playcount)=>{
+                        if(err){
+                            callback(err,null);
+                            return;
+                        }
+                        metadata.playcount=playcount;
+                        callback(null,{game,metadata});
+                    });
+                }else{
+                    let r=_this.db.redis.getClient();
+                    r.get(redis_playcount_prefix+id,(err,playcount)=>{
+                        if(err){
+                            logger.error(err);
+                            callback(err,null);
+                            return;
+                        }
+                        metadata.playcount=parseInt(playcount);
+                        callback(null,{game,metadata});
+                    });
+                }
             }
         }
     }
@@ -239,7 +261,7 @@ export default class GameController{
         });
     }
     //ゲームを変更する（オーナーのチェックもする）
-    //NOTE: metadata.createdはnullになっている（そのまま）
+    //NOTE: metadata.created, metadata.playcountはnullになっている（そのまま）
     editGame(id:number,owner:string,game:GameData,metadata:GameMetadata,callback:Cont):void{
         game.id=metadata.id=id;
         this.getGameCollection((err,collg)=>{
@@ -274,8 +296,9 @@ export default class GameController{
                             return;
                         }
 
-                        //作成時刻はコピー
+                        //コピーすべき情報はコピー
                         metadata.created=metadatadoc.created;
+                        metadata.playcount=metadatadoc.playcount;
                         //過去ログを作成
                         var pastdata: GamePastData={
                             id,
@@ -343,6 +366,79 @@ export default class GameController{
     //ゲームデータにユーザーデータを追加
     addUserData(games:Array<GameOpenMetadata>,callback:Callback<Array<GameOpenMetadataWithOwnerData>>):void{
         addUserData(this.db,games,"owner",callback);
+    }
+    //閲覧カウントを増やす
+    //（このidのゲームが実在することは保証されていてほしい）
+    addPlayCount(id:number,callback?:Callback<number>):void{
+        if(callback==null){
+            callback=(err,_)=>{};
+        }
+        var r=this.db.redis.getClient();
+        var key:string=redis_playcount_prefix+id;
+        r.incr(key,(err,result)=>{
+            if(err){
+                logger.error(err);
+                callback(err,null);
+                return;
+            }
+            if(result<=1){
+                //resultが1だったら何か怪しい（消えてるのでは？）
+                //DBからリストアする
+                this.getMetadataCollection((err,coll)=>{
+                    if(err){
+                        logger.error(err);
+                        callback(err,null);
+                        return;
+                    }
+                    coll.findOne({id},{
+                        fields: {playcount:1}
+                    },(err,doc)=>{
+                        if(err){
+                            logger.error(err);
+                            callback(err,null);
+                            return;
+                        }
+                        if(doc==null){
+                            //ないじゃん
+                            r.del(key);
+                            callback(null,0);
+                            return;
+                        }
+                        if(result<doc.playcount){
+                            //あった
+                            r.set(key,doc.playcount+1);
+                            callback(null,doc.playcount+1);
+                        }else{
+                            callback(null,result);
+                        }
+                    });
+                });
+            }else if(result%100===0){
+                //100単位で保存
+                callback(null,result);
+                this.getMetadataCollection((err,coll)=>{
+                    if(err){
+                        logger.error(err);
+                        callback(err,null);
+                        return;
+                    }
+                    coll.updateOne({
+                        id,
+                        playcount: {$lte: result}
+                    },{
+                        $set: {
+                            playcount: Number(result)
+                        }
+                    },(err,result2)=>{
+                        if(err){
+                            logger.error(err);
+                        }
+                    });
+                });
+            }else{
+                callback(null,result);
+            }
+        });
     }
 
     //MongoDBのコレクションを得る
