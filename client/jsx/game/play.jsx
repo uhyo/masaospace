@@ -37,6 +37,7 @@ module.exports = React.createClass({
                 <div className="game-play-info">
                     <div className="game-play-info-meta">
                         <p><Datetime date={new Date(metadata.created)} /> 投稿</p>
+                        <p>閲覧数 {metadata.playcount}</p>
                         {ownertools}
                         <UserTile {...this.props.owner} label="投稿者" fullWidth/>
                     </div>

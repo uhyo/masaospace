@@ -127,7 +127,7 @@ export default class GameController{
     //playcount: ゲームの閲覧数を1増やす
     //そのゲームが存在しない場合はnull
     getGame(id:number,playcount:boolean,callback:Callback<{game:GameData; metadata:GameMetadata}>):void{
-        var _this, game:GameData, metadata:GameMetadata, errend=false;
+        var _this=this, game:GameData, metadata:GameMetadata, errend=false;
         //並列な感じで読み込む
         this.getMetadataCollection((err,collm)=>{
             if(err){
@@ -177,7 +177,7 @@ export default class GameController{
             if(game!=null && metadata!=null){
                 //データ揃った
                 if(playcount){
-                    this.addPlayCount({id},(err,playcount)=>{
+                    _this.addPlayCount(id,(err,playcount)=>{
                         if(err){
                             callback(err,null);
                             return;
@@ -186,14 +186,14 @@ export default class GameController{
                         callback(null,{game,metadata});
                     });
                 }else{
-                    let r=this.db.redis.getClient();
+                    let r=_this.db.redis.getClient();
                     r.get(redis_playcount_prefix+id,(err,playcount)=>{
                         if(err){
                             logger.error(err);
                             callback(err,null);
                             return;
                         }
-                        metadata.playcount=playcount;
+                        metadata.playcount=parseInt(playcount);
                         callback(null,{game,metadata});
                     });
                 }
@@ -435,6 +435,8 @@ export default class GameController{
                         }
                     });
                 });
+            }else{
+                callback(null,result);
             }
         });
     }
