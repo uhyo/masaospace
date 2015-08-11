@@ -108,6 +108,8 @@ export interface GameOpenMetadata{
     description:string;
     //作成日時
     created:Date;
+    //閲覧回数
+    playcount:number;
 }
 ///ゲームのデータ全部
 export interface GameMetadata extends GameOpenMetadata{

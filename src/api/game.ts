@@ -29,6 +29,7 @@ class C{
                 //時刻をセット
                 var now=new Date();
                 obj.metadata.created=obj.metadata.updated=now;
+                obj.metadata.playcount=0;
                 c.game.newGame(obj.game,obj.metadata,(err,newid:number)=>{
                     if(err){
                         res.json({
@@ -241,6 +242,7 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
             title: metadata.title,
             description: metadata.description,
             created: null,
+            playcount: null,
             updated: null
         };
         callback(null,{

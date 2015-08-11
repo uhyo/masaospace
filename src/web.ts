@@ -216,6 +216,7 @@ export class WebServer{
                     metadata: obj.metadata,
                     config: config
                 });
+                c.game.addPlayCount(id);
             });
         });
         this.app.get("*",(req,res)=>{
