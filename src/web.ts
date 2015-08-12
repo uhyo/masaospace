@@ -187,7 +187,7 @@ export class WebServer{
                     throw err;
                 }
                 res.json({
-                    title: view.title,
+                    title: pageTitle(view.title),
                     page: view.page,
                     data: view.data
                 });
@@ -250,7 +250,7 @@ export class WebServer{
                     data: view.data
                 };
                 res.render("index.ect",{
-                    title: view.title,
+                    title: pageTitle(view.title),
                     initial: initialData,
                     content: React.renderToString(React.createElement(Root,initialData))
                 });
@@ -280,5 +280,14 @@ function makeClientSession(session:Session):any{
         return writeUserInfo(session,{
             loggedin: true
         });
+    }
+}
+
+//タイトル
+function pageTitle(title:string):string{
+    if(title){
+        return title+" | "+config.get("service.name");
+    }else{
+        return config.get("service.name");
     }
 }
