@@ -374,6 +374,24 @@ export default class GameController{
             });
         });
     }
+    //リソースを使用しているゲームを見つける
+    countResourceUsingGames(fileid:string,callback:Callback<number>):void{
+        this.getGameCollection((err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            coll.count({
+                "resources.id":fileid
+            },(err,num)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                }
+                callback(null,num);
+            });
+        });
+    }
     //ゲームデータにユーザーデータを追加
     addUserData(games:Array<GameOpenMetadata>,callback:Callback<Array<GameOpenMetadataWithOwnerData>>):void{
         addUserData(this.db,games,"owner",callback);

@@ -540,30 +540,26 @@ var FileDelForm = React.createClass({
                     <p><input type="button" className="form-single form-button" value="ファイルを削除" onClick={this.handleDel} /></p>
                 </form>
             </div>;
+        }else if(mode==="select"){
+            return <div>
+                <p>TODO</p>
+            </div>;
         }
     },
     handleDel(){
         //ファイルを消すぜえええええええええええ！
-        //TODO
-        if("function"===typeof this.props.onDel){
-            this.props.onDel(this.props.fileid);
-        }
-        return;
         api("/api/file/del",{
             id: this.props.fileid
         })
         .then((result)=>{
             if(result.success===true){
-                this.setState({
-                    mode: "end"
-                });
+                if("function"===typeof this.props.onDel){
+                    this.props.onDel(this.props.fileid);
+                }
             }else{
                 this.setState({
                     mode: "select"
                 });
-                if("function"===typeof this.props.onDel){
-                    this.props.onDel(this.props.fileid);
-                }
             }
         })
         .catch(errorStore.emit);

@@ -146,6 +146,55 @@ class C{
                 });
             });
         });
+        //ファイルを削除
+        //IN id: ファイルID
+        //OUT success: 成功したらtrue
+        router.post("/del",util.apim.useUser,(req,res)=>{
+            var id=req.body.id;
+            //まずファイルが存在するか確認
+            c.file.getFiles({id: id,owner:req.session.user},(err,files)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(files.length===0){
+                    res.json({
+                        error: "そのファイルは存在しません。"
+                    });
+                    return;
+                }
+                //このファイルを使うゲームがないか確認
+                c.game.countResourceUsingGames(id,(err,num)=>{
+                    if(err){
+                        res.json({
+                            error: String(err)
+                        });
+                        return;
+                    }
+                    if(num>0){
+                        //削除できない
+                        res.json({
+                            success: false
+                        });
+                    }else{
+                        //削除できる
+                        c.file.deleteFile(id,(err)=>{
+                            if(err){
+                                res.json({
+                                    error: String(err)
+                                });
+                                return;
+                            }
+                            res.json({
+                                success:true
+                            });
+                        });
+                    }
+                });
+            });
+        });
         //ファイルのリストを得る
         //IN owner: ファイルのもちぬし
         //IN usage: ファイルの種類
