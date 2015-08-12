@@ -40,7 +40,7 @@ export default class GameController{
                 },{
                 },d.intercept((result)=>{
                     coll.createIndex({
-                        created:1
+                        "resources.id":1
                     },{
                     },d.intercept((result)=>{
                         //gamedata index
@@ -50,14 +50,25 @@ export default class GameController{
                             },{
                                 unique:1
                             },d.intercept((result)=>{
-                                this.getPastCollection(d.intercept((coll)=>{
-                                    //gamepast index
+                                coll.createIndex({
+                                    owner:1,
+                                    created:1
+                                },{
+                                },d.intercept((result)=>{
                                     coll.createIndex({
-                                        id:1,
-                                        created:-1
+                                        created:1
                                     },{
                                     },d.intercept((result)=>{
-                                        this.initRedis(callback);
+                                        this.getPastCollection(d.intercept((coll)=>{
+                                            //gamepast index
+                                            coll.createIndex({
+                                                id:1,
+                                                created:-1
+                                            },{
+                                            },d.intercept((result)=>{
+                                                this.initRedis(callback);
+                                            }));
+                                        }));
                                     }));
                                 }));
                             }));
