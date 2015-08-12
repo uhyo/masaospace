@@ -42,12 +42,27 @@
 
   .game-play-tools-bar {
     display: flex;
+    line-height: 24px;
+    color: $color-lightcolor;
   }
   .game-play-tools-code-link {
     margin: 0 1em 0 0;
+
+    a {
+      vertical-align: bottom;
+    }
   }
-  .game-play-tools-social .icon {
-    margin: 2px 4px;
+  .game-play-tools-social {
+    a {
+      display: inline-block;
+      margin: 0 4px;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+    }
+  }
+  .game-play-tools-social-label {
+    vertical-align: top;
   }
 }
 

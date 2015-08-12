@@ -84,6 +84,8 @@ var GameTools = React.createClass({
             text: title
         }), facebookQ=queryString.stringify({
             u: url
+        }), googleQ=queryString.stringify({
+            url:url
         });
         return <div className="game-play-tools">
             <div className="game-play-tools-bar">
@@ -91,8 +93,10 @@ var GameTools = React.createClass({
                     <a href={`/play/${metadata.id}`} className="nop" onClick={this.handleCode}>ウェブページに埋め込む...</a>
                 </div>
                 <div className="game-play-tools-social">
+                    <span className="game-play-tools-social-label">共有：</span>
                     <a href={"https://twitter.com/share?"+twttrQ} target="_blank" title="Twitterでツイート"><span className="icon icon-twitter" /></a>
                     <a href={"https://www.facebook.com/sharer/sharer.php?"+facebookQ} target="_blank" title="Facebookでシェア"><span className="icon icon-facebook" /></a>
+                    <a href={"https://plus.google.com/share?"+googleQ} target="_blank" title="Google+でシェア"><span className="icon icon-googleplus" /></a>
                 </div>
             </div>
             {code}
