@@ -6,7 +6,7 @@ var NeedLogin=require('../commons/need-login.jsx');
 var MyPage=React.createClass({
     displayName:"MyPage",
     propTypes:{
-        session: React.PropTypes.object.isRequire
+        session: React.PropTypes.object.isRequired
     },
     getInitialState:function(){
         return {
