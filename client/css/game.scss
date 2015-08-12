@@ -39,6 +39,13 @@
   margin: 4px auto;
   padding: 4px;
   font-size: 0.9rem;
+
+  .game-play-tools-bar {
+    display: flex;
+  }
+  .game-play-tools-code-link {
+    margin: 0 1em 0 0;
+  }
 }
 
 //user tile

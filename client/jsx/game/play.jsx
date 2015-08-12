@@ -1,5 +1,7 @@
 var React = require('react');
 
+var queryString=require('query-string');
+
 var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
     Datetime=require('../commons/datetime.jsx'),
@@ -74,9 +76,21 @@ var GameTools = React.createClass({
                 }</code></pre>
             </div>;
         }
+        //social
+        var url=this.props.config.service.url+"play/"+metadata.id;
+        var title=metadata.title + " | "+this.props.config.service.name;
+        var twttrQ=queryString.stringify({
+            url:url,
+            text: title
+        });
         return <div className="game-play-tools">
-            <div>
-                <a href={`/play/${metadata.id}`} className="nop" onClick={this.handleCode}>ウェブページに埋め込む...</a>
+            <div className="game-play-tools-bar">
+                <div className="game-play-tools-code-link">
+                    <a href={`/play/${metadata.id}`} className="nop" onClick={this.handleCode}>ウェブページに埋め込む...</a>
+                </div>
+                <div className="game-play-tools-social">
+                    <a href={"https://twitter.com/share?"+twttrQ} target="_blank"><span className="icon icon-twitter" /></a>
+                </div>
             </div>
             {code}
         </div>;
