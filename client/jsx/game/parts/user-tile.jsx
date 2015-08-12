@@ -23,12 +23,7 @@ module.exports = React.createClass({
         var url=null;
         if(this.props.url){
             //プロトコルを除去
-            var urlStr=this.props.url;
-            try{
-                var urlObj=new URL(urlStr);
-                urlStr=urlObj.host+urlObj.pathname+urlObj.search+urlObj.hash;
-            }catch(e){
-            }
+            var urlStr=this.props.url.replace(/^https?:\/\//,"");
 
             url=<div className="user-tile-url">
                 URL: <a href={this.props.url} rel="external" target="_blank">{urlStr}</a>

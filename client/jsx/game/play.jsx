@@ -1,5 +1,7 @@
 var React = require('react');
 
+var queryString=require('query-string');
+
 var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
     Datetime=require('../commons/datetime.jsx'),
@@ -74,9 +76,28 @@ var GameTools = React.createClass({
                 }</code></pre>
             </div>;
         }
+        //social
+        var url=this.props.config.service.url+"play/"+metadata.id;
+        var title=metadata.title + " | "+this.props.config.service.name;
+        var twttrQ=queryString.stringify({
+            url:url,
+            text: title
+        }), facebookQ=queryString.stringify({
+            u: url
+        }), googleQ=queryString.stringify({
+            url:url
+        });
         return <div className="game-play-tools">
-            <div>
-                <a href={`/play/${metadata.id}`} className="nop" onClick={this.handleCode}>ウェブページに埋め込む...</a>
+            <div className="game-play-tools-bar">
+                <div className="game-play-tools-code-link">
+                    <a href={`/play/${metadata.id}`} className="nop" onClick={this.handleCode}>ウェブページに埋め込む...</a>
+                </div>
+                <div className="game-play-tools-social">
+                    <span className="game-play-tools-social-label">共有：</span>
+                    <a href={"https://twitter.com/share?"+twttrQ} target="_blank" title="Twitterでツイート"><span className="icon icon-twitter" /></a>
+                    <a href={"https://www.facebook.com/sharer/sharer.php?"+facebookQ} target="_blank" title="Facebookでシェア"><span className="icon icon-facebook" /></a>
+                    <a href={"https://plus.google.com/share?"+googleQ} target="_blank" title="Google+でシェア"><span className="icon icon-googleplus" /></a>
+                </div>
             </div>
             {code}
         </div>;
