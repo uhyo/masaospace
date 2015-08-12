@@ -237,7 +237,7 @@ var IconEdit = React.createClass({
                 <div>
                     <p>アイコンは最大128×128で表示されることがあります。</p>
                     {icon ? null : <p>アイコンが設定されていません。</p>}
-                    {this.state.edit ? <p>アイコンを変更したら、下の保存ボタンを押してください。</p> : null}
+                    {this.state.edit ? <p>アイコンを変更したら、下の保存ボタンを押してください。</p> : <p>アイコンをクリックして変更できます。</p>}
                 </div>
             </div>
             {filelist}
@@ -402,7 +402,6 @@ var MailForm=React.createClass({
 
 var FilePage=React.createClass({
     displayName:"FilePage",
-    mixins:[React.addons.LinkedStateMixin],
     propTypes:{
         session: React.PropTypes.object.isRequired,
         config: React.PropTypes.object.isRequired
@@ -412,7 +411,9 @@ var FilePage=React.createClass({
             saving: false,
             load: false,
             //選択されたファイル
-            file:null
+            file:null,
+            //モード
+            mode: null,
         };
     },
     render(){
@@ -420,32 +421,78 @@ var FilePage=React.createClass({
             owner: this.props.session.user
         };
         return <div>
-            <FileList config={this.props.config} query={query} forceLoad={this.state.load} diskSpace fileLink={this.linkState("file")}/>
+            <FileList config={this.props.config} query={query} forceLoad={this.state.load} diskSpace fileLink={this.fileLink()}/>
             {this.form()}
         </div>;
     },
     form(){
-        var file=this.state.file;
+        var file=this.state.file, mode=this.state.mode;
         if(file==null){
             //ファイルが選択されていなかったらなにも表示しない
             return null;
         }
-       var fileData={
-            type: file.type,
-            name: file.name,
-            usage: file.usage,
-            description: file.description
-        };
-        var submit,disabled;
-        if(this.state.saving===true){
-            submit="保存中……";
-            disabled=true;
-        }else{
-            submit="保存";
-            disabled=false;
+        var menu = <div className="icon-menu">{
+            ["edit","del"].map((md)=>{
+                var selected = md===mode ? " icon-menu-current" : "";
+                return <div key={md} className={"icon-menu-item"+selected} onClick={this.handleMenu(md)}>
+                    <span className={"icon icon-file"+md}/>
+                </div>;
+            })
+        }</div>;
+        var content=null;
+        if(mode==="edit"){
+            //ファイルを編集
+           var fileData={
+                type: file.type,
+                name: file.name,
+                usage: file.usage,
+                description: file.description
+            };
+            var submit,disabled;
+            if(this.state.saving===true){
+                submit="保存中……";
+                disabled=true;
+            }else{
+                submit="保存";
+                disabled=false;
+            }
+            var fileurl="/uploaded/"+file.id;
+            content = <FileDataForm config={this.props.config} submitButton={submit} submitDisabled={disabled} previewURL={fileurl} previewLink={fileurl} defaultFile={fileData} onSubmit={this.handleSubmit} />;
+        }else if(mode==="del"){
+            //ファイルを削除
+            content = <FileDelForm fileid={file.id} onDel={this.handleDel}/>;
         }
-        var fileurl="/uploaded/"+file.id;
-        return <FileDataForm config={this.props.config} submitButton={submit} submitDisabled={disabled} previewURL={fileurl} previewLink={fileurl} defaultFile={fileData} onSubmit={this.handleSubmit} />;
+        return <div>
+            {menu}
+            {content}
+        </div>;
+    },
+    handleMenu(mode){
+        return ()=>{
+            this.setState({
+                mode,
+                load:false
+            });
+        }
+    },
+    handleDel(fileid){
+        this.setState({
+            file:null,
+            mode:null,
+            load:true
+        });
+    },
+    fileLink(){
+        return {
+            value: this.state.file,
+            requestChange: (file)=>{
+                this.setState({
+                    file,
+                    mode: file ? "edit" : null,
+                    load:false
+                });
+            }
+        };
     },
     handleSubmit(file){
         //ファイルのメタデータを編集するぞーーーーーーーーーーーーーーー
@@ -470,6 +517,57 @@ var FilePage=React.createClass({
             file: filedata
         });
     }
+});
+
+var FileDelForm = React.createClass({
+    displayName:"FileDelForm",
+    propTypes:{
+        fileid: React.PropTypes.string.isRequired,
+        onDel: React.PropTypes.func
+    },
+    getInitialState(){
+        return {
+            mode: "start"
+        };
+    },
+    render(){
+        var mode=this.state.mode;
+        if(mode==="start"){
+            return <div>
+                <p>このファイルを削除しますか？</p>
+                <p>削除するには、下のボタンを押してください。</p>
+                <form className="form">
+                    <p><input type="button" className="form-single form-button" value="ファイルを削除" onClick={this.handleDel} /></p>
+                </form>
+            </div>;
+        }
+    },
+    handleDel(){
+        //ファイルを消すぜえええええええええええ！
+        //TODO
+        if("function"===typeof this.props.onDel){
+            this.props.onDel(this.props.fileid);
+        }
+        return;
+        api("/api/file/del",{
+            id: this.props.fileid
+        })
+        .then((result)=>{
+            if(result.success===true){
+                this.setState({
+                    mode: "end"
+                });
+            }else{
+                this.setState({
+                    mode: "select"
+                });
+                if("function"===typeof this.props.onDel){
+                    this.props.onDel(this.props.fileid);
+                }
+            }
+        })
+        .catch(errorStore.emit);
+    },
 });
 
 module.exports = Account;

@@ -355,6 +355,27 @@ ul.horizontal-menu {
   }
 }
 
+//icon menu
+.icon-menu {
+  display: flex;
+  align-items: flex-start;
+  margin: 8px 0;
+
+  .icon-menu-item {
+    width: 64px;
+    height: 64px;
+    margin: 0 8px;
+
+    background-color: $color-box-background;
+
+    cursor: pointer;
+
+    &.icon-menu-current {
+      background-color: #ccebff;
+    }
+  }
+}
+
 
 //portable styles
 .information {
@@ -372,7 +393,7 @@ ul.horizontal-menu {
   height: 32px;
   overflow: hidden;
   background-image: url(/static/images/icons.png);
-  background-size: 96px 120px;
+  background-size: 192px 120px;
   background-repeat: no-repeat;
 
   &.icon-home {
@@ -408,5 +429,15 @@ ul.horizontal-menu {
     width: 64px;
     height: 64px;
     background-position:0 -56px;
+  }
+  &.icon-fileedit {
+    width: 64px;
+    height: 64px;
+    background-position: -64px -56px;
+  }
+  &.icon-filedel {
+    width: 64px;
+    height: 64px;
+    background-position: -128px -56px;
   }
 }
