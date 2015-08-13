@@ -562,7 +562,7 @@ var FileDelForm = React.createClass({
                 }
             };
             return <div>
-                <p>このファイルは<b>{this.state.used}</b>件の正男で使用されています。どのファイルで置き換えますか？</p>
+                <p>このファイルは<b>{this.state.used}</b>件の正男で使用されています。ファイルを削除するには、他のファイルで置き換えてください。どのファイルで置き換えますか？</p>
                 <FileList config={this.props.config} query={query} fileLink={fileLink} useDefault usePreviewLink/>
                 <form className="form">
                     <input type="button" className="form-single form-button" value="ファイルを置き換えて削除" onClick={this.handleDel}/>
