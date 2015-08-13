@@ -140,6 +140,33 @@ export default class FileController{
             });
         });
     }
+    //ファイルを消す
+    deleteFile(id:string,callback:Cont):void{
+        //まずDBから消す
+        this.getCollection((err,coll)=>{
+            if(err){
+                callback(err);
+                return;
+            }
+            coll.deleteOne({id},(err,result)=>{
+                if(err){
+                    callback(err);
+                    return;
+                }
+                //次にファイルシステムから消す
+                var p=path.join(config.get("file.path"),id);
+                fs.unlink(p,(err)=>{
+                    if(err){
+                        logger.error(err);
+                        logger.alert("fileid: "+id+" remains only in disk!");
+                        callback(err);
+                    }
+                    //完了
+                    callback(null);
+                });
+            });
+        });
+    }
     getFiles(q:FileQuery,callback:Callback<Array<File>>):void{
         if(Array.isArray(q.ids)){
             q.id = <any>{

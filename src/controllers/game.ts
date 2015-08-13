@@ -40,7 +40,7 @@ export default class GameController{
                 },{
                 },d.intercept((result)=>{
                     coll.createIndex({
-                        created:1
+                        "resources.id":1
                     },{
                     },d.intercept((result)=>{
                         //gamedata index
@@ -50,14 +50,25 @@ export default class GameController{
                             },{
                                 unique:1
                             },d.intercept((result)=>{
-                                this.getPastCollection(d.intercept((coll)=>{
-                                    //gamepast index
+                                coll.createIndex({
+                                    owner:1,
+                                    created:1
+                                },{
+                                },d.intercept((result)=>{
                                     coll.createIndex({
-                                        id:1,
-                                        created:-1
+                                        created:1
                                     },{
                                     },d.intercept((result)=>{
-                                        this.initRedis(callback);
+                                        this.getPastCollection(d.intercept((coll)=>{
+                                            //gamepast index
+                                            coll.createIndex({
+                                                id:1,
+                                                created:-1
+                                            },{
+                                            },d.intercept((result)=>{
+                                                this.initRedis(callback);
+                                            }));
+                                        }));
                                     }));
                                 }));
                             }));
@@ -360,6 +371,59 @@ export default class GameController{
                     return;
                 }
                 callback(null,docs);
+            });
+        });
+    }
+    //リソースを使用しているゲームを見つける
+    countResourceUsingGames(fileid:string,callback:Callback<number>):void{
+        this.getGameCollection((err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            coll.count({
+                "resources.id":fileid
+            },(err,num)=>{
+                if(err){
+                    logger.error(err);
+                    callback(err,null);
+                }
+                callback(null,num);
+            });
+        });
+    }
+    //リソースIDを変更する（newidがnullだったらリソースなし）
+    replaceResource(oldid:string,newid:string,callback:Cont):void{
+        this.getGameCollection((err,coll)=>{
+            if(err){
+                callback(err);
+                return;
+            }
+            var op;
+            if(newid==null){
+                //消すだけでいい
+                op={
+                    $pull: {
+                        resources: {
+                            id: oldid
+                        }
+                    }
+                };
+            }else{
+                //書き換える
+                op={
+                    $set: {
+                        "resources.$.id":newid
+                    }
+                };
+            }
+            coll.updateMany({
+                "resources.id":oldid
+            },op,(err,result)=>{
+                if(err){
+                    logger.error(err);
+                }
+                callback(err);
             });
         });
     }
