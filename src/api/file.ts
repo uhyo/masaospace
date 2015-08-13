@@ -176,7 +176,8 @@ class C{
                     if(num>0){
                         //削除できない
                         res.json({
-                            success: false
+                            success: false,
+                            used: num
                         });
                     }else{
                         //削除できる

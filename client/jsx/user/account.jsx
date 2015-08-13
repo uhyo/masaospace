@@ -460,7 +460,7 @@ var FilePage=React.createClass({
             content = <FileDataForm config={this.props.config} submitButton={submit} submitDisabled={disabled} previewURL={fileurl} previewLink={fileurl} defaultFile={fileData} onSubmit={this.handleSubmit} />;
         }else if(mode==="del"){
             //ファイルを削除
-            content = <FileDelForm fileid={file.id} onDel={this.handleDel}/>;
+            content = <FileDelForm config={this.props.config} session={this.props.session} fileid={file.id} usage={file.usage} onDel={this.handleDel}/>;
         }
         return <div>
             {menu}
@@ -522,12 +522,18 @@ var FilePage=React.createClass({
 var FileDelForm = React.createClass({
     displayName:"FileDelForm",
     propTypes:{
+        config: React.PropTypes.object.isRequired,
+        session: React.PropTypes.object.isRequired,
+
         fileid: React.PropTypes.string.isRequired,
+        usage: React.PropTypes.string,
         onDel: React.PropTypes.func
     },
     getInitialState(){
         return {
-            mode: "start"
+            mode: "start",
+            used: null,
+            alternativeFile: null
         };
     },
     render(){
@@ -540,17 +546,40 @@ var FileDelForm = React.createClass({
                     <p><input type="button" className="form-single form-button" value="ファイルを削除" onClick={this.handleDel} /></p>
                 </form>
             </div>;
+        }else if(mode==="loading"){
+            return <Loading/>;
         }else if(mode==="select"){
+            var query={
+                owner: this.props.session.user,
+                usage: this.props.usage
+            };
+            var fileLink={
+                value: this.state.alternativeFile,
+                requestChange:(fl)=>{
+                    this.setState({
+                        alternativeFile: fl
+                    })
+                }
+            };
             return <div>
-                <p>TODO</p>
+                <p>このファイルは<b>{this.state.used}</b>件の正男で使用されています。どのファイルで置き換えますか？</p>
+                <FileList config={this.props.config} query={query} fileLink={fileLink} useDefault usePreviewLink/>
+                <form className="form">
+                    <input type="button" className="form-single form-button" value="ファイルを置き換えて削除" onClick={this.handleDel}/>
+                </form>
             </div>;
         }
     },
     handleDel(){
         //ファイルを消すぜえええええええええええ！
-        api("/api/file/del",{
+        var query={
             id: this.props.fileid
-        })
+        };
+        if(this.state.mode==="select"){
+            //代替ファイル
+            query.alternativeFile = this.state.alternativeFile ? this.state.alternativeFile.id : "";
+        }
+        api("/api/file/del",query)
         .then((result)=>{
             if(result.success===true){
                 if("function"===typeof this.props.onDel){
@@ -558,11 +587,15 @@ var FileDelForm = React.createClass({
                 }
             }else{
                 this.setState({
-                    mode: "select"
+                    mode: "select",
+                    used: result.used
                 });
             }
         })
         .catch(errorStore.emit);
+        this.setState({
+            mode:"loading"
+        });
     },
 });
 
