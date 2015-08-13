@@ -392,6 +392,41 @@ export default class GameController{
             });
         });
     }
+    //リソースIDを変更する（newidがnullだったらリソースなし）
+    replaceResource(oldid:string,newid:string,callback:Cont):void{
+        this.getGameCollection((err,coll)=>{
+            if(err){
+                callback(err);
+                return;
+            }
+            var op;
+            if(newid==null){
+                //消すだけでいい
+                op={
+                    $pull: {
+                        resources: {
+                            id: oldid
+                        }
+                    }
+                };
+            }else{
+                //書き換える
+                op={
+                    $set: {
+                        "resources.$.id":newid
+                    }
+                };
+            }
+            coll.updateMany({
+                "resources.id":oldid
+            },op,(err,result)=>{
+                if(err){
+                    logger.error(err);
+                }
+                callback(err);
+            });
+        });
+    }
     //ゲームデータにユーザーデータを追加
     addUserData(games:Array<GameOpenMetadata>,callback:Callback<Array<GameOpenMetadataWithOwnerData>>):void{
         addUserData(this.db,games,"owner",callback);
