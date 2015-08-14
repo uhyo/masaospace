@@ -5,7 +5,10 @@ module.exports = React.createClass({
     displayName:"GameMetadataForm",
     propTypes:{
         title: React.PropTypes.string,
-        description: React.PropTypes.string
+        description: React.PropTypes.string,
+
+        // {title, description}
+        onChange: React.PropTypes.func
     },
     getInitialState:function(){
         return {

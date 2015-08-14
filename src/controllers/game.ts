@@ -7,7 +7,7 @@ import config=require('config');
 
 import extend=require('extend');
 
-import {UserOpenData, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GamePastData, GameQuery} from '../data';
+import {UserOpenData, GameEditableMetadata, GameMetadataUpdate, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GamePastData, GameQuery} from '../data';
 
 import util=require('../util');
 
@@ -212,7 +212,7 @@ export default class GameController{
         }
     }
     //新しいゲームを作成(callbackでゲームIDを返す）
-    newGame(game:GameData,metadata:GameMetadata,callback:Callback<number>):void{
+    newGame(game:GameData,metadata:GameMetadataUpdate,callback:Callback<number>):void{
         this.getGameCollection((err,collg)=>{
             if(err){
                 callback(err,null);
@@ -233,7 +233,17 @@ export default class GameController{
                     }
                     //resultはID+1になっているので1引いたものが新しいID
                     var newid=result-1;
-                    game.id=metadata.id=newid;
+                    game.id=newid;
+                    var now=new Date();
+                    var metadataobj:GameMetadata={
+                        id: newid,  //metadata.idを使わない
+                        owner: metadata.owner,
+                        title: metadata.title,
+                        description: metadata.description,
+                        created: now,
+                        playcount: 0,
+                        updated: now
+                    };
                     //DBに保存
                     collg.insertOne(game,(err,result)=>{
                         if(err){
@@ -242,7 +252,7 @@ export default class GameController{
                             callback(err,null);
                             return;
                         }
-                        collm.insertOne(metadata,(err,result)=>{
+                        collm.insertOne(metadataobj,(err,result)=>{
                             if(err){
                                 //やばい！！！！！！！gameだけ入った！！！！！！！！
                                 logger.warning("Game id: "+newid+" is missing");
@@ -252,7 +262,7 @@ export default class GameController{
                                 },(err2,result)=>{
                                     if(err2){
                                         //もう知らん！！！！！
-                                        logger.critical("Failed to remove gamedata id:"+newid);
+                                        logger.alert("Failed to remove gamedata id:"+newid);
                                         logger.critical(err);
                                         logger.critical(err2);
                                     }
@@ -272,8 +282,7 @@ export default class GameController{
         });
     }
     //ゲームを変更する（オーナーのチェックもする）
-    //NOTE: metadata.created, metadata.playcountはnullになっている（そのまま）
-    editGame(id:number,owner:string,game:GameData,metadata:GameMetadata,callback:Cont):void{
+    editGame(id:number,owner:string,game:GameData,metadata:GameMetadataUpdate,callback:Cont):void{
         game.id=metadata.id=id;
         this.getGameCollection((err,collg)=>{
             if(err){
@@ -308,8 +317,15 @@ export default class GameController{
                         }
 
                         //コピーすべき情報はコピー
-                        metadata.created=metadatadoc.created;
-                        metadata.playcount=metadatadoc.playcount;
+                        var newMetadata:GameMetadata = {
+                            id: id,
+                            owner: metadata.owner,
+                            title: metadata.title,
+                            description: metadata.description,
+                            created: metadatadoc.created,
+                            playcount: metadatadoc.playcount,
+                            updated: new Date()
+                        };
                         //過去ログを作成
                         var pastdata: GamePastData={
                             id,
@@ -336,7 +352,7 @@ export default class GameController{
                                         callback(err);
                                         return;
                                     }
-                                    collm.replaceOne({id},metadata,(err,result)=>{
+                                    collm.replaceOne({id},newMetadata,(err,result)=>{
                                         if(err){
                                             logger.error(err);
                                             logger.alert("Game id "+id+" is inconsistent");

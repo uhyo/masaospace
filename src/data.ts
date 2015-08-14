@@ -96,16 +96,22 @@ export interface FileQuery{
 }
 
 //正男（各種メタデータ）
-///一般に見せられる
-export interface GameOpenMetadata{
-    //ゲームID
-    id:number;
-    //オーナーユーザーID
-    owner:string;
+//投稿者が編集できる
+export interface GameEditableMetadata{
     //タイトル
     title:string;
     //説明
     description:string;
+}
+//セーブ時に自動生成されないデータ
+export interface GameMetadataUpdate extends GameEditableMetadata{
+    //ゲームID
+    id:number;
+    //オーナーユーザーID
+    owner:string;
+}
+///一般に見せられる
+export interface GameOpenMetadata extends GameMetadataUpdate{
     //作成日時
     created:Date;
     //閲覧回数

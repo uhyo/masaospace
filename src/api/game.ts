@@ -10,7 +10,7 @@ import config=require('config');
 
 import util=require('../util');
 
-import {GameMetadata, GameData, GameQuery} from '../data';
+import {GameEditableMetadata, GameMetadataUpdate, GameMetadata, GameData, GameQuery} from '../data';
 
 class C{
     route(router:express._Router,c:Controller):void{
@@ -26,10 +26,12 @@ class C{
                     });
                     return;
                 }
-                //時刻をセット
-                var now=new Date();
-                obj.metadata.created=obj.metadata.updated=now;
-                obj.metadata.playcount=0;
+                var metadata:GameMetadataUpdate={
+                    id: null,
+                    owner: obj.metadata.owner,
+                    title: obj.metadata.title,
+                    description: obj.metadata.description
+                };
                 c.game.newGame(obj.game,obj.metadata,(err,newid:number)=>{
                     if(err){
                         res.json({
@@ -53,9 +55,10 @@ class C{
                     });
                     return;
                 }
+                var id=parseInt(req.body.id);
                 //updatedをセット（createdはeditGameで）
-                obj.metadata.updated=new Date();
-                c.game.editGame(parseInt(req.body.id), req.session.user, obj.game, obj.metadata,(err)=>{
+                obj.metadata.id=id;
+                c.game.editGame(id, req.session.user, obj.game, obj.metadata,(err)=>{
                     if(err){
                         res.json({
                             error: String(err)
@@ -146,7 +149,7 @@ class C{
 export = C;
 
 //だめだったらfalse
-function validateMetadata(metadata:GameMetadata):boolean{
+function validateMetadata(metadata:GameEditableMetadata):boolean{
     if(validator.funcs.isGameTitle(metadata.title)!=null || validator.funcs.isGameDescription(metadata.description)!=null){
         return false;
     }
@@ -154,8 +157,8 @@ function validateMetadata(metadata:GameMetadata):boolean{
 }
 
 //正男のデータをバリデーションとかする
-function processMasao(req:express.Request,c:Controller,callback:Callback<{game:GameData;metadata:GameMetadata}>):void{
-    var game:GameData, metadata:GameMetadata;
+function processMasao(req:express.Request,c:Controller,callback:Callback<{game:GameData;metadata:GameMetadataUpdate}>):void{
+    var game:GameData, metadata:GameEditableMetadata;
     //JSONを読む
     try{
         game=JSON.parse(req.body.game);
@@ -236,14 +239,11 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
                 };
             })
         };
-        var metadataobj: GameMetadata = {
+        var metadataobj: GameMetadataUpdate = {
             id: null,
             owner: req.session.user,
             title: metadata.title,
             description: metadata.description,
-            created: null,
-            playcount: null,
-            updated: null
         };
         callback(null,{
             game: gameobj,
