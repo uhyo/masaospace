@@ -106,6 +106,9 @@ game:
     max: 10
   description:
     maxLength: 300
+  tag:
+    maxNumber: 10
+    maxLength: 20
 
 # comments
 comment:

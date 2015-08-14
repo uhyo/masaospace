@@ -30,7 +30,8 @@ class C{
                     id: null,
                     owner: obj.metadata.owner,
                     title: obj.metadata.title,
-                    description: obj.metadata.description
+                    description: obj.metadata.description,
+                    tags: obj.metadata.tags
                 };
                 c.game.newGame(obj.game,obj.metadata,(err,newid:number)=>{
                     if(err){
@@ -153,6 +154,18 @@ function validateMetadata(metadata:GameEditableMetadata):boolean{
     if(validator.funcs.isGameTitle(metadata.title)!=null || validator.funcs.isGameDescription(metadata.description)!=null){
         return false;
     }
+    if(!Array.isArray(metadata.tags)){
+        //そもそも配列じゃない
+        return false;
+    }
+    if(metadata.tags.length>config.get("game.tag.maxNumber")){
+        //タグが多すぎ
+        return false;
+    }
+    if(metadata.tags.some((tag)=>{return validator.funcs.isGameTag(tag)!=null})){
+        //まずいタグがある
+        return false;
+    }
     return true;
 }
 
@@ -244,6 +257,7 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
             owner: req.session.user,
             title: metadata.title,
             description: metadata.description,
+            tags: metadata.tags
         };
         callback(null,{
             game: gameobj,

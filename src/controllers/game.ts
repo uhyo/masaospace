@@ -240,6 +240,7 @@ export default class GameController{
                         owner: metadata.owner,
                         title: metadata.title,
                         description: metadata.description,
+                        tags: metadata.tags,
                         created: now,
                         playcount: 0,
                         updated: now
@@ -322,6 +323,7 @@ export default class GameController{
                             owner: metadata.owner,
                             title: metadata.title,
                             description: metadata.description,
+                            tags: metadata.tags,
                             created: metadatadoc.created,
                             playcount: metadatadoc.playcount,
                             updated: new Date()

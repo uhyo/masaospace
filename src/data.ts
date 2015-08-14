@@ -102,6 +102,8 @@ export interface GameEditableMetadata{
     title:string;
     //説明
     description:string;
+    //タグ
+    tags:Array<string>;
 }
 //セーブ時に自動生成されないデータ
 export interface GameMetadataUpdate extends GameEditableMetadata{
