@@ -100,8 +100,12 @@ class C{
             });
         });
         //ゲームを探す
+        //IN skip:number 何ページ分SKIPするか
+        //IN limit:number 最大何件出力するか（capあり）
+        //IN owner:string 投稿者による絞り込み
+        //IN tag:string タグによる絞り込み
         router.post("/find",(req,res)=>{
-            req.validateBody("page").isInteger().optional();
+            req.validateBody("skip").isInteger().optional();
             req.validateBody("limit").isInteger().optional();
 
             if(req.validationErrorResponse(res)){
@@ -122,6 +126,9 @@ class C{
 
             if(req.body.owner!=null){
                 qu.owner=req.body.owner;
+            }
+            if(req.body.tag!=null){
+                qu.tag=req.body.tag;
             }
 
             c.game.findGames(qu,(err,docs)=>{

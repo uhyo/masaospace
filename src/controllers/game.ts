@@ -59,14 +59,19 @@ export default class GameController{
                                         created:1
                                     },{
                                     },d.intercept((result)=>{
-                                        this.getPastCollection(d.intercept((coll)=>{
-                                            //gamepast index
-                                            coll.createIndex({
-                                                id:1,
-                                                created:-1
-                                            },{
-                                            },d.intercept((result)=>{
-                                                this.initRedis(callback);
+                                        coll.createIndex({
+                                            tags: 1
+                                        },{
+                                        },d.intercept((result)=>{
+                                            this.getPastCollection(d.intercept((coll)=>{
+                                                //gamepast index
+                                                coll.createIndex({
+                                                    id:1,
+                                                    created:-1
+                                                },{
+                                                },d.intercept((result)=>{
+                                                    this.initRedis(callback);
+                                                }));
                                             }));
                                         }));
                                     }));
