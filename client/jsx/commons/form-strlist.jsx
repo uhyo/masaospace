@@ -32,9 +32,9 @@ module.exports = React.createClass({
         return (e)=>{
             var props=this.props, vl;
             if(vl=props.valueLink){
-                vl.requestChange(vl.value.splice(i,1));
+                vl.requestChange(vl.value.splice(index,1));
             }else if("function"===typeof props.onChange){
-                props.onChange(props.value.splice(i,1));
+                props.onChange(props.value.splice(index,1));
             }
         };
     },
