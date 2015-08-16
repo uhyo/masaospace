@@ -176,7 +176,7 @@ section {
   p {
     margin: 0.4rem 0;
   }
-  label.form-row {
+  .form-row {
     display: block;
     min-height: 32px;
     border-bottom: 1px solid #f3f3f3;
@@ -200,6 +200,9 @@ section {
     & > span + textarea{
       height: 130px;
     }
+    & > span + .form-strlist-wrapper {
+      height: auto;
+    }
   }
 
   .form-single {
@@ -218,6 +221,25 @@ section {
 
   input[readonly], textarea[readonly] {
     background-color: #f3f3f3;
+  }
+}
+.form-strlist-wrapper {
+  display: inline-block;
+  padding: 6px;
+
+  ul.form-strlist-list {
+    li {
+      display: block;
+    }
+  }
+  input.form-strlist-button {
+    display: inline-block;
+    margin: 0 3px;
+    padding: 2px;
+
+    font-size: 100%;
+    border: 1px solid #cccccc;
+    background-color: #ededed;
   }
 }
 
