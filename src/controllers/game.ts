@@ -387,6 +387,9 @@ export default class GameController{
             if(query.owner!=null){
                 q.owner=query.owner;
             }
+            if(query.tags!=null){
+                q.tags=query.tags;
+            }
             coll.find(q).skip(query.skip).limit(query.limit).sort(query.sort).toArray((err,docs:Array<GameMetadata>)=>{
                 if(err){
                     logger.error(err);

@@ -156,7 +156,7 @@ export interface GamePastData{
 //ゲームを探すクエリ
 export interface GameQuery{
     owner?:string;
-    tag?:string;
+    tags?:string;
 
     skip:number;
     limit:number;

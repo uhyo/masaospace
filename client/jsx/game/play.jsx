@@ -37,8 +37,9 @@ module.exports = React.createClass({
                 <div><span className="icon icon-tag"/></div>
                 <ul>{
                     metadata.tags.map((tag,i)=>{
+                        var q=queryString.stringify({tag});
                         return <li key={i}>
-                            {tag}
+                            <a href={`/game/list?${q}`}>{tag}</a>
                         </li>;
                     })
                 }</ul>

@@ -104,6 +104,7 @@ class C{
         //IN limit:number 最大何件出力するか（capあり）
         //IN owner:string 投稿者による絞り込み
         //IN tag:string タグによる絞り込み
+        //OUT metadata:Array<GameMetadata>
         router.post("/find",(req,res)=>{
             req.validateBody("skip").isInteger().optional();
             req.validateBody("limit").isInteger().optional();
@@ -128,7 +129,7 @@ class C{
                 qu.owner=req.body.owner;
             }
             if(req.body.tag!=null){
-                qu.tag=req.body.tag;
+                qu.tags=req.body.tag;
             }
 
             c.game.findGames(qu,(err,docs)=>{

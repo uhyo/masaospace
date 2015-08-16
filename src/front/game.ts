@@ -53,7 +53,8 @@ export default function(c:Controller,r:_Router):void{
             title: "検索結果",
             page: "game.list",
             data:{
-                owner: obj.owner
+                owner: obj.owner,
+                tag: obj.tag
             }
         });
     });
