@@ -1,5 +1,6 @@
 ///<reference path="../node.d.ts" />
 import domain=require('domain');
+import cron=require('cron');
 
 import db=require('../db');
 import logger=require('../logger');
@@ -16,6 +17,7 @@ import {addUserData} from './util';
 //constants
 const redis_nextid_key:string = "game:nextid";
 const redis_playcount_prefix:string = "game:playcount:";
+const redis_tagscore_prefix:string = "game:tagscore";
 
 export default class GameController{
     constructor(private db:db.DBAccess){
@@ -82,6 +84,13 @@ export default class GameController{
                 }));
             }));
         }));
+        //cron job
+        new cron.CronJob("0 0 0,12 * * *",()=>{
+            //tags setをdeleteする
+            var now=new Date(), h12=now.getHours()-12;
+            var key=redis_tagscore_prefix+(Math.abs(h12)<3 ? "0" : "1");
+            this.db.redis.getClient().del(key);
+        },null,true,"Asia/Tokyo");
     }
     //Redisのデータを初期化
     private initRedis(callback:Cont):void{
@@ -193,7 +202,7 @@ export default class GameController{
             if(game!=null && metadata!=null){
                 //データ揃った
                 if(playcount){
-                    _this.addPlayCount(id,(err,playcount)=>{
+                    _this.addPlayCount(metadata,(err,playcount)=>{
                         if(err){
                             callback(err,null);
                             return;
@@ -458,12 +467,13 @@ export default class GameController{
         addUserData(this.db,games,"owner",callback);
     }
     //閲覧カウントを増やす
-    //（このidのゲームが実在することは保証されていてほしい）
-    addPlayCount(id:number,callback?:Callback<number>):void{
+    addPlayCount(metadata:GameMetadata,callback?:Callback<number>):void{
         if(callback==null){
             callback=(err,_)=>{};
         }
+        var id=metadata.id;
         var r=this.db.redis.getClient();
+        //ゲームの閲覧数
         var key:string=redis_playcount_prefix+id;
         r.incr(key,(err,result)=>{
             if(err){
@@ -529,6 +539,13 @@ export default class GameController{
                 callback(null,result);
             }
         });
+        //タグのランキングを増やす（12時間くぎりで）
+        if(Array.isArray(metadata.tags)){
+            key = redis_tagscore_prefix+((new Date()).getHours()<12 ? "0" : "1");
+            for(var i=0;i<metadata.tags.length;i++){
+                r.zincrby(key,1,metadata.tags[i]);
+            }
+        }
     }
 
     //MongoDBのコレクションを得る
