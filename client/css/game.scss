@@ -23,13 +23,36 @@
   }
   .game-play-info-description {
     flex: auto 1 0;
+    display: flex;
+    flex-flow: column nowrap;
     background-color: $color-box-background;
 
     padding: 0.7rem;
     
-    p {
-      margin: 0;
-      white-space: pre-line;
+    .game-play-info-message {
+      flex: auto 1 0;
+
+      p {
+        margin: 0;
+        white-space: pre-line;
+      }
+    }
+    .game-play-info-tags {
+      flex: auto 0 0;
+      display: flex;
+      
+      ul {
+        flex: auto 1 1;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-start;
+
+        li {
+          display: block;
+          flex: auto 0 0;
+          margin: 0 10px;
+        }
+      }
     }
   }
 }
