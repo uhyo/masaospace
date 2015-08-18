@@ -33,7 +33,8 @@ var Root = React.createClass({
                 //top page
                 return [require('./top.jsx'),{
                     config: this.props.config,
-                    session: session
+                    session: session,
+                    data: this.props.data
                 }];
             ///// user
             case "user.entry":

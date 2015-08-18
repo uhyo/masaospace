@@ -794,10 +794,12 @@ declare module "redis"{
         zinterstore(...args:Array<any>):void;
         zlexcount(key:string,min:string,max:string,callback:(error:any,result:number)=>void):void;
         zrank(key:string,member:string,callback?:(error:any,result:any)=>void):void;
+        zrange(args:Array<any>,callback:(error:any,result:Array<string>)=>void):void;
         zrem(key:string,...members:Array<string>):void;
         zremrangebylex(key:string,min:string,max:string,callback?:(error:any,result:number)=>void):void;
         zremrangebyrank(key:string,start:number,stop:number,callback?:(error:any,result:number)=>void):void;
         zremrangebyscore(key:string,min:number,max:number,callback?:(error:any,result:number)=>void):void;
+        zrevrange(args:Array<any>,callback:(error:any,result:Array<string>)=>void):void;
         zscore(key:string,memer:string,callback:(error:any,result:string)=>void):void;
         zunionstore(...args:Array<any>):void;
     }

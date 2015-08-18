@@ -547,6 +547,55 @@ export default class GameController{
             }
         }
     }
+    //人気のタグを取得する
+    //num: 最大件数
+    getPopularTags(num:number,callback:Callback<Array<string>>):void{
+        var r=this.db.redis.getClient();
+        //2つのsorted setから取得
+        var next:(err:any,result:Array<string>)=>void;
+
+        var cnt:number=0;
+        var tagtable:any={};
+        var tags:Array<{tag:string;score:number}>=[];
+        next=(err:any,result:Array<string>)=>{
+            //arrayにはtagとscoreが順に入っている
+            if(err){
+                logger.error(err);
+                if(cnt>=0){
+                    callback(err,null);
+                    //2回エラーを送らないように
+                    cnt=-1;
+                }
+                return;
+            }
+            if(cnt<0){
+                return;
+            }
+            cnt++;
+            for(var i=0;i<result.length;i+=2){
+                if(tagtable[result[i]]){
+                    tagtable[result[i]].score+=Number(result[i+1]);
+                }else{
+                    let t=tagtable[result[i]]={
+                        tag: result[i],
+                        score: Number(result[i+1])
+                    };
+                    tags.push(t);
+                }
+            }
+            if(cnt<2){
+                return;
+            }
+            //結果が出揃ったので集計する（再ソート）
+            tags.sort((a,b)=>{
+                return b.score-a.score;
+            });
+            callback(null,tags.map(obj=>obj.tag));
+        };
+
+        r.zrevrange([redis_tagscore_prefix+"0",0,num-1,"WITHSCORES"],next);
+        r.zrevrange([redis_tagscore_prefix+"1",0,num-1,"WITHSCORES"],next);
+    }
 
     //MongoDBのコレクションを得る
     private getGameCollection(callback:Callback<db.Collection>):void{

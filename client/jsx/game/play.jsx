@@ -1,6 +1,7 @@
 var React = require('react');
 
-var queryString=require('query-string');
+var queryString=require('query-string'),
+    path=require('../../scripts/path');
 
 var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
@@ -37,9 +38,8 @@ module.exports = React.createClass({
                 <div><span className="icon icon-tag"/></div>
                 <ul>{
                     metadata.tags.map((tag,i)=>{
-                        var q=queryString.stringify({tag});
                         return <li key={i}>
-                            <a href={`/game/list?${q}`}>{tag}</a>
+                            <a href={path.gameListByTag(tag)}>{tag}</a>
                         </li>;
                     })
                 }</ul>
