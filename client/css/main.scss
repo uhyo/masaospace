@@ -130,6 +130,9 @@ a:active {
     }
   }
 }
+.top-tags {
+  margin: 2px 6px;
+}
 
 section {
   padding: 0 0.5rem 0.5rem 0.5rem;
@@ -176,7 +179,7 @@ section {
   p {
     margin: 0.4rem 0;
   }
-  label.form-row {
+  .form-row {
     display: block;
     min-height: 32px;
     border-bottom: 1px solid #f3f3f3;
@@ -200,6 +203,9 @@ section {
     & > span + textarea{
       height: 130px;
     }
+    & > span + .form-strlist-wrapper {
+      height: auto;
+    }
   }
 
   .form-single {
@@ -218,6 +224,26 @@ section {
 
   input[readonly], textarea[readonly] {
     background-color: #f3f3f3;
+  }
+}
+.form-strlist-wrapper {
+  display: inline-block;
+  padding: 6px;
+
+  ul.form-strlist-list {
+    li {
+      display: block;
+      margin: 2px 0;
+    }
+  }
+  input.form-strlist-button {
+    display: inline-block;
+    margin: 0 3px;
+    padding: 2px;
+
+    font-size: 100%;
+    border: 1px solid #cccccc;
+    background-color: #ededed;
   }
 }
 
@@ -408,6 +434,12 @@ ul.horizontal-menu {
     height: 24px;
 
     background-position: 0 -32px;
+  }
+  &.icon-tag {
+    width: 24px;
+    height: 24px;
+
+    background-position: -96px -32px;
   }
   &.icon-twitter {
     width: 24px;

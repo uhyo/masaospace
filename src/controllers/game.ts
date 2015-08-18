@@ -1,5 +1,6 @@
 ///<reference path="../node.d.ts" />
 import domain=require('domain');
+import cron=require('cron');
 
 import db=require('../db');
 import logger=require('../logger');
@@ -7,7 +8,7 @@ import config=require('config');
 
 import extend=require('extend');
 
-import {UserOpenData, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GamePastData, GameQuery} from '../data';
+import {UserOpenData, GameEditableMetadata, GameMetadataUpdate, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GamePastData, GameQuery} from '../data';
 
 import util=require('../util');
 
@@ -16,6 +17,7 @@ import {addUserData} from './util';
 //constants
 const redis_nextid_key:string = "game:nextid";
 const redis_playcount_prefix:string = "game:playcount:";
+const redis_tagscore_prefix:string = "game:tagscore";
 
 export default class GameController{
     constructor(private db:db.DBAccess){
@@ -59,14 +61,19 @@ export default class GameController{
                                         created:1
                                     },{
                                     },d.intercept((result)=>{
-                                        this.getPastCollection(d.intercept((coll)=>{
-                                            //gamepast index
-                                            coll.createIndex({
-                                                id:1,
-                                                created:-1
-                                            },{
-                                            },d.intercept((result)=>{
-                                                this.initRedis(callback);
+                                        coll.createIndex({
+                                            tags: 1
+                                        },{
+                                        },d.intercept((result)=>{
+                                            this.getPastCollection(d.intercept((coll)=>{
+                                                //gamepast index
+                                                coll.createIndex({
+                                                    id:1,
+                                                    created:-1
+                                                },{
+                                                },d.intercept((result)=>{
+                                                    this.initRedis(callback);
+                                                }));
                                             }));
                                         }));
                                     }));
@@ -77,6 +84,13 @@ export default class GameController{
                 }));
             }));
         }));
+        //cron job
+        new cron.CronJob("0 0 0,12 * * *",()=>{
+            //tags setをdeleteする
+            var now=new Date(), h12=now.getHours()-12;
+            var key=redis_tagscore_prefix+(Math.abs(h12)<3 ? "0" : "1");
+            this.db.redis.getClient().del(key);
+        },null,true,"Asia/Tokyo");
     }
     //Redisのデータを初期化
     private initRedis(callback:Cont):void{
@@ -188,7 +202,7 @@ export default class GameController{
             if(game!=null && metadata!=null){
                 //データ揃った
                 if(playcount){
-                    _this.addPlayCount(id,(err,playcount)=>{
+                    _this.addPlayCount(metadata,(err,playcount)=>{
                         if(err){
                             callback(err,null);
                             return;
@@ -212,7 +226,7 @@ export default class GameController{
         }
     }
     //新しいゲームを作成(callbackでゲームIDを返す）
-    newGame(game:GameData,metadata:GameMetadata,callback:Callback<number>):void{
+    newGame(game:GameData,metadata:GameMetadataUpdate,callback:Callback<number>):void{
         this.getGameCollection((err,collg)=>{
             if(err){
                 callback(err,null);
@@ -233,7 +247,18 @@ export default class GameController{
                     }
                     //resultはID+1になっているので1引いたものが新しいID
                     var newid=result-1;
-                    game.id=metadata.id=newid;
+                    game.id=newid;
+                    var now=new Date();
+                    var metadataobj:GameMetadata={
+                        id: newid,  //metadata.idを使わない
+                        owner: metadata.owner,
+                        title: metadata.title,
+                        description: metadata.description,
+                        tags: metadata.tags,
+                        created: now,
+                        playcount: 0,
+                        updated: now
+                    };
                     //DBに保存
                     collg.insertOne(game,(err,result)=>{
                         if(err){
@@ -242,7 +267,7 @@ export default class GameController{
                             callback(err,null);
                             return;
                         }
-                        collm.insertOne(metadata,(err,result)=>{
+                        collm.insertOne(metadataobj,(err,result)=>{
                             if(err){
                                 //やばい！！！！！！！gameだけ入った！！！！！！！！
                                 logger.warning("Game id: "+newid+" is missing");
@@ -252,7 +277,7 @@ export default class GameController{
                                 },(err2,result)=>{
                                     if(err2){
                                         //もう知らん！！！！！
-                                        logger.critical("Failed to remove gamedata id:"+newid);
+                                        logger.alert("Failed to remove gamedata id:"+newid);
                                         logger.critical(err);
                                         logger.critical(err2);
                                     }
@@ -272,8 +297,7 @@ export default class GameController{
         });
     }
     //ゲームを変更する（オーナーのチェックもする）
-    //NOTE: metadata.created, metadata.playcountはnullになっている（そのまま）
-    editGame(id:number,owner:string,game:GameData,metadata:GameMetadata,callback:Cont):void{
+    editGame(id:number,owner:string,game:GameData,metadata:GameMetadataUpdate,callback:Cont):void{
         game.id=metadata.id=id;
         this.getGameCollection((err,collg)=>{
             if(err){
@@ -308,8 +332,16 @@ export default class GameController{
                         }
 
                         //コピーすべき情報はコピー
-                        metadata.created=metadatadoc.created;
-                        metadata.playcount=metadatadoc.playcount;
+                        var newMetadata:GameMetadata = {
+                            id: id,
+                            owner: metadata.owner,
+                            title: metadata.title,
+                            description: metadata.description,
+                            tags: metadata.tags,
+                            created: metadatadoc.created,
+                            playcount: metadatadoc.playcount,
+                            updated: new Date()
+                        };
                         //過去ログを作成
                         var pastdata: GamePastData={
                             id,
@@ -336,7 +368,7 @@ export default class GameController{
                                         callback(err);
                                         return;
                                     }
-                                    collm.replaceOne({id},metadata,(err,result)=>{
+                                    collm.replaceOne({id},newMetadata,(err,result)=>{
                                         if(err){
                                             logger.error(err);
                                             logger.alert("Game id "+id+" is inconsistent");
@@ -363,6 +395,9 @@ export default class GameController{
             var q:any={};
             if(query.owner!=null){
                 q.owner=query.owner;
+            }
+            if(query.tags!=null){
+                q.tags=query.tags;
             }
             coll.find(q).skip(query.skip).limit(query.limit).sort(query.sort).toArray((err,docs:Array<GameMetadata>)=>{
                 if(err){
@@ -432,12 +467,13 @@ export default class GameController{
         addUserData(this.db,games,"owner",callback);
     }
     //閲覧カウントを増やす
-    //（このidのゲームが実在することは保証されていてほしい）
-    addPlayCount(id:number,callback?:Callback<number>):void{
+    addPlayCount(metadata:GameMetadata,callback?:Callback<number>):void{
         if(callback==null){
             callback=(err,_)=>{};
         }
+        var id=metadata.id;
         var r=this.db.redis.getClient();
+        //ゲームの閲覧数
         var key:string=redis_playcount_prefix+id;
         r.incr(key,(err,result)=>{
             if(err){
@@ -503,6 +539,62 @@ export default class GameController{
                 callback(null,result);
             }
         });
+        //タグのランキングを増やす（12時間くぎりで）
+        if(Array.isArray(metadata.tags)){
+            key = redis_tagscore_prefix+((new Date()).getHours()<12 ? "0" : "1");
+            for(var i=0;i<metadata.tags.length;i++){
+                r.zincrby(key,1,metadata.tags[i]);
+            }
+        }
+    }
+    //人気のタグを取得する
+    //num: 最大件数
+    getPopularTags(num:number,callback:Callback<Array<string>>):void{
+        var r=this.db.redis.getClient();
+        //2つのsorted setから取得
+        var next:(err:any,result:Array<string>)=>void;
+
+        var cnt:number=0;
+        var tagtable:any={};
+        var tags:Array<{tag:string;score:number}>=[];
+        next=(err:any,result:Array<string>)=>{
+            //arrayにはtagとscoreが順に入っている
+            if(err){
+                logger.error(err);
+                if(cnt>=0){
+                    callback(err,null);
+                    //2回エラーを送らないように
+                    cnt=-1;
+                }
+                return;
+            }
+            if(cnt<0){
+                return;
+            }
+            cnt++;
+            for(var i=0;i<result.length;i+=2){
+                if(tagtable[result[i]]){
+                    tagtable[result[i]].score+=Number(result[i+1]);
+                }else{
+                    let t=tagtable[result[i]]={
+                        tag: result[i],
+                        score: Number(result[i+1])
+                    };
+                    tags.push(t);
+                }
+            }
+            if(cnt<2){
+                return;
+            }
+            //結果が出揃ったので集計する（再ソート）
+            tags.sort((a,b)=>{
+                return b.score-a.score;
+            });
+            callback(null,tags.map(obj=>obj.tag));
+        };
+
+        r.zrevrange([redis_tagscore_prefix+"0",0,num-1,"WITHSCORES"],next);
+        r.zrevrange([redis_tagscore_prefix+"1",0,num-1,"WITHSCORES"],next);
     }
 
     //MongoDBのコレクションを得る

@@ -1,6 +1,5 @@
 import domain=require('domain');
 
-import cron=require('cron');
 import config=require('config');
 import logger=require('../logger');
 

@@ -33,7 +33,8 @@ var Root = React.createClass({
                 //top page
                 return [require('./top.jsx'),{
                     config: this.props.config,
-                    session: session
+                    session: session,
+                    data: this.props.data
                 }];
             ///// user
             case "user.entry":
@@ -87,7 +88,8 @@ var Root = React.createClass({
                 }]
             case "game.list":
                 return [require('./game/list.jsx'),{
-                    owner: page.data.owner
+                    owner: page.data.owner,
+                    tag: page.data.tag
                 }];
             case "game.edit":
                 return [require('./game/edit.jsx'),{

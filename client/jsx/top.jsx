@@ -1,6 +1,8 @@
 var React=require('react');
 var Reflux=require('reflux');
 
+var path=require('../scripts/path');
+
 var QueryList=require('./game/parts/query-list.jsx');
 
 
@@ -8,9 +10,26 @@ module.exports = React.createClass({
     displayName:"Top",
     propTypes:{
         config: React.PropTypes.object.isRequired,
-        session: React.PropTypes.object.isRequired
+        session: React.PropTypes.object.isRequired,
+        data: React.PropTypes.shape({
+            popularTags: React.PropTypes.arrayOf(React.PropTypes.string.isRequired).isRequired
+        }).isRequired
     },
     render(){
+        //人気のタグ表示
+        var tags=null;
+        if(this.props.data.popularTags.length>0){
+            tags=<div className="top-tags">
+                <p><span className="icon icon-tag"/>人気のタグ： {
+                    this.props.data.popularTags.map((tag,i)=>{
+                        return <span key={i}>
+                            <a href={path.gameListByTag(tag)}>{tag}</a>
+                            {"\u3000"}
+                        </span>
+                    })
+                }</p>
+            </div>;
+        }
         return (
             <div>
                 {this.welcome()}
@@ -22,6 +41,7 @@ module.exports = React.createClass({
                         <li>2015-08-10: 正男をウェブサイトに埋め込めるようになりました。</li>
                     </ul>
                 </div>
+                {tags}
                 <section>
                     <h1>最近投稿された正男</h1>
                     <QueryList query={{}} limit={10} />

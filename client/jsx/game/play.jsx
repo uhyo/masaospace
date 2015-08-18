@@ -1,6 +1,7 @@
 var React = require('react');
 
-var queryString=require('query-string');
+var queryString=require('query-string'),
+    path=require('../../scripts/path');
 
 var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
@@ -30,6 +31,20 @@ module.exports = React.createClass({
                 </a>
             </p>;
         }
+        var tags=null;
+        if(metadata.tags && metadata.tags.length>0){
+            //タグがあった
+            tags=<div className="game-play-info-tags">
+                <div><span className="icon icon-tag"/></div>
+                <ul>{
+                    metadata.tags.map((tag,i)=>{
+                        return <li key={i}>
+                            <a href={path.gameListByTag(tag)}>{tag}</a>
+                        </li>;
+                    })
+                }</ul>
+            </div>;
+        }
         return (
             <section>
                 <h1>{metadata.title}</h1>
@@ -44,7 +59,10 @@ module.exports = React.createClass({
                         <UserTile {...this.props.owner} label="投稿者" fullWidth/>
                     </div>
                     <div className="game-play-info-description">
-                        <p>{metadata.description}</p>
+                        <div className="game-play-info-message">
+                            <p>{metadata.description}</p>
+                        </div>
+                        {tags}
                     </div>
                 </div>
                 <GameTools config={this.props.config} metadata={metadata}/>

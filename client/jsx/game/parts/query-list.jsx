@@ -8,7 +8,8 @@ module.exports = React.createClass({
     displayName:"QueryList",
     propTypes:{
         query:React.PropTypes.shape({
-            owner: React.PropTypes.string
+            owner: React.PropTypes.string,
+            tag: React.PropTypes.string
         }).isRequired,
         limit:React.PropTypes.number
     },
@@ -19,7 +20,7 @@ module.exports = React.createClass({
             games: []
         };
     },
-    getInitialProps:function(){
+    getDefaultProps:function(){
         return {
             limit: 50
         };
@@ -28,6 +29,7 @@ module.exports = React.createClass({
         var query=this.props.query;
         api("/api/game/find",{
             owner: query.owner,
+            tag: query.tag,
 
             skip: this.state.page*this.props.limit,
             limit: this.props.limit

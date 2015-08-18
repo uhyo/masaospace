@@ -29,6 +29,9 @@ validator.addCustomValidator("isGameTitle",(value:string)=>{
 validator.addCustomValidator("isGameDescription",(value:string)=>{
     return !funcs.length(value,0,config.get("game.description.maxLength"));
 });
+validator.addCustomValidator("isGameTag",(value:string)=>{
+    return !funcs.length(value,0,config.get("game.tag.maxLength"));
+});
 
 ////////// comment
 validator.addCustomValidator("isComment",(value:string)=>{
