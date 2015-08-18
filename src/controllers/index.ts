@@ -122,7 +122,7 @@ class Controller{
                     return;
                 }
                 //登録したけど手続きを進めなかったユーザーを消す
-                var limitDate=new Date(Date.now()-config.get("ticket.life.setpassword")*1000);
+                var limitDate=new Date(Date.now()-config.get("ticket.life")*1000);
                 coll.deleteMany({
                     "data.activated":false,
                     "data.created":{
