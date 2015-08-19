@@ -31,6 +31,10 @@ export class DBAccess{
             });
         });
     }
+    close():void{
+        this.mongo.close();
+        this.redis.close();
+    }
 }
 export class Mongo{
     private db:mongodb.Db;
@@ -71,7 +75,10 @@ export class Mongo{
         }
         this.db.collection(name,callback);
     }
-
+    close():void{
+        this.db.close();
+        this.connected=false;
+    }
 }
 export class Redis{
     private client:redis.RedisClient;
@@ -93,5 +100,8 @@ export class Redis{
     }
     getClient():redis.RedisClient{
         return this.client;
+    }
+    close():void{
+        this.client.quit();
     }
 }
