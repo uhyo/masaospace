@@ -22,7 +22,6 @@ var concat=require('gulp-concat');
 
 gulp.task('tsc',function(){
     return gulp.src("src/**/*.ts")
-    .pipe(changed("js/"))
     .pipe(typescript({
         module:"commonjs",
         target:"es5",
@@ -87,6 +86,17 @@ gulp.task('clean',function(cb){
     ],cb);
 });
 
+gulp.task('batch-tsc',function(){
+    return gulp.src("batch/**/*.ts")
+    .pipe(typescript({
+        module:"commonjs",
+        target:"es5",
+        typescript:require('typescript')
+    }))
+    .js
+    .pipe(gulp.dest("batch/"));
+});
+
 gulp.task('watch',['watch-jsx','css','tsc'],function(){
     //w
     gulp.watch("client/css/*.scss",['css']);
@@ -94,7 +104,7 @@ gulp.task('watch',['watch-jsx','css','tsc'],function(){
 });
 
 gulp.task('client',['jsx','css']);
-gulp.task('default',['tsc','jsx','css','mc_canvas','static']);
+gulp.task('default',['tsc','jsx','css','mc_canvas','static','batch-tsc']);
 
 //jsx compiling
 function jsxCompiler(watch){

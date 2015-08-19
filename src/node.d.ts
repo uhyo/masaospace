@@ -8,6 +8,8 @@ declare var __dirname:string;
 declare var process:{
     nextTick(func:()=>void):void;
     exit(code?:number):void;
+    stdin:any;
+    stdout:any;
 };
 
 declare class Buffer{
@@ -350,6 +352,24 @@ declare module "domain"{
         intercept(callback:Function):any;
         enter():void;
         exit():void;
+    }
+}
+declare module "readline"{
+    import events=require('events');
+    export function createInterface(options:{
+        input:any;
+        output?:any;
+    }):Interface;
+
+    export class Interface extends events.EventEmitter{
+        setPrompt(prompt:string):void;
+        prompt(preserveCursor?:boolean):void;
+        question(query:string,callback:(answer:string)=>void):void;
+        pause():void;
+        resume():void;
+        close():void;
+        write(data:string,key?:any):void;
+
     }
 }
 //
