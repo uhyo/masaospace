@@ -200,6 +200,13 @@ export class WebServer{
                 if(err){
                     throw err;
                 }
+                if(view.status){
+                    if(view.status===404){
+                        view.title="Page not found";
+                        view.page="404";
+                        view.data={};
+                    }
+                }
                 res.json({
                     title: pageTitle(view.title),
                     page: view.page,
@@ -254,6 +261,18 @@ export class WebServer{
                     //throw err;
                     res.send(String(err));
                     return;
+                }
+                if(view.status){
+                    //statusを返す
+                    if(view.status===404){
+                        res.status(404);
+                        view.title="Page not found";
+                        view.page="404";
+                        view.data={};
+                    }else{
+                        res.send(view.status);
+                        return;
+                    }
                 }
                 var session = req.session.user!=null ? writeUserInfo(req.session) : null;
                 var initialData={

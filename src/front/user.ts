@@ -62,20 +62,30 @@ export default function(c:Controller,r:_Router):void{
     //user page
     r.add("/:userid",(obj,callback:Callback<View>)=>{
         c.user.user.findOneUser({
-            "data.screen_name_lower":obj[":userid"].toLowerCase()
+            "data.screen_name_lower":obj[":userid"].toLowerCase(),
+            "data.activated": true
         },(err,user)=>{
             if(err){
                 logger.error(err);
                 callback(err,null);
                 return;
             }
+            if(user==null){
+                callback(null,{
+                    status: 404,
+                    title: null,
+                    page: null,
+                    data: null
+                });
+                return;
+            }
+            var d=user.getData();
             callback(null,{
-                //TODO
-                title: "ユーザーページ",
+                title: d.name,
                 page:"user.page",
                 data:{
                     userid: user.id,
-                    data: user.getData()
+                    data: d
                 }
             });
         });

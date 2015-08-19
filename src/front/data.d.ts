@@ -1,4 +1,5 @@
 interface View{
+    status?:number;
     title:string;
     page:string;
     data:any;
