@@ -88,6 +88,20 @@ export class WebServer{
                 url:"/uploaded",
                 index:false
             }));
+            //favicons
+            let m=st({
+                path:path.resolve(__dirname,"..","dist","images","favicon"),
+                url:"/",
+                index:false
+            });
+            this.app.use((req,res,next)=>{
+                if(/^\/(?:favicon\.ico|favicon-.*\.png|apple-touch-icon-.*\.png|android-chrome-.*\.png|mstile-.*\.png|manifest\.json|browserconfig\.xml)$/i.test(req.url)){
+                    //favicon系の配信
+                    m(req,res);
+                }else{
+                    next();
+                }
+            });
         }
         //validator
         this.app.use(validator.forExpress);
