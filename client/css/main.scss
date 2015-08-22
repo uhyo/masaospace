@@ -212,6 +212,7 @@ section {
     width: 100%;
     height: 26px;
     border: 1px solid #cccccc;
+    background-color: #ffffff;
     box-shadow: -2px -2px 0 0 #eeeeee inset;
 
     &.form-button {
@@ -279,6 +280,7 @@ section.login-form{
 //horizontal menu
 ul.horizontal-menu {
   display: flex;
+  flex-flow: row wrap;
 
   background-color: #ffffff;
   min-height: 32px;
@@ -289,7 +291,7 @@ ul.horizontal-menu {
 
   li {
     display: block;
-    flex: auto 1 1;
+    flex: auto 1 0;
     padding: 0 0.8rem;
 
     cursor: pointer;
