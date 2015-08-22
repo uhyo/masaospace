@@ -23,6 +23,7 @@ var errorStore=Reflux.createStore({
         this.logs=[];
     },
     someError(err){
+        console.error(err);
         this.logs=this.logs.concat(String(err));
         this.trigger({
             logs:this.logs

@@ -34,12 +34,15 @@ $color-hovermask : rgba(#000000,0.05);
   border: 1px dashed #888888;
   padding: 0.5rem;
 
-  & > h3 {
+  & > .legend {
     position: relative;
     display: inline-block;
     top: -1rem;
     left: 0.5rem;
     font-size: 1rem;
+    margin: 0;
+    padding: 0;
+    border: none;
 
     background-color: $color-background;
     color: $color-boldcolor;

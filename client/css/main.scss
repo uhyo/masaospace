@@ -314,6 +314,8 @@ ul.horizontal-menu {
 
 //file-list
 .file-list-container {
+  @include legendsection;
+
   .file-list-info {
     color: $color-lightcolor;
   }

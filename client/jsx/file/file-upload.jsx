@@ -33,7 +33,7 @@ module.exports = React.createClass({
     },
     render(){
         return <section className="file-upload">
-            <h3>新しいファイルを追加</h3>
+            <h3 className="legend">新しいファイルを追加</h3>
             <FileSelector onSelect={this.handleFile} />
             {this.state.file!=null ? this.fileDataForm() : null}
         </section>;

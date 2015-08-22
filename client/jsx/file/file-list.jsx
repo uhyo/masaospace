@@ -1,11 +1,13 @@
 var React=require('react');
 var bytes=require('bytes');
+var extend=require('extend');
 //file list
 
 var api=require('../../actions/api');
 
 var errorStore=require('../../stores/error');
 
+var masao=require('../../../lib/masao');
 var Loading=require('../commons/loading.jsx'),
     FileUpload=require('./file-upload.jsx');
 
@@ -34,29 +36,37 @@ module.exports = React.createClass({
     },
     getInitialState(){
         return {
+            query: this.props.query,
             loading: true,
             files: [],
             file_upload: false,
         };
     },
     componentDidMount(){
-        this.load(this.props.query);
+        this.load();
     },
     componentWillReceiveProps(nextProps){
         //検索条件が違うときだけ再読み込み
         var oldQuery=this.props.query, newQuery=nextProps.query;
         if(nextProps.forceLoad===true || oldQuery.owner!==newQuery.owner || oldQuery.usage!==newQuery.usage){
-            this.load(nextProps.query);
+            this.setState({
+                file_upload: false,
+                query: newQuery
+            },()=>{
+                this.load();
+            });
+            this.load();
+        }else{
+            this.setState({
+                file_upload: false
+            });
         }
-        this.setState({
-            file_upload: false
-        });
     },
-    load(query,cb){
+    load(cb){
         this.setState({
             loading: true
         });
-        api("/api/file/list",query)
+        api("/api/file/list",this.state.query)
         .then(({files})=>{
             //filesがきた
             this.setState({
@@ -103,7 +113,18 @@ module.exports = React.createClass({
             </div>;
         }
 
-        return <div className="file-list-container">
+        return <section className="file-list-container">
+            <h1 className="legend">ファイルリスト</h1>
+            <p className="file-list-query">
+                検索条件：<select valueLink={this.linkQueryState()}>
+                    <option value="">全て</option>
+                    {
+                        Object.keys(masao.resourceKinds).map((key)=>{
+                            return <option value={key} key={key}>{masao.resourceKinds[key]}</option>;
+                        })
+                    }
+                </select>
+            </p>
             {diskInfo}
             <div className="file-list-main">{
                 additional.concat(files).map((file,i)=>{
@@ -149,7 +170,21 @@ module.exports = React.createClass({
                 })
             }</div>
             { this.state.file_upload ? this.fileUpload() : null}
-        </div>;
+        </section>;
+    },
+    linkQueryState(){
+        return {
+            value: this.state.query.usage || "",
+            requestChange: (value)=>{
+                this.setState({
+                    query: extend({},this.state.query,{
+                        usage: value || null
+                    })
+                },()=>{
+                    this.load();
+                });
+            }
+        };
     },
     clickHandler(file){
         return ()=>{
@@ -166,7 +201,7 @@ module.exports = React.createClass({
         });
     },
     handleFileUpload(fileid){
-        this.load(this.props.query,()=>{
+        this.load(()=>{
             //該当ファイルを探す
             var rc=this.props.fileLink.requestChange, files=this.state.files;
             for(var i=0;i < files.length;i++){
@@ -181,7 +216,7 @@ module.exports = React.createClass({
     },
     fileUpload(){
         //ファイルアップロード部分
-        return <FileUpload config={this.props.config} onUpload={this.handleFileUpload} usage={this.props.query.usage} />;
+        return <FileUpload config={this.props.config} onUpload={this.handleFileUpload} usage={this.state.query.usage} />;
     }
 });
 
