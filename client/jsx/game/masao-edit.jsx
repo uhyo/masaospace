@@ -36,6 +36,7 @@ module.exports = React.createClass({
             metadata:this.props.metadata || null,
 
             filesPage:"filename_pattern",
+            filesPage2:null,    //otherのとき
         };
     },
     masaoSelected(game,metadata){
@@ -85,35 +86,57 @@ module.exports = React.createClass({
         </section>;
     },
     files:function(){
-        //TODO
         var contents=major.map((key)=>{
             return {
                 id: key,
                 name: masao.resources[key]
             };
+        }).concat({
+            id: "_other",
+            name: "その他"
         });
+        //どのリソースを変更するか？
+        var paramType = this.state.filesPage==="_other" ? this.state.filesPage2 || "filename_chizu": this.state.filesPage;
+
         var query={
             owner: this.props.session.user,
-            usage: masao.resourceToKind[this.state.filesPage]
+            usage: masao.resourceToKind[paramType]
         };
 
         //今どのファイルが選択されているか調べる
         var fileValue=null;
         var resources = this.state.game.resources;
         for(var i=0;i < resources.length;i++){
-            if(resources[i].target===this.state.filesPage){
+            if(resources[i].target===paramType){
                 fileValue=resources[i].id;
                 break;
             }
         }
 
+        //その他の場合のサブメニュー
+        var submenu=null;
+        if(this.state.filesPage==="_other"){
+            submenu=<form className="form">
+                <p className="form-row">
+                    <select className="form-single" valueLink={this.linkState("filesPage2")}>{
+                        Object.keys(masao.resources).map((key)=>{
+                            return <option key={key} value={key}>{
+                                key+" "+masao.resources[key]
+                            }</option>;
+                        })
+                    }</select>
+                </p>
+            </form>;
+        }
+
         var fileLink={
             value: fileValue,
-            requestChange: this.fileHandler(this.state.filesPage)
+            requestChange: this.fileHandler(paramType)
         };
         return <section className="game-files">
             <h1>ファイル選択</h1>
             <HorizontalMenu contents={contents} pageLink={this.linkState("filesPage")} />
+            {submenu}
             <FileList config={this.props.config} query={query} useDefault usePreviewLink fileLink={fileLink} />
         </section>;
     },
