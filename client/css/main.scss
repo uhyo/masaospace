@@ -280,6 +280,7 @@ section.login-form{
 //horizontal menu
 ul.horizontal-menu {
   display: flex;
+  flex-flow: row wrap;
 
   background-color: #ffffff;
   min-height: 32px;
@@ -290,7 +291,7 @@ ul.horizontal-menu {
 
   li {
     display: block;
-    flex: auto 1 1;
+    flex: auto 1 0;
     padding: 0 0.8rem;
 
     cursor: pointer;
