@@ -197,6 +197,35 @@ export interface CommentQuery{
     sort:any;
 }
 
+//シリーズ
+export interface Series{
+    //シリーズID
+    id:number;
+    //シリーズオーナー
+    owner:string;
+    //シリーズ名
+    name:string;
+    //ゲームIDたち
+    games:Array<number>;
+    //プリセットのリソース
+    resources:Array<{
+        target:string;
+        id:string;
+    }>;
+    //作成日時
+    created:Date;
+}
+
+export interface SeriesQuery{
+    id?:number;
+    owner?:string;
+    games?:number;
+
+    skip:number;
+    limit:number;
+    sort:any;
+}
+
 
 //メール（controllers/mail.tsが扱うもの）
 export interface Mail{
