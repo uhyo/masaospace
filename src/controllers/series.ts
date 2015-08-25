@@ -33,13 +33,8 @@ export default class SeriesController{
                         games:1
                     },{
                     },d.intercept((result)=>{
-                        coll.createIndex({
-                            "resources.id":1,
-                        },{
-                        },d.intercept((result)=>{
-                            d.exit();
-                            this.initRedis(callback);
-                        }));
+                        d.exit();
+                        this.initRedis(callback);
                     }));
                 }));
             }));

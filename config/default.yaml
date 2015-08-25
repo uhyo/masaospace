@@ -106,7 +106,7 @@ game:
     min: 0
     max: 10
   description:
-    maxLength: 300
+    maxLength: 500
   tag:
     maxNumber: 10
     maxLength: 20
@@ -119,4 +119,6 @@ comment:
 series:
   name:
     maxLength: 64
+  description:
+    maxLength: 500
 

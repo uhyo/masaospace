@@ -205,13 +205,10 @@ export interface Series{
     owner:string;
     //シリーズ名
     name:string;
+    //説明
+    description:string;
     //ゲームIDたち
     games:Array<number>;
-    //プリセットのリソース
-    resources:Array<{
-        target:string;
-        id:string;
-    }>;
     //作成日時
     created:Date;
 }

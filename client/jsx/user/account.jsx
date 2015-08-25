@@ -75,6 +75,9 @@ var Account=React.createClass({
         },{
             id:"file",
             name:"ファイル管理"
+        },{
+            id:"series",
+            name:"シリーズ管理"
         }];
         return (
             <div>
@@ -94,6 +97,8 @@ var Account=React.createClass({
             return <MailForm userdata={this.state.userdata}/>;
         }else if(page==="file"){
             return <FilePage config={this.props.config} session={this.props.session}/>;
+        }else if(page==="series"){
+            return <SeriesPage config={this.props.config} session={this.props.session}/>;
         }
         return null;
     }
@@ -598,6 +603,142 @@ var FileDelForm = React.createClass({
         });
     },
 });
+
+var SeriesPage=React.createClass({
+    displayName:"SeriesPage",
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        session: React.PropTypes.object.isRequired
+    },
+    getInitialState(){
+        return {
+            loading: true,
+            series: [],
+            selected: null
+        };
+    },
+    componentDidMount(){
+        this.load();
+    },
+    load(){
+        api("/api/series/find",{
+            owner: this.props.session.user
+        })
+        .then(({series})=>{
+            this.setState({
+                loading: false,
+                series,
+                selected: null
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    render(){
+        if(this.state.loading===true){
+            return <Loading/>;
+        }
+        var selected=this.state.selected;
+        var newSeries;
+        if(selected!==-1){
+            newSeries=<div className="user-account-series-list-item" onClick={this.newHandler}>
+                新しいシリーズを作成……
+            </div>;
+        }else{
+            newSeries=<div className="user-account-series-list-form">
+                <p>新しいシリーズを作成</p>
+                <SeriesForm config={this.props.config} onSubmit={this.newSubmitHandler}/>
+            </div>;
+        }
+        //シリーズをソート
+        return <div className="user-account-series">
+            <div className="user-account-series-list">
+                {
+                    this.state.series.map((obj,i)=>{
+                        var c="user-account-series-list-item";
+                        if(i===selected){
+                            c+=" user-account-series-list-item-selected";
+                        }
+                        return <div className={c} key={obj.id} onClick={this.selectHandler(i)}>{
+                            obj.name+" ("+obj.games.length+")"
+                        }</div>;
+                    })
+                }
+                {newSeries}
+            </div>
+        </div>;
+    },
+    selectHandler(idx){
+        return (e)=>{
+            this.setState({
+                selected: idx
+            });
+        };
+    },
+    newHandler(e){
+        this.setState({
+            selected: -1
+        });
+    },
+    newSubmitHandler({name,description}){
+        console.log(name,description);
+    },
+});
+
+//シリーズ管理フォーム
+var SeriesForm=React.createClass({
+    displayName:"SeriesForm",
+    mixins: [React.addons.LinkedStateMixin],
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        saveButton: React.PropTypes.string,
+
+        name: React.PropTypes.string,
+        description: React.PropTypes.string,
+
+        onSubmit: React.PropTypes.func.isRequired
+    },
+    getDefaultProps(){
+        return {
+            saveButton: "保存",
+            name:"",
+            description:""
+        };
+    },
+    getInitialState(){
+        return {
+            name: this.props.name,
+            description: this.props.description
+        };
+    },
+    render(){
+        var config=this.props.config.series;
+        return <form className="form" onSubmit={this.handleSubmit}>
+            <p>
+                <label className="form-row">
+                    <span>シリーズ名</span>
+                    <input valueLink={this.linkState("name")} required maxLength={config.name.maxLength}/>
+                </label>
+            </p>
+            <p>
+                <label className="form-row">
+                    <span>説明</span>
+                    <textarea valueLink={this.linkState("description")} required maxLength={config.description.maxLength}/>
+                </label>
+            </p>
+            <p>
+                <input className="form-single form-button" type="submit" value={this.props.saveButton}/>
+            </p>
+        </form>;
+    },
+    handleSubmit(e){
+        e.preventDefault();
+        this.props.onSubmit({
+            name: this.state.name,
+            description: this.state.description
+        });
+    }
+});
+
 
 module.exports = Account;
 
