@@ -221,9 +221,9 @@ export interface SeriesQuery{
     owner?:string;
     games?:number;
 
-    skip:number;
-    limit:number;
-    sort:any;
+    skip?:number;
+    limit?:number;
+    sort?:any;
 }
 
 
