@@ -620,7 +620,7 @@ var SeriesPage=React.createClass({
     componentDidMount(){
         this.load();
     },
-    load(){
+    load(nextId){
         api("/api/series/find",{
             owner: this.props.session.user
         })
@@ -628,7 +628,7 @@ var SeriesPage=React.createClass({
             this.setState({
                 loading: false,
                 series,
-                selected: null
+                selected: nextId!=null ? nextId : null
             });
         })
         .catch(errorStore.emit);
@@ -655,7 +655,7 @@ var SeriesPage=React.createClass({
                 {
                     this.state.series.map((obj,i)=>{
                         var c="user-account-series-list-item";
-                        if(i===selected){
+                        if(obj.id===selected){
                             c+=" user-account-series-list-item-selected";
                         }
                         return <div className={c} key={obj.id} onClick={this.selectHandler(i)}>{
@@ -680,7 +680,18 @@ var SeriesPage=React.createClass({
         });
     },
     newSubmitHandler({name,description}){
-        console.log(name,description);
+        api("/api/series/new",{
+            name,
+            description
+        })
+        .then(({id})=>{
+            //IDを取得したので再ロード
+            this.setState({
+                loading: true
+            });
+            this.load(id);
+        })
+        .catch(errorStore.emit);
     },
 });
 

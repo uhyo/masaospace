@@ -70,6 +70,7 @@ export default class SeriesController{
         }));
     }
     //新しいシリーズを追加
+    //series.idはnullでいいという感じがする
     newSeries(series:Series,callback:Callback<number>):void{
         this.getCollection((err,coll)=>{
             if(err){

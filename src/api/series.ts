@@ -14,6 +14,38 @@ import {Series, SeriesQuery} from '../data';
 
 class C{
     route(router:express._Router,c:Controller):void{
+        // シリーズを作成する
+        // IN name: シリーズ名
+        // IN description: 説明
+        // OUT id: シリーズID
+        router.post("/new",util.apim.useUser,(req,res)=>{
+            req.validateBody("name").isSeriesName();
+            req.validateBody("description").isSeriesDescription();
+
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+
+            c.series.newSeries({
+                id: null,
+                owner: req.session.user,
+                name: req.body.name,
+                description: req.body.description,
+                games: [],
+                created: new Date()
+            },(err,newid)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                //OK
+                res.json({
+                    id: newid
+                });
+            });
+        });
         // シリーズを検索する
         // IN owner: オーナーのユーザーID
         // OUT series: シリーズたち
