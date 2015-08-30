@@ -835,25 +835,30 @@ var GameList=React.createClass({
     },
     render(){
         var games=this.props.gamesLink.value;
-        var newArea;
+        var newArea, nmo=null;
+        var c="vertical-menu-item";
+        if(this.state.dragTarget===games.length){
+            c+=" user-account-gamelist-dragtarget";
+        }
+        if(this.state.dragging===true){
+            nmo=this.handleMouseOver(games.length);
+        }
         if(this.state.newMode===false){
-            var c="vertical-menu-item vertical-menu-selectable";
-            if(this.state.dragTarget===games.length){
-                c+=" user-account-gamelist-dragtarget";
-            }
-            newArea=<div className={c} onClick={this.addNewHandler}>
+            c+=" vertical-menu-selectable";
+            newArea=<div className={c} onClick={this.addNewHandler} onMouseOver={nmo}>
                 新しい正男を追加...
             </div>;
         }else{
-            var c="vertical-menu-item vertical-menu-separate";
-            if(this.state.dragTarget===games.length){
-                c+=" user-account-gamelist-dragtarget";
-            }
-            newArea=<div className={c}>
+            c+=" vertical-menu-separate";
+            newArea=<div className={c} onMouseOver={nmo}>
                 <GameListSelector owner={this.props.owner} onSelect={this.gameSelectHandler} onClose={this.closeHandler}/>
             </div>;
         }
-        return <div className="vertical-menu" onMouseUp={this.handleMouseUp}>
+        var mouseup=null;
+        if(this.state.dragging===true){
+            mouseup=this.handleMouseUp;
+        }
+        return <div className="vertical-menu" onMouseUp={mouseup}>
             {
                 games.map((obj,i)=>{
                     var mouseover;
@@ -864,6 +869,10 @@ var GameList=React.createClass({
                     if(this.state.dragTarget===i){
                         //この上にドラッグ
                         c+=" user-account-gamelist-dragtarget";
+                    }
+                    if(this.state.dragged===i){
+                        //これがドラッグされてる
+                        c+=" vertical-menu-item-selected";
                     }
                     return <div key={obj.id} className={c} onMouseDown={this.handleMouseDown(i)} onMouseOver={mouseover}>
                         <span>{obj.title}</span>
@@ -900,11 +909,20 @@ var GameList=React.createClass({
         };
     },
     handleMouseUp(e){
-        //TODO
+        //ゲームを移動する
+        var result=this.props.gamesLink.value.concat([]);
+        var pushTarget = this.state.dragTarget;
+        if(this.state.dragged < pushTarget){
+            pushTarget--;
+        }
+        var [p] = result.splice(this.state.dragged,1);
+        result.splice(pushTarget,0,p);
         this.setState({
             dragging: false,
             dragged: null,
-            dragTarget: null
+            dragTarget: null,
+        },()=>{
+            this.props.gamesLink.requestChange(result);
         });
     },
     handleMouseOver(idx){
@@ -913,14 +931,20 @@ var GameList=React.createClass({
             //position: absoluteとかはないよね……（決め打ち）
             var t=target.offsetTop, h=target.offsetHeight;
             var th=t+h/2;
-            if(pageY <= th){
-                //上半分
-                this.setState({
-                    dragTarget: idx
-                });
+            if(idx < this.props.gamesLink.value.length){
+                if(pageY <= th){
+                    //上半分
+                    this.setState({
+                        dragTarget: idx
+                    });
+                }else{
+                    this.setState({
+                        dragTarget: idx+1
+                    });
+                }
             }else{
                 this.setState({
-                    dragTarget: idx+1
+                    dragTarget: idx
                 });
             }
         };
