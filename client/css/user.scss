@@ -48,6 +48,9 @@
 }
 
 .user-account-series {
+  .user-account-seriesform-gamelist {
+    @include legendsection;
+  }
   .user-account-gamelist-del {
     float: right;
   }

@@ -778,7 +778,7 @@ var SeriesForm=React.createClass({
             };
             gamesArea=<section className="user-account-seriesform-gamelist">
                 <h1 className="legend">正男の一覧</h1>
-                <p>現在<b>{this.state.games.length}件</b>の正男が追加されています。</p>
+                <p>現在<b>{this.state.games.length}件</b>の正男が追加されています。正男はドラッグ&amp;ドロップで並び替えができます。</p>
                 <GameList config={this.props.config} owner={this.props.owner} gamesLink={gamesLink}/>
             </section>;
         }
@@ -800,7 +800,7 @@ var SeriesForm=React.createClass({
             {gamesArea}
             <form className="form">
                 <p>
-                    <input className="form-single form-button" type="submit" value={this.props.saveButton}/>
+                    <input className="form-single form-button" type="button" value={this.props.saveButton} onClick={this.handleSubmit}/>
                 </p>
             </form>
         </div>;
@@ -841,7 +841,7 @@ var GameList=React.createClass({
             c+=" user-account-gamelist-dragtarget";
         }
         if(this.state.dragging===true){
-            nmo=this.handleMouseOver(games.length);
+            nmo=this.handleMouseMove(games.length);
         }
         if(this.state.newMode===false){
             c+=" vertical-menu-selectable";
@@ -861,9 +861,9 @@ var GameList=React.createClass({
         return <div className="vertical-menu" onMouseUp={mouseup}>
             {
                 games.map((obj,i)=>{
-                    var mouseover;
+                    var mousemove;
                     if(this.state.dragging===true){
-                        mouseover=this.handleMouseOver(i);
+                        mousemove=this.handleMouseMove(i);
                     }
                     var c="vertical-menu-item vertical-menu-selectable";
                     if(this.state.dragTarget===i){
@@ -874,7 +874,7 @@ var GameList=React.createClass({
                         //これがドラッグされてる
                         c+=" vertical-menu-item-selected";
                     }
-                    return <div key={obj.id} className={c} onMouseDown={this.handleMouseDown(i)} onMouseOver={mouseover}>
+                    return <div key={obj.id} className={c} onMouseDown={this.handleMouseDown(i)} onMouseMove={mousemove}>
                         <span>{obj.title}</span>
                         <span className="user-account-gamelist-del" onClick={this.gameDelHandler(i)}>✖</span>
                     </div>;
@@ -925,7 +925,7 @@ var GameList=React.createClass({
             this.props.gamesLink.requestChange(result);
         });
     },
-    handleMouseOver(idx){
+    handleMouseMove(idx){
         return (e)=>{
             var {target, pageY}=e;
             //position: absoluteとかはないよね……（決め打ち）
