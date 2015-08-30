@@ -704,7 +704,19 @@ var SeriesPage=React.createClass({
         .catch(errorStore.emit);
     },
     saveHandler({name,description,games}){
-        console.log("save!!!!");
+        api("/api/series/save",{
+            id: this.state.series[this.state.selected].id,
+            name,
+            description,
+            games: games.join(",")
+        })
+        .then(()=>{
+            this.setState({
+                loading: true
+            });
+            this.load();
+        })
+        .catch(errorStore.emit);
     }
 });
 
@@ -810,7 +822,7 @@ var SeriesForm=React.createClass({
         this.props.onSubmit({
             name: this.state.name,
             description: this.state.description,
-            games: this.state.games
+            games: this.state.games.map(({id})=>{return id})
         });
     }
 });

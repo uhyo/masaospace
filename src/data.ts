@@ -212,6 +212,8 @@ export interface Series{
     games:Array<number>;
     //作成日時
     created:Date;
+    //更新日時
+    updated:Date;
 }
 
 export interface SeriesQuery{

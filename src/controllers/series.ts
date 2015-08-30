@@ -102,6 +102,24 @@ export default class SeriesController{
             });
         });
     }
+    //シリーズを更新する
+    updateSeries(series:Series,callback:Cont):void{
+        this.getCollection((err,coll)=>{
+            if(err){
+                callback(err);
+                return;
+            }
+            coll.replaceOne({
+                id: series.id
+            },series,(err,result)=>{
+                if(err){
+                    callback(err);
+                    return;
+                }
+                callback(null);
+            });
+        });
+    }
     findSeries(query:SeriesQuery,callback:Callback<Array<Series>>):void{
         this.getCollection((err,coll)=>{
             if(err){

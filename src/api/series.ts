@@ -26,13 +26,15 @@ class C{
                 return;
             }
 
+            var now=new Date();
             c.series.newSeries({
                 id: null,
                 owner: req.session.user,
                 name: req.body.name,
                 description: req.body.description,
                 games: [],
-                created: new Date()
+                created: now,
+                updated: now
             },(err,newid)=>{
                 if(err){
                     res.json({
@@ -43,6 +45,82 @@ class C{
                 //OK
                 res.json({
                     id: newid
+                });
+            });
+        });
+        // シリーズを編集する
+        // IN id: シリーズID
+        // IN name: シリーズ名
+        // IN description: 説明
+        // IN games: ゲームIDを","で区切った文字列
+        router.post("/save",util.apim.useUser,(req,res)=>{
+            req.validateBody("id").isInteger();
+            req.validateBody("name").isSeriesName();
+            req.validateBody("description").isSeriesDescription();
+            req.validateBody("games").isnotEmpty();
+            if(req.validationErrorResponse(res)){
+                return;
+            }
+
+            //該当のシリーズを探す
+            c.series.findSeries({
+                id: parseInt(req.body.id),
+                owner: req.session.user,
+            },(err,docs)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(docs.length<1){
+                    res.json({
+                        error: "シリーズが見つかりません。"
+                    });
+                    return;
+                }
+                var series=docs[0];
+                //ゲームを探す
+                var gameids=req.body.games.split(",").map((id)=>{
+                    return Number(id);
+                });
+                c.game.findGames({
+                    owner: req.session.user,
+                    ids: gameids
+                },(err,metadatas)=>{
+                    if(err){
+                        res.json({
+                            error: String(err)
+                        });
+                        return;
+                    }
+                    if(metadatas.length < gameids.length){
+                        //足りない
+                        res.json({
+                            error: "ゲーム指定が不正です。"
+                        });
+                        return;
+                    }
+                    //OK シリーズを書き換える
+                    c.series.updateSeries({
+                        id: series.id,
+                        owner: series.owner,
+                        name: req.body.name,
+                        description: req.body.description,
+                        games: gameids,
+                        created: series.created,
+                        updated: new Date()
+                    },(err)=>{
+                        if(err){
+                            res.json({
+                                error: String(err)
+                            });
+                        }else{
+                            res.json({
+                                success: true
+                            });
+                        }
+                    });
                 });
             });
         });
