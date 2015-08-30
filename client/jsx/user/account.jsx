@@ -844,10 +844,11 @@ var GameList=React.createClass({
         }
         return <div className="vertical-menu">
             {
-                games.map((obj)=>{
-                    return <div key={obj.id} className="vertical-menu-item vertical-menu-selectable">{
-                        obj.title
-                    }</div>;
+                games.map((obj,i)=>{
+                    return <div key={obj.id} className="vertical-menu-item vertical-menu-selectable">
+                        <span>{obj.title}</span>
+                        <span className="user-account-gamelist-del" onClick={this.gameDelHandler(i)}>✖</span>
+                    </div>;
                 })
             }
             {newArea}
@@ -858,6 +859,14 @@ var GameList=React.createClass({
         this.setState({
             newMode: true
         });
+    },
+    gameDelHandler(idx){
+        return (e)=>{
+            //idx番目を消去
+            var result=this.props.gamesLink.value.concat([]);
+            result.splice(idx,1);
+            this.props.gamesLink.requestChange(result);
+        };
     },
     gameSelectHandler(game){
         //新しいゲームがきた
