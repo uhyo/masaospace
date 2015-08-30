@@ -66,6 +66,43 @@ class C{
                 });
             });
         });
+        // シリーズに属するゲームの一覧
+        // IN series: シリーズID
+        // OUT games: ゲームたち
+        router.post("/games",(req,res)=>{
+            var qu:SeriesQuery={
+                id: Number(req.body.series),
+                limit:1
+            };
+            c.series.findSeries(qu,(err,docs)=>{
+                if(err){
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
+                }
+                if(docs.length<1){
+                    res.json({
+                        error: "シリーズが見つかりませんでした。"
+                    });
+                    return;
+                }
+                var se=docs[0];
+                c.game.findGames({
+                    ids: se.games
+                },(err,docs)=>{
+                    if(err){
+                        res.json({
+                            error: String(err)
+                        });
+                        return;
+                    }
+                    res.json({
+                        games: docs
+                    });
+                });
+            });
+        });
     }
 }
 

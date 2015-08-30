@@ -646,7 +646,15 @@ var SeriesPage=React.createClass({
         }else{
             newSeries=<div className="user-account-series-list-form">
                 <p>新しいシリーズを作成</p>
-                <SeriesForm config={this.props.config} onSubmit={this.newSubmitHandler}/>
+                <SeriesForm config={this.props.config} owner={this.props.session.user} onSubmit={this.newSubmitHandler}/>
+            </div>;
+        }
+        var seriesForm;
+        if(selected!=null && selected>=0){
+            var s=this.state.series[selected];
+            seriesForm=<div>
+                <hr/>
+                <SeriesForm config={this.props.config} owner={this.props.session.user} saveButton="保存" id={s.id} name={s.name} description={s.description} useGamesEdit onSubmit={this.saveHandler}/>
             </div>;
         }
         //シリーズをソート
@@ -665,6 +673,7 @@ var SeriesPage=React.createClass({
                 }
                 {newSeries}
             </div>
+            {seriesForm}
         </div>;
     },
     selectHandler(idx){
@@ -693,6 +702,9 @@ var SeriesPage=React.createClass({
         })
         .catch(errorStore.emit);
     },
+    saveHandler({name,description,games}){
+        console.log("save!!!!");
+    }
 });
 
 //シリーズ管理フォーム
@@ -701,52 +713,218 @@ var SeriesForm=React.createClass({
     mixins: [React.addons.LinkedStateMixin],
     propTypes:{
         config: React.PropTypes.object.isRequired,
+        owner: React.PropTypes.string.isRequired,
         saveButton: React.PropTypes.string,
 
+        id: React.PropTypes.number,
         name: React.PropTypes.string,
         description: React.PropTypes.string,
 
-        onSubmit: React.PropTypes.func.isRequired
+        onSubmit: React.PropTypes.func.isRequired,
+        useGamesEdit: React.PropTypes.bool
     },
     getDefaultProps(){
         return {
             saveButton: "保存",
             name:"",
-            description:""
+            description:"",
         };
     },
     getInitialState(){
+        return this.makeStateFromProps(this.props);
+    },
+    componentWillReceiveProps(newProps){
+        this.setState(this.makeStateFromProps(newProps));
+        this.load(newProps.id);
+    },
+    makeStateFromProps(props){
         return {
-            name: this.props.name,
-            description: this.props.description
+            loading:true,
+            name: props.name,
+            description: props.description,
+            games: []
         };
+    },
+    componentDidMount(){
+        this.load(this.props.id);
+    },
+    load(seriesId){
+        api("/api/series/games",{
+            series: seriesId
+        })
+        .then(({games})=>{
+            this.setState({
+                loading: false,
+                games
+            });
+        })
+        .catch(errorStore.emit);
     },
     render(){
         var config=this.props.config.series;
-        return <form className="form" onSubmit={this.handleSubmit}>
-            <p>
-                <label className="form-row">
-                    <span>シリーズ名</span>
-                    <input valueLink={this.linkState("name")} required maxLength={config.name.maxLength}/>
-                </label>
-            </p>
-            <p>
-                <label className="form-row">
-                    <span>説明</span>
-                    <textarea valueLink={this.linkState("description")} required maxLength={config.description.maxLength}/>
-                </label>
-            </p>
-            <p>
-                <input className="form-single form-button" type="submit" value={this.props.saveButton}/>
-            </p>
-        </form>;
+
+        var gamesArea=null;
+        if(this.state.loading===true){
+            gamesArea=<Loading/>;
+        }else{
+            var gamesLink={
+                value: this.state.games,
+                requestChange: (games)=>{
+                    this.setState({
+                        games
+                    });
+                }
+            };
+            gamesArea=<section className="user-account-seriesform-gamelist">
+                <h1 className="legend">正男の一覧</h1>
+                <p>現在<b>{this.state.games.length}件</b>の正男が追加されています。</p>
+                <GameList config={this.props.config} owner={this.props.owner} gamesLink={gamesLink}/>
+            </section>;
+        }
+        return <div>
+            <form className="form" onSubmit={this.handleSubmit}>
+                <p>
+                    <label className="form-row">
+                        <span>シリーズ名</span>
+                        <input valueLink={this.linkState("name")} required maxLength={config.name.maxLength}/>
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>説明</span>
+                        <textarea valueLink={this.linkState("description")} required maxLength={config.description.maxLength}/>
+                    </label>
+                </p>
+            </form>
+            {gamesArea}
+            <form className="form">
+                <p>
+                    <input className="form-single form-button" type="submit" value={this.props.saveButton}/>
+                </p>
+            </form>
+        </div>;
     },
     handleSubmit(e){
         e.preventDefault();
         this.props.onSubmit({
             name: this.state.name,
-            description: this.state.description
+            description: this.state.description,
+            games: this.state.games
         });
+    }
+});
+
+var GameList=React.createClass({
+    displayName:"GameList",
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        owner: React.PropTypes.string.isRequired,
+        gamesLink: React.PropTypes.shape({
+            value: React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
+            requestChange: React.PropTypes.func.isRequired
+        }).isRequired
+    },
+    getInitialState(){
+        return {
+            newMode: false
+        };
+    },
+    render(){
+        var games=this.props.gamesLink.value;
+        var newArea;
+        if(this.state.newMode===false){
+            newArea=<div className="user-account-gamelist-item user-account-gamelist-new" onClick={this.addNewHandler}>
+                新しい正男を追加...
+            </div>;
+        }else{
+            newArea=<div className="user-account-gamelist-item user-account-gamelist-new">
+                <GameListSelector owner={this.props.owner} onSelect={this.gameSelectHandler} onClose={this.closeHandler}/>
+            </div>;
+        }
+        return <div className="user-account-gamelist">
+            {
+                games.map((obj)=>{
+                    return <div key={obj.id} className="user-account-gamelist-item">{
+                        obj.title
+                    }</div>;
+                })
+            }
+            {newArea}
+        </div>;
+    },
+    addNewHandler(e){
+        //新しい正男を追加ボタンを押した
+        this.setState({
+            newMode: true
+        });
+    },
+    gameSelectHandler(game){
+        //新しいゲームがきた
+        var games=this.props.gamesLink.value;
+        if(games.every((obj)=>{
+            return game.id!==obj.id;
+        })){
+            //今までにはない……！（追加）
+            this.props.gamesLink.requestChange(games.concat(game));
+        }
+    },
+    closeHandler(){
+        this.setState({
+            newMode: false
+        });
+    }
+});
+
+var GameListSelector = React.createClass({
+    displayName: "GameListSelector",
+    propTypes:{
+        owner: React.PropTypes.string.isRequired,
+        onSelect: React.PropTypes.func.isRequired,
+        onClose: React.PropTypes.func
+    },
+    getInitialState(){
+        return {
+            loading: true,
+            games: []
+        };
+    },
+    componentDidMount(){
+        api("/api/game/find",{
+            owner: this.props.owner
+        })
+        .then(({metadatas})=>{
+            this.setState({
+                loading: false,
+                games: metadatas
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    render(){
+        if(this.state.loading===true){
+            return <Loading/>;
+        }
+        return <div className="user-account-gamelistselector">
+            <p>シリーズに追加する正男を選択してください。　<span className="clickable" onClick={this.closeHandler}>閉じる</span></p>
+            <div className="user-account-gamelistselector-list">{
+                this.state.games.map((obj,i)=>{
+                    return <div key={obj.id} className="user-account-gamelistselector-list-item" onClick={this.clickHandler(i)}>
+                        {obj.title}
+                    </div>;
+                })
+            }</div>
+        </div>;
+    },
+    closeHandler(e){
+        if(this.props.onClose){
+            this.props.onClose();
+        }
+    },
+    clickHandler(idx){
+        return (e)=>{
+            var game=this.state.games[idx];
+            this.props.onSelect(game);
+        };
     }
 });
 

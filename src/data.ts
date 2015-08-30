@@ -157,10 +157,11 @@ export interface GamePastData{
 export interface GameQuery{
     owner?:string;
     tags?:string;
+    ids?:Array<number>;
 
-    skip:number;
-    limit:number;
-    sort:any;
+    skip?:number;
+    limit?:number;
+    sort?:any;
 }
 
 

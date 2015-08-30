@@ -399,7 +399,22 @@ export default class GameController{
             if(query.tags!=null){
                 q.tags=query.tags;
             }
-            coll.find(q).skip(query.skip).limit(query.limit).sort(query.sort).toArray((err,docs:Array<GameMetadata>)=>{
+            if(query.ids!=null){
+                q.id={
+                    $in: query.ids
+                };
+            }
+            var cursor=coll.find(q);
+            if(query.skip!=null){
+                cursor=cursor.skip(query.skip);
+            }
+            if(query.limit!=null){
+                cursor=cursor.limit(query.limit);
+            }
+            if(query.sort!=null){
+                cursor=cursor.sort(query.sort);
+            }
+            cursor.toArray((err,docs:Array<GameMetadata>)=>{
                 if(err){
                     logger.error(err);
                     callback(err,null);
