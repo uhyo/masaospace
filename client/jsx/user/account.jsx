@@ -640,11 +640,11 @@ var SeriesPage=React.createClass({
         var selected=this.state.selected;
         var newSeries;
         if(selected!==-1){
-            newSeries=<div className="user-account-series-list-item" onClick={this.newHandler}>
-                新しいシリーズを作成……
+            newSeries=<div className="vertical-menu-item vertical-menu-selectable" onClick={this.newHandler}>
+                新しいシリーズを作成...
             </div>;
         }else{
-            newSeries=<div className="user-account-series-list-form">
+            newSeries=<div className="vertical-menu-item">
                 <p>新しいシリーズを作成</p>
                 <SeriesForm config={this.props.config} owner={this.props.session.user} onSubmit={this.newSubmitHandler}/>
             </div>;
@@ -654,17 +654,18 @@ var SeriesPage=React.createClass({
             var s=this.state.series[selected];
             seriesForm=<div>
                 <hr/>
+                <p>※「保存」ボタンを押さないと変更が保存されません。</p>
                 <SeriesForm config={this.props.config} owner={this.props.session.user} saveButton="保存" id={s.id} name={s.name} description={s.description} useGamesEdit onSubmit={this.saveHandler}/>
             </div>;
         }
         //シリーズをソート
         return <div className="user-account-series">
-            <div className="user-account-series-list">
+            <div className="vertical-menu">
                 {
                     this.state.series.map((obj,i)=>{
-                        var c="user-account-series-list-item";
-                        if(obj.id===selected){
-                            c+=" user-account-series-list-item-selected";
+                        var c="vertical-menu-item vertical-menu-selectable";
+                        if(i===selected){
+                            c+=" vertical-menu-item-selected";
                         }
                         return <div className={c} key={obj.id} onClick={this.selectHandler(i)}>{
                             obj.name+" ("+obj.games.length+")"
@@ -833,18 +834,18 @@ var GameList=React.createClass({
         var games=this.props.gamesLink.value;
         var newArea;
         if(this.state.newMode===false){
-            newArea=<div className="user-account-gamelist-item user-account-gamelist-new" onClick={this.addNewHandler}>
+            newArea=<div className="vertical-menu-item vertical-menu-selectable" onClick={this.addNewHandler}>
                 新しい正男を追加...
             </div>;
         }else{
-            newArea=<div className="user-account-gamelist-item user-account-gamelist-new">
+            newArea=<div className="vertical-menu-item vertical-menu-separate">
                 <GameListSelector owner={this.props.owner} onSelect={this.gameSelectHandler} onClose={this.closeHandler}/>
             </div>;
         }
-        return <div className="user-account-gamelist">
+        return <div className="vertical-menu">
             {
                 games.map((obj)=>{
-                    return <div key={obj.id} className="user-account-gamelist-item">{
+                    return <div key={obj.id} className="vertical-menu-item vertical-menu-selectable">{
                         obj.title
                     }</div>;
                 })
@@ -904,11 +905,11 @@ var GameListSelector = React.createClass({
         if(this.state.loading===true){
             return <Loading/>;
         }
-        return <div className="user-account-gamelistselector">
+        return <div>
             <p>シリーズに追加する正男を選択してください。　<span className="clickable" onClick={this.closeHandler}>閉じる</span></p>
-            <div className="user-account-gamelistselector-list">{
+            <div className="vertical-menu">{
                 this.state.games.map((obj,i)=>{
-                    return <div key={obj.id} className="user-account-gamelistselector-list-item" onClick={this.clickHandler(i)}>
+                    return <div key={obj.id} className="vertical-menu-item vertical-menu-selectable" onClick={this.clickHandler(i)}>
                         {obj.title}
                     </div>;
                 })
