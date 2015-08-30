@@ -82,6 +82,7 @@ var Root = React.createClass({
                     game: page.data.game,
                     metadata: page.data.metadata,
                     owner: page.data.owner,
+                    series: page.data.series,
 
                     config: this.props.config,
                     session: session

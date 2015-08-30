@@ -15,12 +15,18 @@ module.exports = React.createClass({
         game: React.PropTypes.object.isRequired,
         metadata: React.PropTypes.object.isRequired,
         owner: React.PropTypes.object.isRequired,
+        series: React.PropTypes.arrayOf(React.PropTypes.shape({
+            id: React.PropTypes.number.isRequired,
+            name: React.PropTypes.string.isRequired,
+            prev: React.PropTypes.number,
+            next: React.PropTypes.number
+        })),
 
         config: React.PropTypes.object.isRequired,
         session: React.PropTypes.object.isRequired
     },
     render:function(){
-        var metadata=this.props.metadata, session=this.props.session;
+        var metadata=this.props.metadata, series=this.props.series, session=this.props.session;
         var ownertools = null;
         if(session.user===metadata.owner){
             //わたしがオーナーだ！
@@ -45,6 +51,29 @@ module.exports = React.createClass({
                 }</ul>
             </div>;
         }
+        var seriesArea=null;
+        if(series.length>0){
+            seriesArea=<div className="game-play-info-series">{
+                series.map((s)=>{
+                    var prev=null, next=null;
+                    if(s.prev!=null){
+                        prev=<span>
+                            <a href={`/play/${s.prev}`}>前の正男</a>
+                        </span>;
+                    }
+                    if(s.next!=null){
+                        next=<span>
+                            {prev!=null ? "｜" : null}<a href={`/play/${s.next}`}>次の正男</a>
+                        </span>;
+                    }
+                    return <p key={s.id}>
+                        シリーズ: <b>{s.name}</b>&#x3000;
+                        {prev}
+                        {next}
+                    </p>;
+                })
+            }</div>;
+        }
         return (
             <section>
                 <h1>{metadata.title}</h1>
@@ -63,6 +92,7 @@ module.exports = React.createClass({
                             <p>{metadata.description}</p>
                         </div>
                         {tags}
+                        {seriesArea}
                     </div>
                 </div>
                 <GameTools config={this.props.config} metadata={metadata}/>

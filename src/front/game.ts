@@ -83,6 +83,8 @@ export default function(c:Controller,r:_Router):void{
                     }
                 }
                 return {
+                    //シリーズID
+                    id: s.id,
                     //シリーズ名
                     name: s.name,
                     //前の正男
