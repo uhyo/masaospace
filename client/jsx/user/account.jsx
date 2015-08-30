@@ -625,10 +625,18 @@ var SeriesPage=React.createClass({
             owner: this.props.session.user
         })
         .then(({series})=>{
+            //nextIdに該当するシリーズを探す
+            var selected=null;
+            for(var i=0;i < series.length;i++){
+                if(series[i].id===nextId){
+                    selected=i;
+                    break;
+                }
+            }
             this.setState({
                 loading: false,
                 series,
-                selected: nextId!=null ? nextId : null
+                selected
             });
         })
         .catch(errorStore.emit);
@@ -748,18 +756,22 @@ var SeriesForm=React.createClass({
     },
     componentWillReceiveProps(newProps){
         this.setState(this.makeStateFromProps(newProps));
-        this.load(newProps.id);
+        if(newProps.useGamesEdit===true){
+            this.load(newProps.id);
+        }
     },
     makeStateFromProps(props){
         return {
-            loading:true,
+            loading:!!props.useGamesEdit,
             name: props.name,
             description: props.description,
             games: []
         };
     },
     componentDidMount(){
-        this.load(this.props.id);
+        if(this.props.useGamesEdit===true){
+            this.load(this.props.id);
+        }
     },
     load(seriesId){
         api("/api/series/games",{
@@ -779,7 +791,7 @@ var SeriesForm=React.createClass({
         var gamesArea=null;
         if(this.state.loading===true){
             gamesArea=<Loading/>;
-        }else{
+        }else if(this.props.useGamesEdit===true){
             var gamesLink={
                 value: this.state.games,
                 requestChange: (games)=>{
