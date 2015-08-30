@@ -827,25 +827,45 @@ var GameList=React.createClass({
     },
     getInitialState(){
         return {
-            newMode: false
+            newMode: false,
+            dragging: false,
+            dragged: null,
+            dragTarget: null
         };
     },
     render(){
         var games=this.props.gamesLink.value;
         var newArea;
         if(this.state.newMode===false){
-            newArea=<div className="vertical-menu-item vertical-menu-selectable" onClick={this.addNewHandler}>
+            var c="vertical-menu-item vertical-menu-selectable";
+            if(this.state.dragTarget===games.length){
+                c+=" user-account-gamelist-dragtarget";
+            }
+            newArea=<div className={c} onClick={this.addNewHandler}>
                 新しい正男を追加...
             </div>;
         }else{
-            newArea=<div className="vertical-menu-item vertical-menu-separate">
+            var c="vertical-menu-item vertical-menu-separate";
+            if(this.state.dragTarget===games.length){
+                c+=" user-account-gamelist-dragtarget";
+            }
+            newArea=<div className={c}>
                 <GameListSelector owner={this.props.owner} onSelect={this.gameSelectHandler} onClose={this.closeHandler}/>
             </div>;
         }
-        return <div className="vertical-menu">
+        return <div className="vertical-menu" onMouseUp={this.handleMouseUp}>
             {
                 games.map((obj,i)=>{
-                    return <div key={obj.id} className="vertical-menu-item vertical-menu-selectable">
+                    var mouseover;
+                    if(this.state.dragging===true){
+                        mouseover=this.handleMouseOver(i);
+                    }
+                    var c="vertical-menu-item vertical-menu-selectable";
+                    if(this.state.dragTarget===i){
+                        //この上にドラッグ
+                        c+=" user-account-gamelist-dragtarget";
+                    }
+                    return <div key={obj.id} className={c} onMouseDown={this.handleMouseDown(i)} onMouseOver={mouseover}>
                         <span>{obj.title}</span>
                         <span className="user-account-gamelist-del" onClick={this.gameDelHandler(i)}>✖</span>
                     </div>;
@@ -866,6 +886,43 @@ var GameList=React.createClass({
             var result=this.props.gamesLink.value.concat([]);
             result.splice(idx,1);
             this.props.gamesLink.requestChange(result);
+        };
+    },
+    handleMouseDown(idx){
+        return (e)=>{
+            //idx番目をつかんだ
+            e.preventDefault();
+            this.setState({
+                dragging: true,
+                dragged: idx,
+                dragTarget: idx
+            });
+        };
+    },
+    handleMouseUp(e){
+        //TODO
+        this.setState({
+            dragging: false,
+            dragged: null,
+            dragTarget: null
+        });
+    },
+    handleMouseOver(idx){
+        return (e)=>{
+            var {target, pageY}=e;
+            //position: absoluteとかはないよね……（決め打ち）
+            var t=target.offsetTop, h=target.offsetHeight;
+            var th=t+h/2;
+            if(pageY <= th){
+                //上半分
+                this.setState({
+                    dragTarget: idx
+                });
+            }else{
+                this.setState({
+                    dragTarget: idx+1
+                });
+            }
         };
     },
     gameSelectHandler(game){
