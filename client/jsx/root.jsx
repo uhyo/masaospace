@@ -98,6 +98,13 @@ var Root = React.createClass({
                     session: session,
                     id: page.data.id
                 }];
+            /////series
+            case "series.page":
+                return [require('./series/page.jsx'),{
+                    series: page.data.series,
+                    owner: page.data.owner,
+                    metadatas: page.data.metadatas
+                }];
             default:
                 //"404"とか
                 return [require('./notfound.jsx'),null]

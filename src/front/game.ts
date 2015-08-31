@@ -96,6 +96,88 @@ export default function(c:Controller,r:_Router):void{
             next(null);
         });
     });
+    /////ついでにシリーズ
+    r.add("/series/:number",(obj,callback:Callback<View>)=>{
+        var id=parseInt(obj[":number"]);
+        //シリーズを探す
+        c.series.findSeries({
+            id,
+            limit: 1
+        },(err,docs)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            var s=docs[0];
+            if(s==null){
+                //are----
+                callback(null,{
+                    status: 404,
+                    title: null,
+                    page: null,
+                    data: null
+                });
+                return;
+            }
+            var metadatas=null, owner=null;
+            var errend=false;
+            var next=(err)=>{
+                if(errend===true){
+                    return;
+                }
+                if(err){
+                    errend=true;
+                    callback(err,null);
+                    return;
+                }
+                if(metadatas!=null && owner!=null){
+                    //結果そろった
+                    callback(null,{
+                        title: "シリーズ: "+s.name,
+                        page:"series.page",
+                        data:{
+                            series: s,
+                            owner,
+                            metadatas
+                        }
+                    });
+                }
+            };
+            //game一覧
+            c.game.findGames({
+                ids: s.games
+            },(err,games)=>{
+                if(err){
+                    callback(err,null);
+                    return;
+                }
+                //シリーズ内の順に並び替える
+                var table=<any>{};
+                for(let i=0;i<games.length;i++){
+                    let g=games[i];
+                    table[g.id]=g;
+                }
+                metadatas=s.games.map((id)=>{
+                    return table[id];
+                });
+                next(null);
+            });
+            //owner情報を得る
+            c.user.user.findOneUser({
+                id:s.owner
+            },(err,usr)=>{
+                if(err){
+                    logger.error(err);
+                    next(err);
+                    return;
+                }
+                var data:any=outUserData(usr.getData());
+                data.id=usr.id;
+                owner=data;
+                next(null);
+            });
+        });
+    });
     /////list
     r.add("/game/list",(obj,callback:Callback<View>)=>{
         //検索条件をアレする

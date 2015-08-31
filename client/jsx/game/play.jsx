@@ -67,7 +67,7 @@ module.exports = React.createClass({
                         </span>;
                     }
                     return <p key={s.id}>
-                        シリーズ: <b>{s.name}</b>&#x3000;
+                        シリーズ: <b><a href={`/series/${s.id}`}>{s.name}</a></b>&#x3000;
                         {prev}
                         {next}
                     </p>;
