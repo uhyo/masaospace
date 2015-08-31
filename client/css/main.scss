@@ -24,11 +24,11 @@ hr {
 }
 
 a:link {
-  color: #444444;
+  color: $color-boldcolor;
   text-decoration: underline;
 }
 a:visited {
-  color: #777777;
+  color: $color-lightcolor;
   text-decoration: underline;
 }
 a:active {
@@ -303,11 +303,47 @@ ul.horizontal-menu {
     border-bottom: 4px hidden transparent;
 
     &.horizontal-menu-current {
-      border-bottom: 4px solid #bebebe;
+      border-bottom: 4px solid $color-solidcolor;
     }
 
     &:hover {
       background-color: $color-hovermask;
+    }
+  }
+}
+
+//vertical menu
+.vertical-menu {
+  margin: 8px;
+
+  .vertical-menu-item {
+    border-top: 1px solid #aaaaaa;
+    border-left: 1px solid #aaaaaa;
+    border-right: 1px solid #aaaaaa;
+
+    padding: 6px;
+
+    color: $color-boldcolor;
+
+    &.vertical-menu-separate {
+      border-top: 4px double #aaaaaa;
+    }
+
+    &.vertical-menu-item-selected {
+      padding-left: 2px;
+      border-left: 5px solid $color-solidcolor;
+    }
+
+    &:last-child {
+      border-bottom: 1px solid #aaaaaa;
+    }
+
+    &.vertical-menu-selectable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: $color-hovermask;
+      }
     }
   }
 }
@@ -414,6 +450,11 @@ ul.horizontal-menu {
   padding: 1rem;
   margin: 0.6rem;
   font-size: 0.9rem;
+}
+.clickable {
+  color: $color-boldcolor;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 //icons

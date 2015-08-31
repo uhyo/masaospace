@@ -12,8 +12,15 @@ module.exports = React.createClass({
             title:React.PropTypes.string,
             level:React.PropTypes.number,
             description:React.PropTypes.string,
-            created:React.PropTypes.string,
-            updated:React.PropTypes.string,
+            created:React.PropTypes.oneOfType([
+                React.PropTypes.string,
+                React.PropTypes.instanceOf(Date)
+            ]),
+            updated:React.PropTypes.oneOfType([
+                React.PropTypes.string,
+                React.PropTypes.instanceOf(Date)
+            ]),
+            user:React.PropTypes.object
         })
     },
     render:function(){

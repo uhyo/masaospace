@@ -2,7 +2,7 @@ var React = require('react');
 
 var api=require('../../../actions/api');
 var Loading=require('../../commons/loading.jsx'),
-    GameTile=require('./game-tile.jsx');
+    GameList=require('./game-list.jsx');
 
 module.exports = React.createClass({
     displayName:"QueryList",
@@ -45,22 +45,6 @@ module.exports = React.createClass({
             //ローディング状態
             return <Loading/>;
         }
-        //ゲームたちを表示
-        var games=this.state.games;
-        var len=games.length;
-        if(len===0){
-            return (
-                <div className="game-query-list">
-                    <p>正男が見つかりませんでした。</p>
-                </div>
-            );
-        }
-        return (
-            <div className="game-query-list">{
-                games.map((obj,i)=>{
-                    return <GameTile key={i} metadata={obj} />;
-                })
-            }</div>
-        );
+        return <GameList games={this.state.games} zero="正男が見つかりませんでした。" />;
     }
 });

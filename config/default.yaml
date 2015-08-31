@@ -14,6 +14,7 @@ mongodb:
     gamepast: gamepast
     mail: mail
     comment: comment
+    series: series
 redis:
   host: localhost
   port: 6379
@@ -105,7 +106,7 @@ game:
     min: 0
     max: 10
   description:
-    maxLength: 300
+    maxLength: 500
   tag:
     maxNumber: 10
     maxLength: 20
@@ -113,4 +114,11 @@ game:
 # comments
 comment:
   maxLength: 10240
+
+# series
+series:
+  name:
+    maxLength: 64
+  description:
+    maxLength: 500
 

@@ -104,7 +104,7 @@ class C{
         //IN limit:number 最大何件出力するか（capあり）
         //IN owner:string 投稿者による絞り込み
         //IN tag:string タグによる絞り込み
-        //OUT metadata:Array<GameMetadata>
+        //OUT metadatas:Array<GameMetadata>
         router.post("/find",(req,res)=>{
             req.validateBody("skip").isInteger().optional();
             req.validateBody("limit").isInteger().optional();
@@ -112,18 +112,23 @@ class C{
             if(req.validationErrorResponse(res)){
                 return;
             }
-            var skip=parseInt(req.body.skip) || 0,
-                limit=parseInt(req.body.limit) || 10;
-            if(limit>50){
-                limit=50;
-            }
-
 
             var qu:GameQuery={
-                skip:skip,
-                limit:limit,
                 sort:{id:-1}
             };
+            if(req.body.skip){
+                qu.skip=parseInt(req.body.skip) || 0;
+            }
+            if(req.body.limit){
+                let limit=parseInt(req.body.limit) || 10;
+                if(limit>50){
+                    limit=50;
+                }
+                qu.limit=limit;
+            }else if(!req.session.user || req.session.user !== req.body.owner){
+                //自分の正男を検索するときだけ制限なし
+                qu.limit = 10;
+            }
 
             if(req.body.owner!=null){
                 qu.owner=req.body.owner;

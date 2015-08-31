@@ -298,7 +298,8 @@ export class WebServer{
             user: config.get("user"),
             game: config.get("game"),
             comment: config.get("comment"),
-            filedata: config.get("filedata")
+            filedata: config.get("filedata"),
+            series: config.get("series")
         };
     }
 }

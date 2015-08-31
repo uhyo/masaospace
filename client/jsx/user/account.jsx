@@ -75,6 +75,9 @@ var Account=React.createClass({
         },{
             id:"file",
             name:"ファイル管理"
+        },{
+            id:"series",
+            name:"シリーズ管理"
         }];
         return (
             <div>
@@ -94,6 +97,8 @@ var Account=React.createClass({
             return <MailForm userdata={this.state.userdata}/>;
         }else if(page==="file"){
             return <FilePage config={this.props.config} session={this.props.session}/>;
+        }else if(page==="series"){
+            return <SeriesPage config={this.props.config} session={this.props.session}/>;
         }
         return null;
     }
@@ -598,6 +603,446 @@ var FileDelForm = React.createClass({
         });
     },
 });
+
+var SeriesPage=React.createClass({
+    displayName:"SeriesPage",
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        session: React.PropTypes.object.isRequired
+    },
+    getInitialState(){
+        return {
+            loading: true,
+            series: [],
+            selected: null
+        };
+    },
+    componentDidMount(){
+        this.load();
+    },
+    load(nextId){
+        api("/api/series/find",{
+            owner: this.props.session.user
+        })
+        .then(({series})=>{
+            //nextIdに該当するシリーズを探す
+            var selected=null;
+            for(var i=0;i < series.length;i++){
+                if(series[i].id===nextId){
+                    selected=i;
+                    break;
+                }
+            }
+            this.setState({
+                loading: false,
+                series,
+                selected
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    render(){
+        if(this.state.loading===true){
+            return <Loading/>;
+        }
+        var selected=this.state.selected;
+        var newSeries;
+        if(selected!==-1){
+            newSeries=<div className="vertical-menu-item vertical-menu-selectable" onClick={this.newHandler}>
+                新しいシリーズを作成...
+            </div>;
+        }else{
+            newSeries=<div className="vertical-menu-item">
+                <p>新しいシリーズを作成</p>
+                <SeriesForm config={this.props.config} owner={this.props.session.user} onSubmit={this.newSubmitHandler}/>
+            </div>;
+        }
+        var seriesForm;
+        if(selected!=null && selected>=0){
+            var s=this.state.series[selected];
+            seriesForm=<div>
+                <hr/>
+                <p>※「保存」ボタンを押さないと変更が保存されません。</p>
+                <SeriesForm config={this.props.config} owner={this.props.session.user} saveButton="保存" id={s.id} name={s.name} description={s.description} useGamesEdit onSubmit={this.saveHandler}/>
+            </div>;
+        }
+        //シリーズをソート
+        return <div className="user-account-series">
+            <div className="vertical-menu">
+                {
+                    this.state.series.map((obj,i)=>{
+                        var c="vertical-menu-item vertical-menu-selectable";
+                        if(i===selected){
+                            c+=" vertical-menu-item-selected";
+                        }
+                        return <div className={c} key={obj.id} onClick={this.selectHandler(i)}>{
+                            obj.name+" ("+obj.games.length+")"
+                        }</div>;
+                    })
+                }
+                {newSeries}
+            </div>
+            {seriesForm}
+        </div>;
+    },
+    selectHandler(idx){
+        return (e)=>{
+            this.setState({
+                selected: idx
+            });
+        };
+    },
+    newHandler(e){
+        this.setState({
+            selected: -1
+        });
+    },
+    newSubmitHandler({name,description}){
+        api("/api/series/new",{
+            name,
+            description
+        })
+        .then(({id})=>{
+            //IDを取得したので再ロード
+            this.setState({
+                loading: true
+            });
+            this.load(id);
+        })
+        .catch(errorStore.emit);
+    },
+    saveHandler({name,description,games}){
+        api("/api/series/save",{
+            id: this.state.series[this.state.selected].id,
+            name,
+            description,
+            games: games.join(",")
+        })
+        .then(()=>{
+            this.setState({
+                loading: true
+            });
+            this.load();
+        })
+        .catch(errorStore.emit);
+    }
+});
+
+//シリーズ管理フォーム
+var SeriesForm=React.createClass({
+    displayName:"SeriesForm",
+    mixins: [React.addons.LinkedStateMixin],
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        owner: React.PropTypes.string.isRequired,
+        saveButton: React.PropTypes.string,
+
+        id: React.PropTypes.number,
+        name: React.PropTypes.string,
+        description: React.PropTypes.string,
+
+        onSubmit: React.PropTypes.func.isRequired,
+        useGamesEdit: React.PropTypes.bool
+    },
+    getDefaultProps(){
+        return {
+            saveButton: "保存",
+            name:"",
+            description:"",
+        };
+    },
+    getInitialState(){
+        return this.makeStateFromProps(this.props);
+    },
+    componentWillReceiveProps(newProps){
+        this.setState(this.makeStateFromProps(newProps));
+        if(newProps.useGamesEdit===true){
+            this.load(newProps.id);
+        }
+    },
+    makeStateFromProps(props){
+        return {
+            loading:!!props.useGamesEdit,
+            name: props.name,
+            description: props.description,
+            games: []
+        };
+    },
+    componentDidMount(){
+        if(this.props.useGamesEdit===true){
+            this.load(this.props.id);
+        }
+    },
+    load(seriesId){
+        api("/api/series/games",{
+            series: seriesId
+        })
+        .then(({games})=>{
+            this.setState({
+                loading: false,
+                games
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    render(){
+        var config=this.props.config.series;
+
+        var gamesArea=null;
+        if(this.state.loading===true){
+            gamesArea=<Loading/>;
+        }else if(this.props.useGamesEdit===true){
+            var gamesLink={
+                value: this.state.games,
+                requestChange: (games)=>{
+                    this.setState({
+                        games
+                    });
+                }
+            };
+            gamesArea=<section className="user-account-seriesform-gamelist">
+                <h1 className="legend">正男の一覧</h1>
+                <p>現在<b>{this.state.games.length}件</b>の正男が追加されています。正男はドラッグ&amp;ドロップで並び替えができます。</p>
+                <GameList config={this.props.config} owner={this.props.owner} gamesLink={gamesLink}/>
+            </section>;
+        }
+        return <div>
+            <form className="form" onSubmit={this.handleSubmit}>
+                <p>
+                    <label className="form-row">
+                        <span>シリーズ名</span>
+                        <input valueLink={this.linkState("name")} required maxLength={config.name.maxLength}/>
+                    </label>
+                </p>
+                <p>
+                    <label className="form-row">
+                        <span>説明</span>
+                        <textarea valueLink={this.linkState("description")} required maxLength={config.description.maxLength}/>
+                    </label>
+                </p>
+            </form>
+            {gamesArea}
+            <form className="form">
+                <p>
+                    <input className="form-single form-button" type="button" value={this.props.saveButton} onClick={this.handleSubmit}/>
+                </p>
+            </form>
+        </div>;
+    },
+    handleSubmit(e){
+        e.preventDefault();
+        this.props.onSubmit({
+            name: this.state.name,
+            description: this.state.description,
+            games: this.state.games.map(({id})=>{return id})
+        });
+    }
+});
+
+var GameList=React.createClass({
+    displayName:"GameList",
+    propTypes:{
+        config: React.PropTypes.object.isRequired,
+        owner: React.PropTypes.string.isRequired,
+        gamesLink: React.PropTypes.shape({
+            value: React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
+            requestChange: React.PropTypes.func.isRequired
+        }).isRequired
+    },
+    getInitialState(){
+        return {
+            newMode: false,
+            dragging: false,
+            dragged: null,
+            dragTarget: null
+        };
+    },
+    render(){
+        var games=this.props.gamesLink.value;
+        var newArea, nmo=null;
+        var c="vertical-menu-item";
+        if(this.state.dragTarget===games.length){
+            c+=" user-account-gamelist-dragtarget";
+        }
+        if(this.state.dragging===true){
+            nmo=this.handleMouseMove(games.length);
+        }
+        if(this.state.newMode===false){
+            c+=" vertical-menu-selectable";
+            newArea=<div className={c} onClick={this.addNewHandler} onMouseOver={nmo}>
+                新しい正男を追加...
+            </div>;
+        }else{
+            c+=" vertical-menu-separate";
+            newArea=<div className={c} onMouseOver={nmo}>
+                <GameListSelector owner={this.props.owner} onSelect={this.gameSelectHandler} onClose={this.closeHandler}/>
+            </div>;
+        }
+        var mouseup=null;
+        if(this.state.dragging===true){
+            mouseup=this.handleMouseUp;
+        }
+        return <div className="vertical-menu" onMouseUp={mouseup}>
+            {
+                games.map((obj,i)=>{
+                    var mousemove;
+                    if(this.state.dragging===true){
+                        mousemove=this.handleMouseMove(i);
+                    }
+                    var c="vertical-menu-item vertical-menu-selectable";
+                    if(this.state.dragTarget===i){
+                        //この上にドラッグ
+                        c+=" user-account-gamelist-dragtarget";
+                    }
+                    if(this.state.dragged===i){
+                        //これがドラッグされてる
+                        c+=" vertical-menu-item-selected";
+                    }
+                    return <div key={obj.id} className={c} onMouseDown={this.handleMouseDown(i)} onMouseMove={mousemove}>
+                        <span>{obj.title}</span>
+                        <span className="user-account-gamelist-del" onClick={this.gameDelHandler(i)}>✖</span>
+                    </div>;
+                })
+            }
+            {newArea}
+        </div>;
+    },
+    addNewHandler(e){
+        //新しい正男を追加ボタンを押した
+        this.setState({
+            newMode: true
+        });
+    },
+    gameDelHandler(idx){
+        return (e)=>{
+            //idx番目を消去
+            var result=this.props.gamesLink.value.concat([]);
+            result.splice(idx,1);
+            this.props.gamesLink.requestChange(result);
+        };
+    },
+    handleMouseDown(idx){
+        return (e)=>{
+            //idx番目をつかんだ
+            e.preventDefault();
+            this.setState({
+                dragging: true,
+                dragged: idx,
+                dragTarget: idx
+            });
+        };
+    },
+    handleMouseUp(e){
+        //ゲームを移動する
+        var result=this.props.gamesLink.value.concat([]);
+        var pushTarget = this.state.dragTarget;
+        if(this.state.dragged < pushTarget){
+            pushTarget--;
+        }
+        var [p] = result.splice(this.state.dragged,1);
+        result.splice(pushTarget,0,p);
+        this.setState({
+            dragging: false,
+            dragged: null,
+            dragTarget: null,
+        },()=>{
+            this.props.gamesLink.requestChange(result);
+        });
+    },
+    handleMouseMove(idx){
+        return (e)=>{
+            var {target, pageY}=e;
+            //position: absoluteとかはないよね……（決め打ち）
+            var t=target.offsetTop, h=target.offsetHeight;
+            var th=t+h/2;
+            if(idx < this.props.gamesLink.value.length){
+                if(pageY <= th){
+                    //上半分
+                    this.setState({
+                        dragTarget: idx
+                    });
+                }else{
+                    this.setState({
+                        dragTarget: idx+1
+                    });
+                }
+            }else{
+                this.setState({
+                    dragTarget: idx
+                });
+            }
+        };
+    },
+    gameSelectHandler(game){
+        //新しいゲームがきた
+        var games=this.props.gamesLink.value;
+        if(games.every((obj)=>{
+            return game.id!==obj.id;
+        })){
+            //今までにはない……！（追加）
+            this.props.gamesLink.requestChange(games.concat(game));
+        }
+    },
+    closeHandler(){
+        this.setState({
+            newMode: false
+        });
+    }
+});
+
+var GameListSelector = React.createClass({
+    displayName: "GameListSelector",
+    propTypes:{
+        owner: React.PropTypes.string.isRequired,
+        onSelect: React.PropTypes.func.isRequired,
+        onClose: React.PropTypes.func
+    },
+    getInitialState(){
+        return {
+            loading: true,
+            games: []
+        };
+    },
+    componentDidMount(){
+        api("/api/game/find",{
+            owner: this.props.owner
+        })
+        .then(({metadatas})=>{
+            this.setState({
+                loading: false,
+                games: metadatas
+            });
+        })
+        .catch(errorStore.emit);
+    },
+    render(){
+        if(this.state.loading===true){
+            return <Loading/>;
+        }
+        return <div>
+            <p>シリーズに追加する正男を選択してください。　<span className="clickable" onClick={this.closeHandler}>閉じる</span></p>
+            <div className="vertical-menu">{
+                this.state.games.map((obj,i)=>{
+                    return <div key={obj.id} className="vertical-menu-item vertical-menu-selectable" onClick={this.clickHandler(i)}>
+                        {obj.title}
+                    </div>;
+                })
+            }</div>
+        </div>;
+    },
+    closeHandler(e){
+        if(this.props.onClose){
+            this.props.onClose();
+        }
+    },
+    clickHandler(idx){
+        return (e)=>{
+            var game=this.state.games[idx];
+            this.props.onSelect(game);
+        };
+    }
+});
+
 
 module.exports = Account;
 

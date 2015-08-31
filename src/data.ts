@@ -157,10 +157,11 @@ export interface GamePastData{
 export interface GameQuery{
     owner?:string;
     tags?:string;
+    ids?:Array<number>;
 
-    skip:number;
-    limit:number;
-    sort:any;
+    skip?:number;
+    limit?:number;
+    sort?:any;
 }
 
 
@@ -195,6 +196,34 @@ export interface CommentQuery{
     skip:number;
     limit:number;
     sort:any;
+}
+
+//シリーズ
+export interface Series{
+    //シリーズID
+    id:number;
+    //シリーズオーナー
+    owner:string;
+    //シリーズ名
+    name:string;
+    //説明
+    description:string;
+    //ゲームIDたち
+    games:Array<number>;
+    //作成日時
+    created:Date;
+    //更新日時
+    updated:Date;
+}
+
+export interface SeriesQuery{
+    id?:number;
+    owner?:string;
+    games?:number;
+
+    skip?:number;
+    limit?:number;
+    sort?:any;
 }
 
 

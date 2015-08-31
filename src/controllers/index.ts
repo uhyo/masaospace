@@ -10,6 +10,7 @@ import FileController from './file';
 import SessionController from './session';
 import GameController from './game';
 import CommentController from './comment';
+import SeriesController from './series';
 import MailController from './mail';
 import mum=require('my-user-mongo');
 
@@ -24,6 +25,7 @@ class Controller{
     public session:SessionController;
     public game:GameController;
     public comment:CommentController;
+    public series:SeriesController;
     public mail:MailController;
 
     constructor(private db:db.DBAccess){
@@ -50,6 +52,7 @@ class Controller{
         this.session= new SessionController(db,this.user);
         this.game  =new GameController(db);
         this.comment= new CommentController(db);
+        this.series=new SeriesController(db);
         this.mail  =new MailController(db);
 
         logger.debug("Controller: initialization start.");
@@ -66,9 +69,13 @@ class Controller{
                                 logger.debug("Controller.game initialized.");
                                 this.comment.init(d.intercept(()=>{
                                     logger.debug("Controller.comment initialized.");
-                                    this.mail.init(d.intercept(()=>{
-                                        logger.debug("Controller.mail initialized.");
-                                        callback(null);
+                                    this.series.init(d.intercept(()=>{
+                                        logger.debug("Controller.series initialized.");
+                                        this.mail.init(d.intercept(()=>{
+                                            logger.debug("Controller.mail initialized.");
+                                            d.exit();
+                                            callback(null);
+                                        }));
                                     }));
                                 }));
                             }));

@@ -54,6 +54,9 @@
         }
       }
     }
+    .game-play-info-series {
+      flex: auto 0 0;
+    }
   }
 }
 .game-play-tools {
@@ -159,7 +162,7 @@
 }
 
 //query list
-.game-query-list {
+.game-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;

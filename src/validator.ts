@@ -38,4 +38,12 @@ validator.addCustomValidator("isComment",(value:string)=>{
     return !funcs.length(value,1,config.get("comment.maxLength"));
 });
 
+///////// series
+validator.addCustomValidator("isSeriesName",(value:string)=>{
+    return !funcs.length(value,1,config.get("series.name.maxLength"));
+});
+validator.addCustomValidator("isSeriesDescription",(value:string)=>{
+    return !funcs.length(value,1,config.get("series.description.maxLength"));
+});
+
 export = validator;

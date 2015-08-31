@@ -24,7 +24,7 @@ module.exports = React.createClass({
         metadata: React.PropTypes.shape({
             title: React.PropTypes.string,
             description: React.PropTypes.string,
-            tags: React.PropTypes.arrayOf(React.PropTypes.string)
+            tags: React.PropTypes.arrayOf(React.PropTypes.string),
         }),
 
         saveButton: React.PropTypes.string.isRequired,
@@ -33,7 +33,11 @@ module.exports = React.createClass({
     getInitialState(){
         return {
             game:this.props.game || null,
-            metadata:this.props.metadata || null,
+            metadata:this.props.metadata || {
+                title: "",
+                description: "",
+                tags: [],
+            },
 
             filesPage:"filename_pattern",
             filesPage2:null,    //otherのとき
@@ -52,7 +56,7 @@ module.exports = React.createClass({
     },
     handleMetadata(metadata){
         this.setState({
-            metadata: metadata
+            metadata: extend({},this.state.metadata,metadata)
         });
     },
     handleSubmit(e){

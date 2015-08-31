@@ -82,6 +82,7 @@ var Root = React.createClass({
                     game: page.data.game,
                     metadata: page.data.metadata,
                     owner: page.data.owner,
+                    series: page.data.series,
 
                     config: this.props.config,
                     session: session
@@ -96,6 +97,13 @@ var Root = React.createClass({
                     config: this.props.config,
                     session: session,
                     id: page.data.id
+                }];
+            /////series
+            case "series.page":
+                return [require('./series/page.jsx'),{
+                    series: page.data.series,
+                    owner: page.data.owner,
+                    metadatas: page.data.metadatas
                 }];
             default:
                 //"404"とか

@@ -46,3 +46,15 @@
     cursor: pointer;
   }
 }
+
+.user-account-series {
+  .user-account-seriesform-gamelist {
+    @include legendsection;
+  }
+  .user-account-gamelist-del {
+    float: right;
+  }
+  .user-account-gamelist-dragtarget {
+    border-top: 3px solid black !important;
+  }
+}

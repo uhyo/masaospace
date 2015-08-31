@@ -12,37 +12,169 @@ export default function(c:Controller,r:_Router):void{
     /////play
     r.add("/play/:number",(obj,callback:Callback<View>)=>{
         var id=parseInt(obj[":number"]);
+        //results
+        var game=null, metadata=null, owner=null, series=null;
+        var errend=false;
+        //結果を収集
+        var next=(err)=>{
+            if(errend===true){
+                return;
+            }
+            if(err){
+                errend=true;
+                callback(err,null);
+                return;
+            }
+            if(game!=null && metadata!=null && owner!=null && series!=null){
+                //結果が揃った
+                callback(null,{
+                    title: metadata.title,
+                    page: "game.play",
+                    data:{
+                        game,
+                        metadata,
+                        owner,
+                        series
+                    }
+                });
+            }
+        };
+        //ゲームデータを得る
         c.game.getGame(id,true,(err,obj)=>{
             if(err){
-                callback(err,null);
+                next(err);
                 return;
             }
             if(obj==null){
                 //そんなゲームはないね
-                callback("お探しの正男は見つかりませんでした。",null);
+                next("お探しの正男は見つかりませんでした。");
                 return;
             }
+            game=obj.game;
+            metadata=obj.metadata;
             //ownerの情報も得る
             c.user.user.findOneUser({
                 id:obj.metadata.owner
             },(err,usr)=>{
                 if(err){
                     logger.error(err);
-                    callback(err,null);
+                    next(err);
                     return;
                 }
                 var data:any=outUserData(usr.getData());
                 data.id=usr.id;
-                //データを返す
-                callback(null,{
-                    title: obj.metadata.title,
-                    page: "game.play",
-                    data:{
-                        game: obj.game,
-                        metadata: obj.metadata,
-                        owner: data
+                owner=data;
+                next(null);
+            });
+        });
+        //シリーズ情報を検索
+        c.series.findSeries({games: id},(err,docs)=>{
+            if(err){
+                next(err);
+                return;
+            }
+            //情報をいい感じに変形
+            series=docs.map((s)=>{
+                var games=s.games;
+                for(var i=0,l=games.length;i<l;i++){
+                    if(games[i]===id){
+                        //これだ
+                        break;
                     }
+                }
+                return {
+                    //シリーズID
+                    id: s.id,
+                    //シリーズ名
+                    name: s.name,
+                    //前の正男
+                    prev: i>0 ? games[i-1] : null,
+                    //次の正男
+                    next: i<l-1 ? games[i+1] : null
+                };
+            });
+            next(null);
+        });
+    });
+    /////ついでにシリーズ
+    r.add("/series/:number",(obj,callback:Callback<View>)=>{
+        var id=parseInt(obj[":number"]);
+        //シリーズを探す
+        c.series.findSeries({
+            id,
+            limit: 1
+        },(err,docs)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            var s=docs[0];
+            if(s==null){
+                //are----
+                callback(null,{
+                    status: 404,
+                    title: null,
+                    page: null,
+                    data: null
                 });
+                return;
+            }
+            var metadatas=null, owner=null;
+            var errend=false;
+            var next=(err)=>{
+                if(errend===true){
+                    return;
+                }
+                if(err){
+                    errend=true;
+                    callback(err,null);
+                    return;
+                }
+                if(metadatas!=null && owner!=null){
+                    //結果そろった
+                    callback(null,{
+                        title: "シリーズ: "+s.name,
+                        page:"series.page",
+                        data:{
+                            series: s,
+                            owner,
+                            metadatas
+                        }
+                    });
+                }
+            };
+            //game一覧
+            c.game.findGames({
+                ids: s.games
+            },(err,games)=>{
+                if(err){
+                    callback(err,null);
+                    return;
+                }
+                //シリーズ内の順に並び替える
+                var table=<any>{};
+                for(let i=0;i<games.length;i++){
+                    let g=games[i];
+                    table[g.id]=g;
+                }
+                metadatas=s.games.map((id)=>{
+                    return table[id];
+                });
+                next(null);
+            });
+            //owner情報を得る
+            c.user.user.findOneUser({
+                id:s.owner
+            },(err,usr)=>{
+                if(err){
+                    logger.error(err);
+                    next(err);
+                    return;
+                }
+                var data:any=outUserData(usr.getData());
+                data.id=usr.id;
+                owner=data;
+                next(null);
             });
         });
     });
