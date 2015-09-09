@@ -13,8 +13,8 @@ var Entry = React.createClass({
             <section>
                 <h1>新規登録</h1>
                 <div className="warning">
-                    <p>注意：このサービスを利用して発生したいかなる損害にも運営者はその責任を負いません。</p>
-                    <p>このサービスはアルファ版にも満たない何かです。登録されたデータは予告なく変更・削除されることがあります。</p>
+                    <p>このサービスを利用して発生したいかなる損害にも運営者はその責任を負いません。</p>
+                    <p>このサービスはアルファ版です。登録されたデータは予告なく変更・削除されることがあります。</p>
                 </div>
                 <div className="user-entry-form-wrapper">
                     <EntryForm config={this.props.config}/>

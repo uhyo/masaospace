@@ -36,9 +36,9 @@ module.exports = React.createClass({
                 <div className="information">
                     <p>最近の更新：</p>
                     <ul>
-                        <li>2015-08-09: プロフィールにアイコンとURLを登録できるようになりました。</li>
                         <li>2015-08-10: 正男をウェブサイトに埋め込めるようになりました。</li>
                         <li>2015-08-18: 正男にタグ付けできるようになりました。</li>
+                        <li>2015-09-10: 正男エディタで正男を作成・編集できるようになりました。</li>
                     </ul>
                 </div>
                 {tags}
@@ -59,7 +59,7 @@ module.exports = React.createClass({
                 <p>{config.service.name}にようこそ！</p>
                 <p>正男を共有できるサービスです。</p>
                 <p>現在利用可能な機能は、ユーザー登録と正男の投稿です。</p>
-                <p>さっそく<a href="/entry/page">新規登録</a>して正男を投稿しましょう！</p>
+                <p>さっそく<a href="/entry/page">新規登録</a>して<a href="/game/new">正男を投稿</a>しましょう！</p>
             </div>
         );
     }
