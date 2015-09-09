@@ -72,10 +72,6 @@ module.exports = React.createClass({
     },
     render(){
         var game=this.state.game;
-        if(this.props.session.loggedin===false){
-            //?????
-            return null;
-        }
         return <div>
             <MasaoSelector onSelect={this.masaoSelected} defaultGame={this.state.game}/>
             {game!=null ? this.preview() : null}
@@ -147,15 +143,25 @@ module.exports = React.createClass({
     form:function(){
         //正男メタデータを入力するフォーム
         var m = this.state.metadata || {};
+        var submit=null;
+        if(this.props.session.user==null){
+            submit=<NeedLogin>
+                <p>正男を投稿するにはログインが必要です。</p>
+                <p>ページ上部からログインしても作った正男は失われません。</p>
+                <p>アカウントをお持ちではありませんか？　<a href="/entry/page" target="_blank">新規登録</a>を行なってください。</p>
+            </NeedLogin>;
+        }else{
+            submit= <form className="form">
+                <p><input className="form-single form-button" type="button" value={this.props.saveButton} disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
+            </form>;
+        }
         return (
             <div>
                 <section className="game-metadata-form">
                     <h1>正男情報</h1>
                     <div className="game-new-metadataform-wrapper">
                         <GameMetadataForm onChange={this.handleMetadata} title={m.title} description={m.description} tags={m.tags}/>
-                        <form className="form">
-                            <p><input className="form-single form-button" type="button" value={this.props.saveButton} disabled={this.isSubmitDisabled()} onClick={this.handleSubmit} /></p>
-                        </form>
+                        {submit}
                     </div>
                 </section>
             </div>

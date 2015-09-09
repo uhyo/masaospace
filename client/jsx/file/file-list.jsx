@@ -63,6 +63,15 @@ module.exports = React.createClass({
         }
     },
     load(cb){
+        if(this.state.query.owner==null){
+            //あれ？（未登録ユーザー）
+            this.setState({
+                loading: false,
+                files: []
+            });
+            setTimeout(cb,0);
+            return;
+        }
         this.setState({
             loading: true
         });

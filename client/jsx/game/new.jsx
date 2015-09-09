@@ -1,7 +1,6 @@
 var React = require('react');
 
-var NeedLogin = require('../commons/need-login.jsx'),
-    GameEdit = require('./masao-edit.jsx');
+var GameEdit = require('./masao-edit.jsx');
 
 
 var api=require('../../actions/api');
@@ -25,12 +24,6 @@ module.exports = React.createClass({
         }).catch(errorStore.emit);
     },
     render:function(){
-        if(this.props.session.loggedin===false){
-            return <section>
-                <h1>新しい正男を投稿</h1>
-                <NeedLogin/>
-            </section>;
-        }
         return (
             //TODO
             <section>
