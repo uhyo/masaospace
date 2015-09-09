@@ -1,3 +1,6 @@
 [submodule "mc_canvas"]
 	path = mc_canvas
 	url = https://github.com/uhyo/mc_canvas
+[submodule "masao-editor"]
+	path = masao-editor
+	url = https://github.com/uhyo/masao-editor

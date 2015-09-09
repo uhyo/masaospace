@@ -1,7 +1,10 @@
 //正男データをファイルとかから生成する
 var React = require('react');
 
-var FileSelector = require('../file/file-selector.jsx');
+var FileSelector = require('../file/file-selector.jsx'),
+    HorizontalMenu = require('../commons/horizontal-menu.jsx');
+
+var MasaoEditorCore = require('../../../masao-editor/core');
 
 var errorStore=require('../../stores/error');
 
@@ -9,6 +12,48 @@ var masao=require('../../../lib/masao');
 
 module.exports = React.createClass({
     displayName:"MasaoSelector",
+    propTypes: {
+        onSelect: React.PropTypes.func,
+    },
+    getInitialState(){
+        return {
+            mode: "file"
+        };
+    },
+    render(){
+        var menu=[{
+            id: "file",
+            name: "ファイルを読み込み"
+        },{
+            id: "editor",
+            name: "正男エディタで作成"
+        }];
+        var pageLink={
+            value: this.state.mode,
+            requestChange: (mode)=>{
+                this.setState({mode});
+            }
+        };
+        var main=null;
+        if(this.state.mode==="file"){
+            main=<FromFile onSelect={this.props.onSelect} />;
+        }else if(this.state.mode==="editor"){
+            //TODO
+            main=<MasaoEditorCore filename_pattern="/static/pattern.gif" filename_chips="/static/images/chips.png" />;
+        }
+        return <div>
+            <HorizontalMenu contents={menu} pageLink={pageLink}/>
+            {main}
+        </div>;
+    }
+});
+
+
+var FromFile = React.createClass({
+    displayName:"MasaoSelector",
+    propTypes: {
+        onSelect: React.PropTypes.func,
+    },
     fileSelected:function(file){
         if(file==null){
             this.setGame(null,null);
