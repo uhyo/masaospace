@@ -32,14 +32,17 @@ module.exports = React.createClass({
         return (e)=>{
             var props=this.props, vl;
             if(vl=props.valueLink){
-                vl.requestChange(vl.value.splice(index,1));
+                vl.requestChange(vl.value.slice(0,index).concat(vl.value.slice(index+1)));
             }else if("function"===typeof props.onChange){
-                props.onChange(props.value.splice(index,1));
+                props.onChange(props.value.slice(0,index).concat(props.value.slice(index+1)));
             }
         };
     },
     handleNew(e){
         var props=this.props, vl, txt=React.findDOMNode(this.refs.newstr);
+        if(txt.value===""){
+            return;
+        }
         if(vl=props.valueLink){
             vl.requestChange(vl.value.concat(txt.value));
         }else if("function"===typeof props.onChange){
