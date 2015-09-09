@@ -2,7 +2,8 @@
 var React = require('react');
 
 var FileSelector = require('../file/file-selector.jsx'),
-    HorizontalMenu = require('../commons/horizontal-menu.jsx');
+    HorizontalMenu = require('../commons/horizontal-menu.jsx'),
+    GameView = require('./game-view.jsx');
 
 var MasaoEditorCore = require('../../../masao-editor/core');
 
@@ -39,7 +40,7 @@ module.exports = React.createClass({
             main=<FromFile onSelect={this.props.onSelect} />;
         }else if(this.state.mode==="editor"){
             //TODO
-            main=<MasaoEditorCore filename_pattern="/static/pattern.gif" filename_chips="/static/images/chips.png" />;
+            main=<FromEditor onSelect={this.props.onSelect} />;
         }
         return <div>
             <HorizontalMenu contents={menu} pageLink={pageLink}/>
@@ -289,7 +290,6 @@ var FromFile = React.createClass({
     },
 });
 
-
 function findCanvasParams(text){
     var index=0, len=text.length;
     //ソースからCanvas正男を抽出する
@@ -365,3 +365,66 @@ function findCanvasParams(text){
     }
     return null;
 }
+
+var FromEditor = React.createClass({
+    displayname: "FromEditor",
+    propTypes: {
+        onSelect: React.PropTypes.func
+    },
+    getInitialState(){
+        return {
+            testplay: false,
+            testgame: null
+        };
+    },
+    render(){
+        var testplay=null;
+        if(this.state.testplay===true){
+            testplay=<section className="game-masao-preview">
+                <h1>テストプレイ</h1>
+                <p><span className="clickable" onClick={this.handleCloseTestplay}>テストプレイを終了</span></p>
+                <GameView game={this.state.testgame}/>
+            </section>;
+        }
+        return <div>
+            <div className="warning">
+                <p>現在、正男エディタのパターン画像変更には対応しておりません。（投稿時はパターン画像を変更できます）</p>
+            </div>
+            {testplay}
+            <MasaoEditorCore filename_pattern="/static/pattern.gif" filename_chips="/static/images/chips.png" text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
+        </div>;
+    },
+    handleSave(params){
+        //gameは適当につくる
+        var game={
+            id: null,
+            version: "fx",
+            params: params,
+            resources: []
+        }, metadata={
+            title: ""
+        };
+
+        if("function"===typeof this.props.onSelect){
+            this.props.onSelect(game, metadata);
+        }
+    },
+    handleTestplay(params){
+        this.setState({
+            testplay: true,
+            testgame: {
+                id: null,
+                version: "fx",
+                params,
+                resources: []
+            }
+        });
+    },
+    handleCloseTestplay(e){
+        e.preventDefault();
+        this.setState({
+            testplay: false,
+            testgame: null
+        });
+    },
+});
