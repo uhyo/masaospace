@@ -1,7 +1,11 @@
 //正男データをファイルとかから生成する
 var React = require('react');
 
-var FileSelector = require('../file/file-selector.jsx');
+var FileSelector = require('../file/file-selector.jsx'),
+    HorizontalMenu = require('../commons/horizontal-menu.jsx'),
+    GameView = require('./game-view.jsx');
+
+var MasaoEditorCore = require('../../../masao-editor/core');
 
 var errorStore=require('../../stores/error');
 
@@ -9,6 +13,49 @@ var masao=require('../../../lib/masao');
 
 module.exports = React.createClass({
     displayName:"MasaoSelector",
+    propTypes: {
+        onSelect: React.PropTypes.func,
+        defaultGame: React.PropTypes.object
+    },
+    getInitialState(){
+        return {
+            mode: "file"
+        };
+    },
+    render(){
+        var menu=[{
+            id: "file",
+            name: "ファイルを読み込み"
+        },{
+            id: "editor",
+            name: "正男エディタで作成"
+        }];
+        var pageLink={
+            value: this.state.mode,
+            requestChange: (mode)=>{
+                this.setState({mode});
+            }
+        };
+        var main=null;
+        if(this.state.mode==="file"){
+            main=<FromFile onSelect={this.props.onSelect} />;
+        }else if(this.state.mode==="editor"){
+            //TODO
+            main=<FromEditor onSelect={this.props.onSelect} defaultGame={this.props.defaultGame}/>;
+        }
+        return <div>
+            <HorizontalMenu contents={menu} pageLink={pageLink}/>
+            {main}
+        </div>;
+    }
+});
+
+
+var FromFile = React.createClass({
+    displayName:"MasaoSelector",
+    propTypes: {
+        onSelect: React.PropTypes.func,
+    },
     fileSelected:function(file){
         if(file==null){
             this.setGame(null,null);
@@ -244,7 +291,6 @@ module.exports = React.createClass({
     },
 });
 
-
 function findCanvasParams(text){
     var index=0, len=text.length;
     //ソースからCanvas正男を抽出する
@@ -320,3 +366,66 @@ function findCanvasParams(text){
     }
     return null;
 }
+
+var FromEditor = React.createClass({
+    displayname: "FromEditor",
+    propTypes: {
+        onSelect: React.PropTypes.func,
+        defaultGame: React.PropTypes.object
+    },
+    getInitialState(){
+        return {
+            testplay: false,
+            testgame: null
+        };
+    },
+    render(){
+        var testplay=null;
+        if(this.state.testplay===true){
+            testplay=<section className="game-masao-preview">
+                <h1>テストプレイ</h1>
+                <p><span className="clickable" onClick={this.handleCloseTestplay}>テストプレイを終了</span></p>
+                <GameView game={this.state.testgame}/>
+            </section>;
+        }
+        var defaultParams = this.props.defaultGame ? this.props.defaultGame.params : null;
+        return <div>
+            <div className="warning">
+                <p>現在、正男エディタのパターン画像変更には対応しておりません。（投稿時はパターン画像を変更できます）</p>
+            </div>
+            {testplay}
+            <MasaoEditorCore filename_pattern="/static/pattern.gif" filename_chips="/static/images/chips.png" defaultParams={defaultParams} text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
+        </div>;
+    },
+    handleSave(params){
+        //gameは適当につくる
+        var game={
+            id: null,
+            version: "fx",
+            params: params,
+            resources: []
+        };
+
+        if("function"===typeof this.props.onSelect){
+            this.props.onSelect(game, null);
+        }
+    },
+    handleTestplay(params){
+        this.setState({
+            testplay: true,
+            testgame: {
+                id: null,
+                version: "fx",
+                params,
+                resources: []
+            }
+        });
+    },
+    handleCloseTestplay(e){
+        e.preventDefault();
+        this.setState({
+            testplay: false,
+            testgame: null
+        });
+    },
+});

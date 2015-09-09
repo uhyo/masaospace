@@ -44,14 +44,17 @@ module.exports = React.createClass({
         };
     },
     masaoSelected(game,metadata){
+        var metadata_title;
         if(metadata==null){
-            metadata={};
+            metadata_title={};
+        }else{
+            metadata_title={
+                title: metadata.title
+            };
         }
         this.setState({
             game: game,
-            metadata: extend({},this.state.metadata,{
-                title: metadata.title
-            })
+            metadata: extend({},this.state.metadata,metadata_title)
         });
     },
     handleMetadata(metadata){
@@ -74,10 +77,7 @@ module.exports = React.createClass({
             return null;
         }
         return <div>
-            <div className="warning">
-                <p>現在はJava版またはcanvas版の正男が記述されたHTMLファイルの読み込みのみ対応しています。ご了承ください。</p>
-            </div>
-            <MasaoSelector onSelect={this.masaoSelected} />
+            <MasaoSelector onSelect={this.masaoSelected} defaultGame={this.state.game}/>
             {game!=null ? this.preview() : null}
             {game!=null ? this.files() : null}
             {game!=null ? this.form() : null}
@@ -163,6 +163,7 @@ module.exports = React.createClass({
     },
     //入力が完了してたら送信できる
     isSubmitDisabled:function(){
+        console.log("disabled?",this.state.game==null, this.state.metadata);
         if(this.state.game==null)return true;
         var metadata=this.state.metadata;
         if(metadata==null)return true;

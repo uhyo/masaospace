@@ -195,16 +195,16 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
     }
     //ゲームをバリデートする
     if(game==null || metadata==null){
-        callback("ゲーム情報が不正です。",null);
+        callback("ゲーム情報が不正です。(1)",null);
         return;
     }
     if(!masao.validateParams(game.params) || !masao.validateVersion(game.version) || !Array.isArray(game.resources)){
-        callback("ゲーム情報が不正です。",null);
+        callback("ゲーム情報が不正です。(2)",null);
         return;
     }
     //メタ情報のバリデーション
     if(!validateMetadata(metadata)){
-        callback("ゲーム情報が不正です。",null);
+        callback("ゲーム情報が不正です。(3)",null);
         return;
     }
     //リソース情報を除去
@@ -230,7 +230,7 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
     });
     if(resourceTargetFlag===true){
         //resourcesデータにまずいところがあった
-        callback("ゲーム情報が不正です。",null);
+        callback("ゲーム情報が不正です。(4)",null);
         return;
     }
     c.file.getFiles({
@@ -249,7 +249,7 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
         for(var i=0;i<resourceIds.length;i++){
             if(table[resourceIds[i]]!==true){
                 //!?
-                callback("ゲーム情報が不正です。",null);
+                callback("ゲーム情報が不正です。(5)",null);
                 return;
             }
         }

@@ -69,6 +69,14 @@ gulp.task('static',function(){
     .pipe(gulp.dest("dist/images/"));
 });
 
+gulp.task('masao-editor-static',function(){
+    return gulp.src(["masao-editor/images/*"],{
+        base:"masao-editor/images"
+    })
+    .pipe(changed("dist/images/"))
+    .pipe(gulp.dest("dist/images/"));
+});
+
 gulp.task('css',function(){
     return gulp.src(["client/css/index.scss"])
     .pipe(sass({outputStyle:"compressed"}).on("error",sass.logError))
@@ -104,7 +112,7 @@ gulp.task('watch',['watch-jsx','css','tsc'],function(){
 });
 
 gulp.task('client',['jsx','css']);
-gulp.task('default',['tsc','jsx','css','mc_canvas','static','batch-tsc']);
+gulp.task('default',['tsc','jsx','css','mc_canvas','static','masao-editor-static','batch-tsc']);
 
 //jsx compiling
 function jsxCompiler(watch){
