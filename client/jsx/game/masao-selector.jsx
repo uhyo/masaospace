@@ -15,6 +15,7 @@ module.exports = React.createClass({
     displayName:"MasaoSelector",
     propTypes: {
         onSelect: React.PropTypes.func,
+        defaultGame: React.PropTypes.object
     },
     getInitialState(){
         return {
@@ -40,7 +41,7 @@ module.exports = React.createClass({
             main=<FromFile onSelect={this.props.onSelect} />;
         }else if(this.state.mode==="editor"){
             //TODO
-            main=<FromEditor onSelect={this.props.onSelect} />;
+            main=<FromEditor onSelect={this.props.onSelect} defaultGame={this.props.defaultGame}/>;
         }
         return <div>
             <HorizontalMenu contents={menu} pageLink={pageLink}/>
@@ -369,7 +370,8 @@ function findCanvasParams(text){
 var FromEditor = React.createClass({
     displayname: "FromEditor",
     propTypes: {
-        onSelect: React.PropTypes.func
+        onSelect: React.PropTypes.func,
+        defaultGame: React.PropTypes.object
     },
     getInitialState(){
         return {
@@ -386,12 +388,13 @@ var FromEditor = React.createClass({
                 <GameView game={this.state.testgame}/>
             </section>;
         }
+        var defaultParams = this.props.defaultGame ? this.props.defaultGame.params : null;
         return <div>
             <div className="warning">
                 <p>現在、正男エディタのパターン画像変更には対応しておりません。（投稿時はパターン画像を変更できます）</p>
             </div>
             {testplay}
-            <MasaoEditorCore filename_pattern="/static/pattern.gif" filename_chips="/static/images/chips.png" text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
+            <MasaoEditorCore filename_pattern="/static/pattern.gif" filename_chips="/static/images/chips.png" defaultParams={defaultParams} text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
         </div>;
     },
     handleSave(params){
@@ -401,12 +404,10 @@ var FromEditor = React.createClass({
             version: "fx",
             params: params,
             resources: []
-        }, metadata={
-            title: ""
         };
 
         if("function"===typeof this.props.onSelect){
-            this.props.onSelect(game, metadata);
+            this.props.onSelect(game, null);
         }
     },
     handleTestplay(params){
