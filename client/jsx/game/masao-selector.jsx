@@ -436,7 +436,7 @@ var FromEditor = React.createClass({
                 id: null,
                 version: "fx",
                 params,
-                resources: []
+                resources: this.props.resources
             }
         });
     },
