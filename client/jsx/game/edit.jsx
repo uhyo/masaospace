@@ -37,6 +37,7 @@ module.exports = React.createClass({
     handleSave({game, metadata}){
         var id=this.props.id;
 
+        console.log(JSON.stringify(game).length, JSON.stringify(metadata).length);
         api("/api/game/edit",{
             id: id,
             game: JSON.stringify(game),

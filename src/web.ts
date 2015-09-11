@@ -73,7 +73,8 @@ export class WebServer{
         this.app.engine("ect",ectRenderer.render);
         // bodyparser
         this.app.use(bodyParser.urlencoded({
-            extended: false
+            extended: false,
+            limit: '300kb'
         }));
         //static files
         if(config.get("webserver.externalstatic")!==true){
