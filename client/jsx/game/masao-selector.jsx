@@ -409,9 +409,6 @@ var FromEditor = React.createClass({
         }
 
         return <div>
-            <div className="warning">
-                <p>現在、正男エディタのパターン画像変更には対応しておりません。（投稿時はパターン画像を変更できます）</p>
-            </div>
             {testplay}
             <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultParams={defaultParams} text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
         </div>;
