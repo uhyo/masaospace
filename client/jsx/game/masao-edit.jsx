@@ -39,6 +39,8 @@ module.exports = React.createClass({
                 tags: [],
             },
 
+            resources: this.props.game ? this.props.game.resources : [],
+
             filesPage:"filename_pattern",
             filesPage2:null,    //otherのとき
         };
@@ -53,9 +55,9 @@ module.exports = React.createClass({
             };
         }
         //resourcesをひきつぐ
-        if(game!=null && this.state.game!=null){
+        if(game!=null){
             extend(game,{
-                resources: this.state.game.resources
+                resources: this.state.resources
             });
         }
         this.setState({
@@ -81,7 +83,7 @@ module.exports = React.createClass({
         return <div>
             <MasaoSelector onSelect={this.masaoSelected} defaultGame={this.state.game}/>
             {game!=null ? this.preview() : null}
-            {game!=null ? this.files() : null}
+            {this.files()}
             {game!=null ? this.form() : null}
         </div>;
     },
@@ -111,7 +113,7 @@ module.exports = React.createClass({
 
         //今どのファイルが選択されているか調べる
         var fileValue=null;
-        var resources = this.state.game.resources;
+        var resources = this.state.resources;
         for(var i=0;i < resources.length;i++){
             if(resources[i].target===paramType){
                 fileValue=resources[i].id;
@@ -188,7 +190,7 @@ module.exports = React.createClass({
         return (file)=>{
             //ゲームがかきかわる
             var game=this.state.game;
-            var resources = game.resources.concat([]);
+            var resources = this.state.resources.concat([]);
             var flag=false;
             if(!file){
                 //リソースを削除
@@ -219,11 +221,12 @@ module.exports = React.createClass({
                 }
             }
             //これが新しいゲームだ
-            var newGame = extend({},game,{
+            var newGame = game==null ? null : extend({},game,{
                 resources
             });
             this.setState({
-                game: newGame
+                game: newGame,
+                resources
             });
         };
     }
