@@ -14,6 +14,10 @@ var masao=require('../../../lib/masao');
 module.exports = React.createClass({
     displayName:"MasaoSelector",
     propTypes: {
+        resources: React.PropTypes.arrayOf(React.PropTypes.shape({
+            target: React.PropTypes.string.isRequired,
+            id: React.PropTypes.string.isRequired
+        }).isRequired),
         onSelect: React.PropTypes.func,
         defaultGame: React.PropTypes.object
     },
@@ -41,7 +45,7 @@ module.exports = React.createClass({
             main=<FromFile onSelect={this.props.onSelect} />;
         }else if(this.state.mode==="editor"){
             //TODO
-            main=<FromEditor onSelect={this.props.onSelect} defaultGame={this.props.defaultGame}/>;
+            main=<FromEditor resources={this.props.resources} onSelect={this.props.onSelect} defaultGame={this.props.defaultGame}/>;
         }
         return <div>
             <HorizontalMenu contents={menu} pageLink={pageLink}/>
@@ -370,6 +374,10 @@ function findCanvasParams(text){
 var FromEditor = React.createClass({
     displayname: "FromEditor",
     propTypes: {
+        resources: React.PropTypes.arrayOf(React.PropTypes.shape({
+            target: React.PropTypes.string.isRequired,
+            id: React.PropTypes.string.isRequired
+        }).isRequired),
         onSelect: React.PropTypes.func,
         defaultGame: React.PropTypes.object
     },
@@ -389,12 +397,23 @@ var FromEditor = React.createClass({
             </section>;
         }
         var defaultParams = this.props.defaultGame ? this.props.defaultGame.params : null;
+        //ファイル名をアレする
+        var filename_pattern="/static/pattern.gif", filename_mapchip="/static/mapchip.gif";
+        for(var i=0, resources=this.props.resources, l=resources.length;i < l; i++){
+            var o=resources[i];
+            if(o.target==="filename_pattern"){
+                filename_pattern="/uploaded/"+o.id;
+            }else if(o.target==="filename_mapchip"){
+                filename_mapchip="/uploaded"+o.id;
+            }
+        }
+
         return <div>
             <div className="warning">
                 <p>現在、正男エディタのパターン画像変更には対応しておりません。（投稿時はパターン画像を変更できます）</p>
             </div>
             {testplay}
-            <MasaoEditorCore filename_pattern="/static/pattern.gif" filename_mapchip="/static/mapchip.gif" filename_chips="/static/images/chips.png" defaultParams={defaultParams} text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
+            <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultParams={defaultParams} text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
         </div>;
     },
     handleSave(params){

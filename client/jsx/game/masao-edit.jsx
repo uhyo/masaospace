@@ -81,7 +81,7 @@ module.exports = React.createClass({
     render(){
         var game=this.state.game;
         return <div>
-            <MasaoSelector onSelect={this.masaoSelected} defaultGame={this.state.game}/>
+            <MasaoSelector resources={this.state.resources} onSelect={this.masaoSelected} defaultGame={this.state.game}/>
             {game!=null ? this.preview() : null}
             {this.files()}
             {game!=null ? this.form() : null}
