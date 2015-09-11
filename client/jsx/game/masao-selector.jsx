@@ -239,7 +239,7 @@ var FromFile = React.createClass({
             id: null,
             version: version,
             params: params,
-            resources: []
+            resources: null
         };
         this.sanitizeGame(game);
         this.setGame(game,{
@@ -262,7 +262,7 @@ var FromFile = React.createClass({
             id: null,
             version: "fx",
             params: obj,
-            resources: []
+            resources: null
         },{
             title: ""
         });
@@ -403,7 +403,7 @@ var FromEditor = React.createClass({
             id: null,
             version: "fx",
             params: params,
-            resources: []
+            resources: null
         };
 
         if("function"===typeof this.props.onSelect){

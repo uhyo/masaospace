@@ -52,6 +52,12 @@ module.exports = React.createClass({
                 title: metadata.title
             };
         }
+        //resourcesをひきつぐ
+        if(game!=null && this.state.game!=null){
+            extend(game,{
+                resources: this.state.game.resources
+            });
+        }
         this.setState({
             game: game,
             metadata: extend({},this.state.metadata,metadata_title)
