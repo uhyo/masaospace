@@ -18,7 +18,7 @@ module.exports = React.createClass({
     componentDidMount:function(){
         this.setGame(this.props.game);
     },
-    componentWiiiUnMount:function(){
+    componentWillUnmount:function(){
         this.endGame();
     },
     componentDidUpdate:function(prevProps, prevState){
@@ -59,8 +59,7 @@ module.exports = React.createClass({
         if(this.game==null){
             return;
         }
-        this.game.__mc.stop();
-        this.game.__mc.destroy();
+        this.game.kill();
         /* 手動でcleanする */
         var d=React.findDOMNode(this);
         d.id=null;
