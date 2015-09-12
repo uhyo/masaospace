@@ -1,6 +1,6 @@
 {
   "name": "masaospace",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Masao posting system",
   "main": "index.js",
   "scripts": {
