@@ -9,7 +9,8 @@ var MasaoEditorCore = require('../../../masao-editor/core');
 
 var errorStore=require('../../stores/error');
 
-var masao=require('../../../lib/masao');
+var masao=require('../../../lib/masao'),
+    file=require('../../scripts/file');
 
 module.exports = React.createClass({
     displayName:"MasaoSelector",
@@ -260,15 +261,25 @@ var FromFile = React.createClass({
             this.setGame(null);
             return;
         }
-        //objがゲームオブジェクトっぽい
-        //TODO
+        //masao-json-format draft-1を読み込むことができる
+        if(obj==null || obj["masao-json-format-version"]!=="draft-1" || "object"!==typeof obj.params || obj.params==null){
+            errorStore.emit("ファイルを読み込めませんでした。対応していない形式のファイルです。");
+            this.setGame(null);
+        }
+        var params=obj.params, metadata=obj.metadata, title="";
+        if(metadata!=null){
+            if("string"===typeof metadata.title){
+                title=metadata.title;
+            }
+        }
+        
         this.setGame({
             id: null,
             version: "fx",
-            params: obj,
+            params,
             resources: null
         },{
-            title: ""
+            title
         });
     },
     setGame:function(game,metadata){
@@ -407,10 +418,24 @@ var FromEditor = React.createClass({
                 filename_mapchip="/uploaded"+o.id;
             }
         }
+        var externals=[
+            {
+                label: "保存（投稿画面へ）",
+                request: this.handleSave
+            },
+            {
+                label: "ファイルに保存",
+                request: this.handleFileSave
+            },
+            {
+                label: "テストプレイ",
+                request: this.handleTestplay
+            }
+        ];
 
         return <div>
             {testplay}
-            <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultParams={defaultParams} text_save="保存（投稿画面へ）" requestSave={this.handleSave} requestTestplay={this.handleTestplay}/>
+            <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultParams={defaultParams} externalCommands={externals}/>
         </div>;
     },
     handleSave(params){
@@ -425,6 +450,13 @@ var FromEditor = React.createClass({
         if("function"===typeof this.props.onSelect){
             this.props.onSelect(game, null);
         }
+    },
+    handleFileSave(params){
+        //あの、ファイルに保存したいのですが……
+        var fileData=JSON.stringify(masao.makeJSONFormat(params));
+        var blob=new Blob([fileData],{type: "application/json"});
+        console.log("byu-------",blob);
+        file.downloadFile("masao.json",blob);
     },
     handleTestplay(params){
         this.setState({

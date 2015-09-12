@@ -8,3 +8,4 @@ export declare function removeInvalidParams(params:any):any;
 export declare function validateVersion(version:string):boolean;
 export declare function validateResourceKind(kind:string):boolean;
 export declare function localizeGame(game:any):any;
+export declare function makeJSONFormat(params:any):any;
