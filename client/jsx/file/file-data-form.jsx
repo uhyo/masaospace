@@ -112,7 +112,7 @@ module.exports = React.createClass({
                 <p>
                     <label className="form-row">
                         <span>説明</span>
-                        <textarea maxLength={config.description.maxLength} valueLink={this.linkState("description")} />
+                        <textarea required maxLength={config.description.maxLength} valueLink={this.linkState("description")} />
                     </label>
                 </p>
                 <p>

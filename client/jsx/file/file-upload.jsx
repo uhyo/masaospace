@@ -21,7 +21,7 @@ module.exports = React.createClass({
     },
     getDefaultProps(){
         return {
-            usage: ""
+            usage: Object.keys(masao.resourceKinds)[0]
         };
     },
     getInitialState(){
