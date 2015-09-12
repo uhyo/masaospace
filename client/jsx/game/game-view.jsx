@@ -8,7 +8,8 @@ module.exports = React.createClass({
     displayName:"GameView",
     mixins:[React.addons.PureRenderMixin],
     propTypes:{
-        game: React.PropTypes.object
+        game: React.PropTypes.object,
+        audio_enabled: React.PropTypes.bool
     },
     getInitialState:function(){
         return {
@@ -21,8 +22,20 @@ module.exports = React.createClass({
         this.endGame();
     },
     componentDidUpdate:function(prevProps, prevState){
-        this.endGame();
-        this.setGame(this.props.game);
+        if(prevProps.game!==this.props.game){
+            this.endGame();
+            this.setGame(this.props.game);
+        }else if(prevProps.audio_enabled!==this.props.audio_enabled){
+            if(this.props.audio_enabled){
+                if(this.game.__mc && this.game.__mc.soundOn){
+                    this.game.__mc.soundOn();
+                }
+            }else{
+                if(this.game.__mc && this.game.__mc.soundOff){
+                    this.game.__mc.soundOff();
+                }
+            }
+        }
     },
     setGame:function(game){
         if(this.gameid==null){
@@ -35,6 +48,11 @@ module.exports = React.createClass({
             this.game=new CanvasMasao_v28.Game(p,this.gameid);
         }else{
             this.game=new CanvasMasao.Game(p,this.gameid);
+        }
+        if(this.props.audio_enabled!==true){
+            if(this.game.__mc && this.game.__mc.soundOff){
+                this.game.__mc.soundOff();
+            }
         }
     },
     endGame:function(){

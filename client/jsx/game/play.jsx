@@ -25,6 +25,11 @@ module.exports = React.createClass({
         config: React.PropTypes.object.isRequired,
         session: React.PropTypes.object.isRequired
     },
+    getInitialState(){
+        return {
+            audio_switch: true
+        };
+    },
     render:function(){
         var metadata=this.props.metadata, series=this.props.series, session=this.props.session;
         var ownertools = null;
@@ -74,11 +79,19 @@ module.exports = React.createClass({
                 })
             }</div>;
         }
+        var audioLink={
+            value: this.state.audio_switch,
+            requestChange:(v)=>{
+                this.setState({
+                    audio_switch: v
+                });
+            }
+        };
         return (
             <section>
                 <h1>{metadata.title}</h1>
                 <div className="game-play-container">
-                    <GameView game={this.props.game} />
+                    <GameView game={this.props.game} audio_enabled={this.state.audio_switch}/>
                 </div>
                 <div className="game-play-info">
                     <div className="game-play-info-meta">
@@ -95,7 +108,7 @@ module.exports = React.createClass({
                         {seriesArea}
                     </div>
                 </div>
-                <GameTools config={this.props.config} metadata={metadata}/>
+                <GameTools config={this.props.config} game={this.props.game} metadata={metadata} audioLink={audioLink}/>
                 <GameComment game={metadata.id} config={this.props.config} session={session} />
             </section>
         );
@@ -106,7 +119,12 @@ var GameTools = React.createClass({
     displayName:"GameTools",
     propTypes:{
         config: React.PropTypes.object.isRequired,
-        metadata: React.PropTypes.object.isRequired
+        game: React.PropTypes.object.isRequired,
+        metadata: React.PropTypes.object.isRequired,
+        audioLink: React.PropTypes.shape({
+            value: React.PropTypes.bool.isRequired,
+            requestChange: React.PropTypes.func.isRequired
+        })
     },
     getInitialState(){
         return {
@@ -124,6 +142,19 @@ var GameTools = React.createClass({
                 }</code></pre>
             </div>;
         }
+        //audio
+        var audio=null;
+        if(this.props.game.params.se_switch==="2" || this.props.game.version!=="fx"){
+            //効果音はいらなそう
+            audio=<span className="icon icon-sound-off" title="効果音はありません。"/>
+        }else{
+            //効果音がありそう
+            if(this.props.audioLink && this.props.audioLink.value===true){
+                audio=<span className="icon icon-sound clickable" title="効果音がONになっています。" onClick={this.handleAudioClick}/>
+            }else{
+                audio=<span className="icon icon-sound-off clickable" title="効果音がOFFになっています。" onClick={this.handleAudioClick}/>
+            }
+        }
         //social
         var url=this.props.config.service.url+"play/"+metadata.id;
         var title=metadata.title + " | "+this.props.config.service.name;
@@ -140,6 +171,9 @@ var GameTools = React.createClass({
                 <div className="game-play-tools-code-link">
                     <a href={`/play/${metadata.id}`} className="nop" onClick={this.handleCode}>ウェブページに埋め込む...</a>
                 </div>
+                <div className="game-play-tools-audio">
+                    {audio}
+                </div>
                 <div className="game-play-tools-social">
                     <span className="game-play-tools-social-label">共有：</span>
                     <a href={"https://twitter.com/share?"+twttrQ} target="_blank" title="Twitterでツイート"><span className="icon icon-twitter" /></a>
@@ -155,5 +189,11 @@ var GameTools = React.createClass({
         this.setState({
             code: !this.state.code
         });
+    },
+    handleAudioClick(e){
+        e.preventDefault();
+        if(this.props.audioLink){
+            this.props.audioLink.requestChange(!this.props.audioLink.value);
+        }
     }
 });

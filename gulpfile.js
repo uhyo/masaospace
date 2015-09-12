@@ -61,12 +61,20 @@ gulp.task('mc_canvas',['mc_canvas-static','mc_canvas-uglify'],function(){
     .pipe(gulp.dest("dist/"));
 });
 
-gulp.task('static',function(){
+gulp.task('static-image',function(){
     return gulp.src(["client/images/**/*"],{
         base:"client/images"
     })
     .pipe(changed("dist/images/"))
     .pipe(gulp.dest("dist/images/"));
+});
+
+gulp.task('static-sound',function(){
+    return gulp.src(["client/sounds/*"],{
+        base:"client/sounds"
+    })
+    .pipe(changed("dist/sounds/"))
+    .pipe(gulp.dest("dist/sounds/"));
 });
 
 gulp.task('masao-editor-static',function(){
@@ -76,6 +84,9 @@ gulp.task('masao-editor-static',function(){
     .pipe(changed("dist/images/"))
     .pipe(gulp.dest("dist/images/"));
 });
+
+gulp.task('static',['static-image','static-sound','masao-editor-static']);
+
 
 gulp.task('css',function(){
     return gulp.src(["client/css/index.scss"])
@@ -112,7 +123,7 @@ gulp.task('watch',['watch-jsx','css','tsc'],function(){
 });
 
 gulp.task('client',['jsx','css']);
-gulp.task('default',['tsc','jsx','css','mc_canvas','static','masao-editor-static','batch-tsc']);
+gulp.task('default',['tsc','jsx','css','mc_canvas','static','batch-tsc']);
 
 //jsx compiling
 function jsxCompiler(watch){
