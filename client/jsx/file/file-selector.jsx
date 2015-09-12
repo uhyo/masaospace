@@ -1,5 +1,7 @@
 var React=require('react');
 
+var file=require('../../scripts/file');
+
 module.exports = React.createClass({
     displayName:"FileSelector",
     propTypes:{
@@ -65,6 +67,7 @@ module.exports = React.createClass({
         return (
             <div>
                 <p>ファイル：{name}</p>
+                <p><span className="clickable" onClick={this.handleFileSelect}>ファイルを選択...</span></p>
             </div>
         );
     },
@@ -80,7 +83,19 @@ module.exports = React.createClass({
             <div>
                 <p>ここにファイルをドラッグしてください。</p>
                 {accepts ? <p className="fileselector-accept">{accepts}</p> : null}
+                <p><span className="clickable" onClick={this.handleFileSelect}>ファイルを選択...</span></p>
             </div>
         );
-    }
+    },
+    handleFileSelect(e){
+        e.preventDefault();
+        file.selectFile((f)=>{
+            this.setState({
+                file: f
+            });
+            if("function"===typeof this.props.onSelect){
+                this.props.onSelect(f);
+            }
+        });
+    },
 });
