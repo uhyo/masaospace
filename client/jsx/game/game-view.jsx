@@ -43,6 +43,7 @@ module.exports = React.createClass({
         }
         React.findDOMNode(this).id=this.gameid;
         var p=masao.localizeGame(game);
+        console.log("p",p);
         if(game.version==="2.8"){
             //2.8だ
             this.game=new CanvasMasao_v28.Game(p,this.gameid);
