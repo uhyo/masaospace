@@ -61,12 +61,6 @@ module.exports = React.createClass({
             return;
         }
         this.game.kill();
-        /* 手動でcleanする */
-        var d=React.findDOMNode(this);
-        d.id=null;
-        while(d.firstChild){
-            d.removeChild(d.firstChild);
-        }
         this.game=null;
     },
     render:function(){
