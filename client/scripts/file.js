@@ -10,8 +10,10 @@ exports.downloadFile = function(name, blob){
     document.body.appendChild(a);
 
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(u);
+    setTimeout(()=>{
+        document.body.removeChild(a);
+        URL.revokeObjectURL(u);
+    },0);
 };
 
 //ユーザーにファイルをセレクトさせる
