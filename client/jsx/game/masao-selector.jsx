@@ -438,12 +438,12 @@ var FromEditor = React.createClass({
             <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultParams={defaultParams} externalCommands={externals}/>
         </div>;
     },
-    handleSave(params){
+    handleSave(obj){
         //gameは適当につくる
         var game={
             id: null,
-            version: "fx",
-            params: params,
+            version: masao.versionCategory(obj.version),
+            params: obj.params,
             resources: null
         };
 
@@ -451,20 +451,19 @@ var FromEditor = React.createClass({
             this.props.onSelect(game, null);
         }
     },
-    handleFileSave(params){
+    handleFileSave(obj){
         //あの、ファイルに保存したいのですが……
-        var fileData=JSON.stringify(masao.makeJSONFormat(params));
+        var fileData=JSON.stringify(obj);
         var blob=new Blob([fileData],{type: "application/json"});
-        console.log("byu-------",blob);
         file.downloadFile("masao.json",blob);
     },
-    handleTestplay(params){
+    handleTestplay(obj){
         this.setState({
             testplay: true,
             testgame: {
                 id: null,
-                version: "fx",
-                params,
+                version: masao.versionCategory(obj.version),
+                params: obj.params,
                 resources: this.props.resources
             }
         });
