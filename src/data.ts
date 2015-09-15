@@ -134,7 +134,7 @@ export interface GameData{
     //ゲームID
     id:number;
     //ゲームのバージョン
-    //"2.8", "fx"
+    //"2.8", "fx", "kani2"
     version:string;
     //ここにいろいろ入ってる
     params:any;

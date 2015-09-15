@@ -47,6 +47,11 @@ module.exports = React.createClass({
         if(game.version==="2.8"){
             //2.8だ
             this.game=new CanvasMasao_v28.Game(p,this.gameid);
+        }else if(game.version==="kani2"){
+            //MasaoKani2だ
+            this.game=new CanvasMasao.Game(p,this.gameid,{
+                extensions: [CanvasMasao.MasaoKani2]
+            });
         }else{
             this.game=new CanvasMasao.Game(p,this.gameid);
         }

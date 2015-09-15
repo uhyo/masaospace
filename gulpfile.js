@@ -46,7 +46,7 @@ gulp.task("mc_canvas-static",function(){
 });
 
 gulp.task('mc_canvas-uglify',function(){
-    return gulp.src(["mc_canvas/Outputs/CanvasMasao.js","mc_canvas/Outputs/CanvasMasao_v28.js"])
+    return gulp.src(["mc_canvas/Outputs/CanvasMasao.js","mc_canvas/Outputs/CanvasMasao_v28.js","mc_canvas/Outputs/MasaoKani2_manual.js"])
     .pipe(changed("dist/"))
     .pipe(uglify())
     .pipe(gulpif(function(file){
@@ -56,7 +56,7 @@ gulp.task('mc_canvas-uglify',function(){
 });
 
 gulp.task('mc_canvas',['mc_canvas-static','mc_canvas-uglify'],function(){
-    return gulp.src(["dist/CanvasMasao.js","dist/CanvasMasao_v28.js"])
+    return gulp.src(["dist/CanvasMasao.js","dist/CanvasMasao_v28.js","dist/MasaoKani2_manual.js"])
     .pipe(concat("CanvasMasao.min.js"))
     .pipe(gulp.dest("dist/"));
 });
