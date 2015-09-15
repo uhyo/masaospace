@@ -415,7 +415,13 @@ var FromEditor = React.createClass({
                 <GameView game={this.state.testgame}/>
             </section>;
         }
-        var defaultParams = this.props.defaultGame ? this.props.defaultGame.params : null;
+        var defaultGame = null;
+        if(this.props.defaultGame){
+            defaultGame = masao.format.make({
+                version: masao.categoryToVersion(this.props.defaultGame.version),
+                params: this.props.defaultGame.params
+            });
+        }
         //ファイル名をアレする
         var filename_pattern="/static/pattern.gif", filename_mapchip="/static/mapchip.gif";
         for(var i=0, resources=this.props.resources, l=resources.length;i < l; i++){
@@ -443,7 +449,7 @@ var FromEditor = React.createClass({
 
         return <div>
             {testplay}
-            <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultParams={defaultParams} externalCommands={externals}/>
+            <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultGame={defaultGame} externalCommands={externals}/>
         </div>;
     },
     handleSave(obj){
