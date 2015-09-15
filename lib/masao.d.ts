@@ -1,3 +1,5 @@
+export declare var param:object;
+export declare var format:object;
 export declare var resources:Array<string>;
 export declare var resourceKeys:Array<string>;
 export declare var resourceKinds:{[key:string]:string};

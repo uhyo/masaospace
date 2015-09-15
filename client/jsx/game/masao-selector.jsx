@@ -261,12 +261,20 @@ var FromFile = React.createClass({
             this.setGame(null);
             return;
         }
-        //masao-json-format draft-1を読み込むことができる
-        if(obj==null || obj["masao-json-format-version"]!=="draft-1" || "object"!==typeof obj.params || obj.params==null){
-            errorStore.emit("ファイルを読み込めませんでした。対応していない形式のファイルです。");
+        if(obj==null){
+            errorStore.emit("ファイルを読み込めませんでした。JSONフォーマットになっているか確認してください。");
             this.setGame(null);
+            return;
         }
-        var params=obj.params, metadata=obj.metadata, title="";
+        var gameobj;
+        try{
+            gameobj=masao.format.load(obj);
+        }catch(e){
+            errorStore.emit(e);
+            this.setGame(null);
+            return;
+        }
+        var params=gameobj.params, metadata=gameobj.metadata, title="";
         if(metadata!=null){
             if("string"===typeof metadata.title){
                 title=metadata.title;
@@ -275,7 +283,7 @@ var FromFile = React.createClass({
         
         this.setGame({
             id: null,
-            version: "fx",
+            version: masao.versionCategory(gameobj.version),
             params,
             resources: null
         },{
