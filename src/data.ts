@@ -104,6 +104,8 @@ export interface GameEditableMetadata{
     description:string;
     //タグ
     tags:Array<string>;
+    //非公開
+    hidden:boolean;
 }
 //セーブ時に自動生成されないデータ
 export interface GameMetadataUpdate extends GameEditableMetadata{
@@ -158,6 +160,7 @@ export interface GameQuery{
     owner?:string;
     tags?:string;
     ids?:Array<number>;
+    hidden?:boolean;
 
     skip?:number;
     limit?:number;

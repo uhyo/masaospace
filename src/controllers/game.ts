@@ -37,32 +37,35 @@ export default class GameController{
                 unique:true
             },d.intercept((result)=>{
                 coll.createIndex({
-                    owner:1,
-                    created:1
+                    "resources.id":1
                 },{
                 },d.intercept((result)=>{
-                    coll.createIndex({
-                        "resources.id":1
-                    },{
-                    },d.intercept((result)=>{
-                        //gamedata index
-                        this.getMetadataCollection(d.intercept((coll)=>{
+                    //gamedata index
+                    this.getMetadataCollection(d.intercept((coll)=>{
+                        coll.createIndex({
+                            id:1
+                        },{
+                            unique:1
+                        },d.intercept((result)=>{
                             coll.createIndex({
-                                id:1
+                                owner:1,
+                                created:1
                             },{
-                                unique:1
                             },d.intercept((result)=>{
                                 coll.createIndex({
-                                    owner:1,
+                                    hidden:1,
                                     created:1
                                 },{
                                 },d.intercept((result)=>{
                                     coll.createIndex({
-                                        created:1
+                                        hidden: 1,
+                                        tags: 1
                                     },{
                                     },d.intercept((result)=>{
                                         coll.createIndex({
-                                            tags: 1
+                                            hidden: 1,
+                                            owner: 1,
+                                            created: 1
                                         },{
                                         },d.intercept((result)=>{
                                             this.getPastCollection(d.intercept((coll)=>{
@@ -132,7 +135,7 @@ export default class GameController{
         });
     }
     //ゲームが存在するか確かめる
-    existsGame(id:number,callback:Callback<boolean>):void{
+    /*existsGame(id:number,callback:Callback<boolean>):void{
         this.getMetadataCollection((err,coll)=>{
             if(err){
                 callback(err,null);
@@ -147,7 +150,7 @@ export default class GameController{
                 callback(null, num>0);
             });
         });
-    }
+    }*/
     //ゲームをロードする
     //playcount: ゲームの閲覧数を1増やす
     //そのゲームが存在しない場合はnull
@@ -176,9 +179,11 @@ export default class GameController{
             });
         });
         this.getGameCollection((err,collg)=>{
-            if(err && !errend){
-                errend=true;
-                callback(err,null);
+            if(err){
+               if(!errend){
+                    errend=true;
+                    callback(err,null);
+                }
                 return;
             }
             collg.findOne({id:id},(err,doc)=>{
@@ -201,7 +206,7 @@ export default class GameController{
             }
             if(game!=null && metadata!=null){
                 //データ揃った
-                if(playcount){
+                if(playcount && metadata.hidden!==true){
                     _this.addPlayCount(metadata,(err,playcount)=>{
                         if(err){
                             callback(err,null);
@@ -255,6 +260,7 @@ export default class GameController{
                         title: metadata.title,
                         description: metadata.description,
                         tags: metadata.tags,
+                        hidden: metadata.hidden,
                         created: now,
                         playcount: 0,
                         updated: now
@@ -338,6 +344,7 @@ export default class GameController{
                             title: metadata.title,
                             description: metadata.description,
                             tags: metadata.tags,
+                            hidden: metadata.hidden,
                             created: metadatadoc.created,
                             playcount: metadatadoc.playcount,
                             updated: new Date()
@@ -403,6 +410,9 @@ export default class GameController{
                 q.id={
                     $in: query.ids
                 };
+            }
+            if(query.hidden!=null){
+                q.hidden=query.hidden;
             }
             var cursor=coll.find(q);
             if(query.skip!=null){

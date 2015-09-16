@@ -27,16 +27,28 @@ export default function(c:Controller,r:_Router):void{
             }
             if(game!=null && metadata!=null && owner!=null && series!=null){
                 //結果が揃った
-                callback(null,{
-                    title: metadata.title,
-                    page: "game.play",
-                    data:{
-                        game,
-                        metadata,
-                        owner,
-                        series
-                    }
-                });
+                if(metadata.hidden===true && obj.session.user!==metadata.owner){
+                    //非公開は見れない
+                    callback(null,{
+                        title: null,
+                        page: "game.hidden",
+                        data:{
+                            id,
+                            owner: metadata.owner
+                        }
+                    });
+                }else{
+                    callback(null,{
+                        title: metadata.title,
+                        page: "game.play",
+                        data:{
+                            game,
+                            metadata,
+                            owner,
+                            series
+                        }
+                    });
+                }
             }
         };
         //ゲームデータを得る

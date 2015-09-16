@@ -197,7 +197,7 @@ export class WebServer{
                 });
                 return;
             }
-            re.result(extend(u.query,re.params),(err,view)=>{
+            re.result(extend({session: req.session},u.query,re.params),(err,view)=>{
                 if(err){
                     throw err;
                 }
@@ -230,6 +230,11 @@ export class WebServer{
                     res.send(404);
                     return;
                 }
+                if(obj.metadata.hidden===true){
+                    //非公開の正男
+                    res.render("embed-hidden.ect");
+                    return;
+                }
                 //正男をローカライズ
                 var localGame=masao.localizeGame(obj.game);
                 res.render("embed.ect",{
@@ -244,7 +249,7 @@ export class WebServer{
             var re=r.route(req.path);
             var func = re ? re.result : null;
             var params = re ? re.params : {};
-            params=extend(req.query,params);
+            params=extend({session: req.session},req.query,params);
             if(func==null){
                 /* 404 */
                 res.status(404);

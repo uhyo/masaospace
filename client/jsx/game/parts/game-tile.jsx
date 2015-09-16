@@ -12,6 +12,7 @@ module.exports = React.createClass({
             title:React.PropTypes.string,
             level:React.PropTypes.number,
             description:React.PropTypes.string,
+            hidden:React.PropTypes.bool,
             created:React.PropTypes.oneOfType([
                 React.PropTypes.string,
                 React.PropTypes.instanceOf(Date)
@@ -25,10 +26,14 @@ module.exports = React.createClass({
     },
     render:function(){
         var metadata=this.props.metadata;
+        var hiddenFlag=null;
+        if(metadata.hidden===true){
+            hiddenFlag="（非公開）";
+        }
         return (
             <div className="game-tile">
                 <p className="game-tile-title"><a href={"/play/"+metadata.id}>{metadata.title}</a></p>
-                <p className="game-tile-time">投稿日時：<Datetime date={new Date(this.props.metadata.created)} /></p>
+                <p className="game-tile-time">投稿日時：<Datetime date={new Date(this.props.metadata.created)} />{hiddenFlag}</p>
                 {metadata.user ? <UserTile id={metadata.owner} label="投稿者" {...metadata.user} fullWidth/> : null}
             </div>
         );
