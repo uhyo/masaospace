@@ -44,7 +44,7 @@ module.exports = React.createClass({
                 {tags}
                 <section>
                     <h1>最近投稿された正男</h1>
-                    <QueryList query={{}} limit={10} />
+                    <QueryList query={{}} limit={15} />
                 </section>
             </div>);
     },
