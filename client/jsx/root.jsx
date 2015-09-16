@@ -98,6 +98,12 @@ var Root = React.createClass({
                     session: session,
                     id: page.data.id
                 }];
+            case "game.hidden":
+                return [require('./game/hidden.jsx'),{
+                    id: page.data.id,
+                    owner: page.data.owner,
+                    session: session
+                }];
             /////series
             case "series.page":
                 return [require('./series/page.jsx'),{
