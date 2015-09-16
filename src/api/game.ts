@@ -95,15 +95,23 @@ class C{
                     res.json({
                         error: "そのゲームIDは存在しません。"
                     });
-                }else{
-                    res.json(obj);
+                    return;
                 }
+                if(obj.metadata.hidden===true && obj.metadata.owner!==req.session.user){
+                    //非公開の場合はオーナーしかアクセスできない
+                    res.json({
+                        error: "そのゲームは非公開です。"
+                    });
+                    return;
+                }
+                    res.json(obj);
             });
         });
         //ゲームを探す
         //IN skip:number 何ページ分SKIPするか
         //IN limit:number 最大何件出力するか（capあり）
         //IN owner:string 投稿者による絞り込み
+        //IN hidden:string ("true" of "false")非公開フラグ
         //IN tag:string タグによる絞り込み
         //OUT metadatas:Array<GameMetadata>
         router.post("/find",(req,res)=>{
@@ -136,6 +144,12 @@ class C{
             }
             if(req.body.tag!=null){
                 qu.tags=req.body.tag;
+            }
+            if(req.session.user !== req.body.owner){
+                //非公開の正男は自分のしか検索できない
+                qu.hidden=false;
+            }else if(req.query.hidden!=null){
+                qu.hidden= req.query.hidden==="true";
             }
 
             c.game.findGames(qu,(err,docs)=>{

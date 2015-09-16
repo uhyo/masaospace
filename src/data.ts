@@ -160,6 +160,7 @@ export interface GameQuery{
     owner?:string;
     tags?:string;
     ids?:Array<number>;
+    hidden?:boolean;
 
     skip?:number;
     limit?:number;
