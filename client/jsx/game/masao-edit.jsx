@@ -25,6 +25,7 @@ module.exports = React.createClass({
             title: React.PropTypes.string,
             description: React.PropTypes.string,
             tags: React.PropTypes.arrayOf(React.PropTypes.string),
+            hidden: React.PropTypes.bool
         }),
 
         saveButton: React.PropTypes.string.isRequired,
@@ -37,6 +38,7 @@ module.exports = React.createClass({
                 title: "",
                 description: "",
                 tags: [],
+                hidden: false
             },
 
             resources: this.props.game ? this.props.game.resources : [],
@@ -168,7 +170,7 @@ module.exports = React.createClass({
                 <section className="game-metadata-form">
                     <h1>正男情報</h1>
                     <div className="game-new-metadataform-wrapper">
-                        <GameMetadataForm onChange={this.handleMetadata} title={m.title} description={m.description} tags={m.tags}/>
+                        <GameMetadataForm onChange={this.handleMetadata} title={m.title} description={m.description} tags={m.tags} hidden={m.hidden}/>
                         {submit}
                     </div>
                 </section>
