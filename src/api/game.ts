@@ -16,7 +16,7 @@ class C{
     route(router:express._Router,c:Controller):void{
         // ゲームを投稿する
         // IN game: ゲームのJSON表現
-        // IN metadata: メタデータのJSON表現(title,description)
+        // IN metadata: メタデータのJSON表現(title,description,tags,hidden)
         // OUT id: 新しいゲームのid
         router.post("/new",util.apim.useUser,(req,res)=>{
             processMasao(req,c,(err,obj)=>{
@@ -31,7 +31,8 @@ class C{
                     owner: obj.metadata.owner,
                     title: obj.metadata.title,
                     description: obj.metadata.description,
-                    tags: obj.metadata.tags
+                    tags: obj.metadata.tags,
+                    hidden: obj.metadata.hidden
                 };
                 c.game.newGame(obj.game,obj.metadata,(err,newid:number)=>{
                     if(err){
@@ -167,6 +168,9 @@ function validateMetadata(metadata:GameEditableMetadata):boolean{
     if(validator.funcs.isGameTitle(metadata.title)!=null || validator.funcs.isGameDescription(metadata.description)!=null){
         return false;
     }
+    if("boolean"!==typeof metadata.hidden){
+        return false;
+    }
     if(!Array.isArray(metadata.tags)){
         //そもそも配列じゃない
         return false;
@@ -270,7 +274,8 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
             owner: req.session.user,
             title: metadata.title,
             description: metadata.description,
-            tags: metadata.tags
+            tags: metadata.tags,
+            hidden: metadata.hidden
         };
         callback(null,{
             game: gameobj,

@@ -255,6 +255,7 @@ export default class GameController{
                         title: metadata.title,
                         description: metadata.description,
                         tags: metadata.tags,
+                        hidden: metadata.hidden,
                         created: now,
                         playcount: 0,
                         updated: now
@@ -338,6 +339,7 @@ export default class GameController{
                             title: metadata.title,
                             description: metadata.description,
                             tags: metadata.tags,
+                            hidden: metadata.hidden,
                             created: metadatadoc.created,
                             playcount: metadatadoc.playcount,
                             updated: new Date()
