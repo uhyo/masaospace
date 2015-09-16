@@ -42,6 +42,10 @@ module.exports = React.createClass({
                 </a>
             </p>;
         }
+        var hiddenInfo = null;
+        if(metadata.hidden===true){
+            hiddenInfo=<strong>（非公開）</strong>;
+        }
         var tags=null;
         if(metadata.tags && metadata.tags.length>0){
             //タグがあった
@@ -96,7 +100,7 @@ module.exports = React.createClass({
                 <div className="game-play-info">
                     <div className="game-play-info-meta">
                         <p><Datetime date={new Date(metadata.created)} /> 投稿</p>
-                        <p>閲覧数 {metadata.playcount}</p>
+                        <p>閲覧数 {metadata.playcount} {hiddenInfo}</p>
                         {ownertools}
                         <UserTile {...this.props.owner} label="投稿者" fullWidth/>
                     </div>
