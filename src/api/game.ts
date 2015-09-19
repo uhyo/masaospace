@@ -145,7 +145,7 @@ class C{
             if(req.body.tag!=null){
                 qu.tags=req.body.tag;
             }
-            if(req.session.user !== req.body.owner){
+            if(req.session.user==null || req.session.user !== req.body.owner){
                 //非公開の正男は自分のしか検索できない
                 qu.hidden=false;
             }else if(req.query.hidden!=null){
