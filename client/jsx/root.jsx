@@ -16,6 +16,12 @@ var Root = React.createClass({
         session: React.PropTypes.object,
         data: React.PropTypes.object
     },
+    componentDidUpdate(prevProps,prevState){
+        if(prevState.page!==this.state.page){
+            //pageが変わったら一番上へ
+            window.scrollTo(0,0);
+        }
+    },
     render:function(){
         var session = this.state.session || this.props.session;
         var [elm,props]=this.getPage();
