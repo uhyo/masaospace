@@ -34,7 +34,7 @@ module.exports = React.createClass({
     render(){
         return <section className="file-upload">
             <h3 className="legend">新しいファイルを追加</h3>
-            <FileSelector onSelect={this.handleFile} />
+            <FileSelector onSelect={this.handleFile} maxsize={this.props.config.filedata.maxSize}/>
             {this.state.file!=null ? this.fileDataForm() : null}
         </section>;
     },

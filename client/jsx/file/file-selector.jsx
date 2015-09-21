@@ -1,4 +1,5 @@
-var React=require('react');
+var React=require('react'),
+    bytes=require('bytes');
 
 var file=require('../../scripts/file');
 
@@ -7,7 +8,8 @@ module.exports = React.createClass({
     propTypes:{
         //拡張子（.は含まない）を,で区切った文字列がいい
         accept: React.PropTypes.string,
-        onSelect: React.PropTypes.func
+        onSelect: React.PropTypes.func,
+        maxsize: React.PropTypes.number
     },
     getInitialState:function(){
         return {
@@ -63,26 +65,36 @@ module.exports = React.createClass({
         );
     },
     acceptedView:function(){
-        var name=this.state.file.name;
+        var file=this.state.file, name=file.name, size=file.size, maxsize=this.props.maxsize;
+        var sizewarn=null;
+        if(maxsize!=null && size>maxsize){
+            //オーバーしてる
+            sizewarn=<p className="warning-string">ファイルサイズがアップロード可能なサイズを超えています。</p>;
+        }
         return (
             <div>
                 <p>ファイル：{name}</p>
+                {sizewarn}
                 <p><span className="clickable" onClick={this.handleFileSelect}>ファイルを選択...</span></p>
             </div>
         );
     },
     acceptingView:function(){
-        var accepts=null;
-        var accept=this.props.accept;
+        var accepts=null, limits=null;
+        var accept=this.props.accept, maxsize=this.props.maxsize;
         if(accept){
             accepts = accept.split(",").map((ext)=>{
                 return `${ext.trim()}ファイル`;
             }).join(", ") + "を読み込めます。";
         }
+        if(maxsize!=null){
+            //最大サイズが指定されている
+            limits = "アップロードできるファイルのサイズは最大"+bytes(maxsize)+"です。";
+        }
         return (
             <div>
                 <p>ここにファイルをドラッグしてください。</p>
-                {accepts ? <p className="fileselector-accept">{accepts}</p> : null}
+                {accepts || limits ? <p className="fileselector-accept">{accepts}{limits}</p> : null}
                 <p><span className="clickable" onClick={this.handleFileSelect}>ファイルを選択...</span></p>
             </div>
         );
