@@ -136,7 +136,7 @@ var GameTools = React.createClass({
         };
     },
     render(){
-        var metadata=this.props.metadata;
+        var metadata=this.props.metadata, game=this.props.game;
         var code=null;
         if(this.state.code===true){
             code=<div className="game-play-tools-code">
@@ -148,15 +148,15 @@ var GameTools = React.createClass({
         }
         //audio
         var audio=null;
-        if(this.props.game.params.se_switch==="2" || this.props.game.version!=="fx"){
+        if(game.params.se_switch==="2" && game.params.fx_bgm_switch==="2" || this.props.game.version!=="fx"){
             //効果音はいらなそう
-            audio=<span className="icon icon-sound-off" title="効果音はありません。"/>
+            audio=<span className="icon icon-sound-off" title="音声はありません。"/>
         }else{
             //効果音がありそう
             if(this.props.audioLink && this.props.audioLink.value===true){
-                audio=<span className="icon icon-sound clickable" title="効果音がONになっています。" onClick={this.handleAudioClick}/>
+                audio=<span className="icon icon-sound clickable" title="音声がONになっています。" onClick={this.handleAudioClick}/>
             }else{
-                audio=<span className="icon icon-sound-off clickable" title="効果音がOFFになっています。" onClick={this.handleAudioClick}/>
+                audio=<span className="icon icon-sound-off clickable" title="音声がOFFになっています。" onClick={this.handleAudioClick}/>
             }
         }
         //social

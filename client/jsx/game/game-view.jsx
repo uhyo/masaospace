@@ -53,7 +53,12 @@ module.exports = React.createClass({
                 extensions: [CanvasMasao.MasaoKani2]
             });
         }else{
-            this.game=new CanvasMasao.Game(p,this.gameid);
+            this.game=new CanvasMasao.Game(p,this.gameid,{
+                extensions: [CanvasMasao.InputRecorder],
+                inputdataCallback: (result)=>{
+                    console.log(result);
+                }
+            });
         }
         if(this.props.audio_enabled!==true){
             if(this.game.__mc && this.game.__mc.soundOff){
