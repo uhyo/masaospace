@@ -54,10 +54,10 @@ module.exports = React.createClass({
             });
         }else{
             this.game=new CanvasMasao.Game(p,this.gameid,{
-                extensions: [CanvasMasao.InputRecorder],
+                /*extensions: [CanvasMasao.InputRecorder],
                 inputdataCallback: (result)=>{
                     console.log(result);
-                }
+                }*/
             });
         }
         if(this.props.audio_enabled!==true){
