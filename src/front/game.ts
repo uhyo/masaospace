@@ -22,7 +22,17 @@ export default function(c:Controller,r:_Router):void{
             }
             if(err){
                 errend=true;
-                callback(err,null);
+                if(err==="notfound"){
+                    //みつからない
+                    callback(null,{
+                        status: 404,
+                        title: null,
+                        page: null,
+                        data: null
+                    });
+                }else{
+                    callback(err,null);
+                }
                 return;
             }
             if(game!=null && metadata!=null && owner!=null && series!=null){
@@ -59,7 +69,7 @@ export default function(c:Controller,r:_Router):void{
             }
             if(obj==null){
                 //そんなゲームはないね
-                next("お探しの正男は見つかりませんでした。");
+                next("notfound");
                 return;
             }
             game=obj.game;
