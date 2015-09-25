@@ -2,7 +2,8 @@ var React=require('react');
 //comments list
 
 var UserTile=require('./user-tile.jsx'),
-    Datetime=require('../../commons/datetime.jsx');
+    Datetime=require('../../commons/datetime.jsx'),
+    RichText=require('../../commons/rich-text.jsx');
 
 module.exports = React.createClass({
     displayName:"Comments",
@@ -21,7 +22,9 @@ module.exports = React.createClass({
                         <UserTile id={obj.userid} {...obj.user} label="投稿者" fullWidth/>
                     </div>
                     <div className="comments-body">
-                        <p className="comments-text">{obj.comment}</p>
+                        <div className="comments-text">
+                            <RichText text={obj.comment}/>
+                        </div>
                         <p className="comments-time"><Datetime date={new Date(obj.time)} /> 投稿</p>
                     </div>
                 </div>;

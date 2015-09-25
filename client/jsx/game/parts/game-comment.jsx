@@ -24,15 +24,20 @@ module.exports = React.createClass({
         };
     },
     componentDidMount(){
-        this.load();
+        this.load(this.props.game);
+    },
+    componentWillReceiveProps(nextProps){
+        if(this.props.game!==nextProps.game){
+            this.load(nextProps.game);
+        }
     },
     handleComment(){
-        this.load()
+        this.load(this.props.game)
     },
-    load(){
+    load(game){
         //request
         api("/api/comment/find",{
-            game: this.props.game,
+            game,
             skip: 0,
             limit: 50
         })
