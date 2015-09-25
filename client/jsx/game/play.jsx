@@ -6,6 +6,7 @@ var queryString=require('query-string'),
 var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
     Datetime=require('../commons/datetime.jsx'),
+    RichText=require('../commons/rich-text.jsx'),
     GameComment=require('./parts/game-comment.jsx');
 
 
@@ -106,7 +107,7 @@ module.exports = React.createClass({
                     </div>
                     <div className="game-play-info-description">
                         <div className="game-play-info-message">
-                            <p>{metadata.description}</p>
+                            <RichText text={metadata.description}/>
                         </div>
                         {tags}
                         {seriesArea}
