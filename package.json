@@ -74,7 +74,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-ruby-sass": "^1.0.5",
     "gulp-sass": "^2.0.4",
-    "gulp-typescript": "^2.7.6",
+    "gulp-typescript": "^2.9.0",
     "reactify": "^1.1.1",
     "typescript": "^1.6.2",
     "vinyl-source-stream": "^1.1.0"
