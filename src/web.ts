@@ -199,7 +199,10 @@ export class WebServer{
             }
             re.result(extend({session: req.session},u.query,re.params),(err,view)=>{
                 if(err){
-                    throw err;
+                    res.json({
+                        error: String(err)
+                    });
+                    return;
                 }
                 if(view.status){
                     if(view.status===404){
