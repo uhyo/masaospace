@@ -19,9 +19,15 @@ module.exports = React.createClass({
                     href: "/play/"+num
                 };
             }
-        }];
+        }], options={
+            url: {
+                attributes: {
+                    target: "_blank"
+                }
+            }
+        };
         return {
-            __html: autolink(this.props.text, transforms)
+            __html: autolink(this.props.text, transforms, options)
         };
     },
 });
