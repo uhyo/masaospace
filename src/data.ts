@@ -238,3 +238,26 @@ export interface Mail{
 
     type: string;
 }
+
+//プレイログ
+export interface Playlog{
+    id:string;  //プレイログのID(sha)
+    owner:string;   //誰がアップロードしたプレイログか
+    stage:number;   //ステージID
+    stage_id:string;    //ステージのgameの_id（変わってるかもしれないので）
+    cleared:boolean;    //クリアしたかどうか
+    score:number;       //最終スコア
+
+    //プレイログのバイナリデータ(Buffer)
+    data:any;
+}
+
+export interface PlaylogQuery{
+    id?:string;
+    owner?:string;
+    stage?:number;
+
+    skip?:number;
+    limit?:number;
+    sort?:any;
+}
