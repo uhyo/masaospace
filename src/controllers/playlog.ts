@@ -25,16 +25,22 @@ export default class PlaylogController{
             },d.intercept((result)=>{
                 coll.createIndex({
                     owner:1,
-                    stage:1
+                    game:1
                 },{
                 },d.intercept((result)=>{
                     coll.createIndex({
-                        stage:1,
+                        game:1,
                         score:-1
                     },{
                     },d.intercept((result)=>{
-                        d.exit();
-                        callback(null);
+                        coll.createIndex({
+                            owner:1,
+                            created:-1
+                        },{
+                        },d.intercept((result)=>{
+                            d.exit();
+                            callback(null);
+                        }));
                     }));
                 }));
             }));
@@ -77,8 +83,8 @@ export default class PlaylogController{
             if(query.owner!=null){
                 q.owner=query.owner;
             }
-            if(query.stage!=null){
-                q.stage=query.stage;
+            if(query.game!=null){
+                q.game=query.game;
             }
             var cursor=coll.find(q);
             if(query.skip!=null){

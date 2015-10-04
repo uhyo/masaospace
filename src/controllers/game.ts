@@ -154,8 +154,8 @@ export default class GameController{
     //ゲームをロードする
     //playcount: ゲームの閲覧数を1増やす
     //そのゲームが存在しない場合はnull
-    getGame(id:number,playcount:boolean,callback:Callback<{game:GameData; metadata:GameMetadata}>):void{
-        var _this=this, game:GameData, metadata:GameMetadata, errend=false;
+    getGame(id:number,playcount:boolean,callback:Callback<{game:GameData&{_id:any}; metadata:GameMetadata&{_id:any}}>):void{
+        var _this=this, game:GameData&{_id:any}, metadata:GameMetadata&{_id:any}, errend=false;
         //並列な感じで読み込む
         this.getMetadataCollection((err,collm)=>{
             if(err){
