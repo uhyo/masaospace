@@ -372,6 +372,19 @@ declare module "readline"{
 
     }
 }
+declare module "zlib"{
+    import stream=require('stream');
+    export function createGzip():Gzip;
+    export function createGunzip():Gunzip;
+    export function gzip(buf:string|Buffer,callback:Callback<Buffer>):void;
+    export function gunzip(buf:string|Buffer,callback:Callback<Buffer>):void;
+    interface Zlib extends stream.Duplex{
+    }
+    interface Gzip extends Zlib{
+    }
+    interface Gunzip extends Zlib{
+    }
+}
 //
 //
 //
@@ -921,6 +934,8 @@ declare module "express"{
             jsonp(status:number,body?:any):void;
             type(type:string):void;
             sendfile(path:string,option?:any,fn?:Function):void;
+
+            acceptsEncodings(...encodings:Array<string>):string|boolean;
             
             //本当はないが、このアプリでの拡張view.tsでの拡張用に
             public errorHandler:(err:any)=>void;

@@ -2,6 +2,8 @@
 import express=require('express');
 import Controller=require('../controllers/index');
 
+import zlib=require('zlib');
+
 import logger=require('../logger');
 import masao=require('../../lib/masao');
 
@@ -56,8 +58,8 @@ class C{
                     stage: playlogobj.stage,
                     score: playlogobj.score,
                     created: now,
-                    data: buf
-                },(err,newid)=>{
+                    data: null
+                },buf,(err,newid)=>{
                     if(err){
                         res.json({
                             error: String(err)
@@ -99,8 +101,18 @@ class C{
                     res.sendStatus(404);
                     return;
                 }
-                res.send(bin.read(0,bin.length()));
-                res.end();
+                //binはgzipされている
+                if(res.acceptsEncodings("gzip")!==false){
+                    //gzipをacceptするのでこのまま流す
+                    res.send(bin.read(0,bin.length()));
+                    res.end();
+                }else{
+                    //gzipをサポートしていないのでこちらがわで解凍する必要がある
+                    let g=zlib.createGunzip();
+                    g.pipe(res);
+                    g.write(bin.read(0,bin.length()));
+                    g.end();
+                }
             });
         });
     }

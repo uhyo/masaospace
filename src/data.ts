@@ -252,7 +252,7 @@ export interface Playlog{
     //プレイログがアップロードされた時間
     created:Date;
 
-    //プレイログのバイナリデータ(Buffer)
+    //プレイログのバイナリデータ(Buffer. gzipped)
     data:any;
 }
 

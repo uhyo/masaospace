@@ -2,6 +2,7 @@
 import {Playlog,PlaylogQuery} from '../data';
 import domain=require('domain');
 import crypto=require('crypto');
+import zlib=require('zlib');
 
 import db=require('../db');
 import config=require('config');
@@ -47,8 +48,8 @@ export default class PlaylogController{
         }));
     }
     //新しいログを追加
-    //playlog.idはnullでいいという感じがする
-    newPlaylog(playlog:Playlog,callback:Callback<string>):void{
+    //playlog.idとplaylog.dataはnullでいいという感じがする
+    newPlaylog(playlog:Playlog,data:Buffer,callback:Callback<string>):void{
         this.getCollection((err,coll)=>{
             if(err){
                 callback(err,null);
@@ -56,17 +57,25 @@ export default class PlaylogController{
             }
             //idを生成
             let hash=crypto.createHash("sha256");
-            hash.update(playlog.data);
+            hash.update(data);
             playlog.id = hash.digest("hex");
-            //DBに保存
-            coll.insertOne(playlog,(err,result)=>{
+            //gzipしてplaylogに入れる
+            zlib.gzip(data,(err,buf)=>{
                 if(err){
-                    logger.error(err);
                     callback(err,null);
                     return;
                 }
-                //OK
-                callback(null,playlog.id);
+                playlog.data = buf;
+                //DBに保存
+                coll.insertOne(playlog,(err,result)=>{
+                    if(err){
+                        logger.error(err);
+                        callback(err,null);
+                        return;
+                    }
+                    //OK
+                    callback(null,playlog.id);
+                });
             });
         });
     }
