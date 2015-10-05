@@ -55,6 +55,7 @@ class Controller{
         this.game  =new GameController(db);
         this.comment= new CommentController(db);
         this.series=new SeriesController(db);
+        this.playlog=new PlaylogController(db);
         this.mail  =new MailController(db);
 
         logger.debug("Controller: initialization start.");

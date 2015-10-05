@@ -28,7 +28,13 @@ module.exports = React.createClass({
     },
     getInitialState(){
         return {
-            audio_switch: true
+            audio_switch: true,
+            playlog_switch: true,
+            //保存したプレイログ
+            playlog_score: null,    //スコアがいちばん
+            playlog_clear: null,     //クリアした
+            //今プレイ中のプレイログ（データのみ）
+            playlog_playing_data: null
         };
     },
     render:function(){
@@ -92,12 +98,63 @@ module.exports = React.createClass({
                 });
             }
         };
+
+        //プレイログをとったら表示
+        var playlogArea=null;
+        if(this.state.playlog_score!=null || this.state.playlog_clear!=null || this.state.playlog_playing_data!=null){
+            var stopper = null;
+            if(this.state.playlog_playing_data!=null){
+                var clickHandler=(e)=>{
+                    e.preventDefault();
+                    this.setState({
+                        playlog_playing_data:null
+                    });
+                };
+                stopper = <p>
+                    <span className="clickable" onClick={clickHandler}>再生を停止</span>
+                </p>;
+            }
+            var player = null;
+            if(this.state.playlog_score!=null || this.state.playlog_clear!=null){
+                var playlogLI = (obj)=>{
+                    if(obj==null){
+                        return null;
+                    }
+                    var clickHandler=(e)=>{
+                        e.preventDefault();
+                        this.setState({
+                            playlog_playing_data: obj.buffer
+                        });
+                    };
+                    return <li>
+                        {obj.cleared ? "クリア" : "未クリア"}　スコア:{obj.score}　<span className="clickable" onClick={clickHandler}>再生</span>
+                    </li>;
+                };
+                player=<div>
+                    <p>保存されたプレイログ：</p>
+                    <ul>
+                        {playlogLI(this.state.playlog_clear)}
+                        {this.state.playlog_score!==this.state.playlog_clear ? playlogLI(this.state.playlog_score) : null}
+                    </ul>
+                </div>;
+            }
+            playlogArea = <div className="game-play-logs">
+                {stopper}
+                {player}
+            </div>;
+        }
+        //gameviewにわたすやつ
+        var playlogCallback = null;
+        if(this.state.playlog_switch===true && this.state.playlog_playing_data==null){
+            playlogCallback = this.handlePlaylog;
+        }
         return (
             <section>
                 <h1>{metadata.title}</h1>
                 <div className="game-play-container">
-                    <GameView game={this.props.game} audio_enabled={this.state.audio_switch}/>
+                    <GameView game={this.props.game} audio_enabled={this.state.audio_switch} playlogCallback={playlogCallback} playlog={this.state.playlog_playing_data}/>
                 </div>
+                {playlogArea}
                 <div className="game-play-info">
                     <div className="game-play-info-meta">
                         <p><Datetime date={new Date(metadata.created)} /> 投稿</p>
@@ -117,6 +174,28 @@ module.exports = React.createClass({
                 <GameComment game={metadata.id} config={this.props.config} session={session} />
             </section>
         );
+    },
+    //playlogが来たので
+    handlePlaylog(obj){
+        var playlog_clear = this.state.playlog_clear, playlog_score = this.state.playlog_score, flag=false;
+        if(obj.cleared){
+            //クリアしたし
+            if(playlog_clear==null || playlog_clear.score <= obj.score){
+                //更新
+                playlog_clear = obj;
+                flag=true;
+            }
+        }
+        if(playlog_score==null || playlog_score.score <= obj.score){
+            playlog_score = obj;
+            flag=true;
+        }
+        if(flag===true){
+            this.setState({
+                playlog_score,
+                playlog_clear
+            });
+        }
     }
 });
 

@@ -9,6 +9,15 @@
 .game-play-container {
   margin: 0.5rem 0 0.5rem 0;
 }
+.game-play-logs {
+  max-width: 800px;
+  margin: 4px auto;
+  padding: 3px;
+
+  font-size: 0.9em;
+  color: $color-boldcolor;
+  background-color: $color-box-background;
+}
 .game-play-info {
   display: flex;
   max-width: 800px;
