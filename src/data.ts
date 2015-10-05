@@ -246,6 +246,7 @@ export interface Playlog{
     game:number;   //ゲームID
     game_id:string;    //ステージのgameの_id（変わってるかもしれないので）
     cleared:boolean;    //クリアしたかどうか
+    stage:number;       //到達ステージ
     score:number;       //最終スコア
 
     //プレイログがアップロードされた時間

@@ -7,7 +7,8 @@ var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
     Datetime=require('../commons/datetime.jsx'),
     RichText=require('../commons/rich-text.jsx'),
-    GameComment=require('./parts/game-comment.jsx');
+    GameComment=require('./parts/game-comment.jsx'),
+    PlaylogList=require('./parts/playlog-list.jsx');
 
 
 module.exports = React.createClass({
@@ -32,7 +33,7 @@ module.exports = React.createClass({
             playlog_switch: true,
             //保存したプレイログ
             playlog_score: null,    //スコアがいちばん
-            playlog_clear: null,     //クリアした
+            playlog_clear: null,     //進みがいちばん
             //今プレイ中のプレイログ（データのみ）
             playlog_playing_data: null
         };
@@ -101,7 +102,15 @@ module.exports = React.createClass({
 
         //プレイログをとったら表示
         var playlogArea=null;
-        if(this.state.playlog_score!=null || this.state.playlog_clear!=null || this.state.playlog_playing_data!=null){
+        //プレイログ
+        var playlogs = this.state.playlog_score!=null ?
+            (this.state.playlog_score!==this.state.playlog_clear ?
+                [this.state.playlog_clear, this.state.playlog_score] :
+                [this.state.playlog_score]) :
+            (this.state.playlog_clear!=null ?
+                [this.state.playlog_clear] : []);
+        var player = null;
+        if(playlogs.length>0 || this.state.playlog_playing_data!=null){
             var stopper = null;
             if(this.state.playlog_playing_data!=null){
                 var clickHandler=(e)=>{
@@ -116,26 +125,16 @@ module.exports = React.createClass({
             }
             var player = null;
             if(this.state.playlog_score!=null || this.state.playlog_clear!=null){
-                var playlogLI = (obj)=>{
-                    if(obj==null){
-                        return null;
-                    }
-                    var clickHandler=(e)=>{
-                        e.preventDefault();
-                        this.setState({
-                            playlog_playing_data: obj.buffer
-                        });
-                    };
-                    return <li>
-                        {obj.cleared ? "クリア" : "未クリア"}　スコア:{obj.score}　<span className="clickable" onClick={clickHandler}>再生</span>
-                    </li>;
-                };
+                var plist = this.state.playlog_score!=null ?
+                    (this.state.playlog_score!==this.state.playlog_clear ?
+                        [this.state.playlog_clear, this.state.playlog_score] :
+                        [this.state.playlog_score]) :
+                    (this.state.playlog_clear!=null ?
+                        [this.state.playlog_clear] : []);
+
                 player=<div>
                     <p>保存されたプレイログ：</p>
-                    <ul>
-                        {playlogLI(this.state.playlog_clear)}
-                        {this.state.playlog_score!==this.state.playlog_clear ? playlogLI(this.state.playlog_score) : null}
-                    </ul>
+                    <PlaylogList playlogs={plist} onPlay={this.handlePlay}/>
                 </div>;
             }
             playlogArea = <div className="game-play-logs">
@@ -171,22 +170,20 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <GameTools config={this.props.config} game={this.props.game} metadata={metadata} audioLink={audioLink}/>
-                <GameComment game={metadata.id} config={this.props.config} session={session} />
+                <GameComment game={metadata.id} playlogs={playlogs} config={this.props.config} session={session} />
             </section>
         );
     },
     //playlogが来たので
     handlePlaylog(obj){
         var playlog_clear = this.state.playlog_clear, playlog_score = this.state.playlog_score, flag=false;
-        if(obj.cleared){
-            //クリアしたし
-            if(playlog_clear==null || playlog_clear.score <= obj.score){
-                //更新
-                playlog_clear = obj;
-                flag=true;
-            }
+        console.log(playlog_clear, obj);
+        if(playlog_clear==null || obj.cleared && !playlog_clear.cleared || obj.stage>playlog_clear.stage || obj.cleared===playlog_clear.cleared && obj.stage===playlog_clear.stage && obj.score>playlog_clear.score){
+            //更新
+            playlog_clear = obj;
+            flag=true;
         }
-        if(playlog_score==null || playlog_score.score <= obj.score){
+        if(playlog_score==null || playlog_score.score < obj.score){
             playlog_score = obj;
             flag=true;
         }
@@ -196,7 +193,13 @@ module.exports = React.createClass({
                 playlog_clear
             });
         }
-    }
+    },
+    //再生要求
+    handlePlay(obj){
+        this.setState({
+            playlog_playing_data: obj.buffer
+        });
+    },
 });
 
 var GameTools = React.createClass({

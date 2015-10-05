@@ -53,6 +53,7 @@ class C{
                     game: obj.game.id,
                     game_id: String(obj.game._id),
                     cleared: masao.getLastStage(game)===playlogobj.stage,
+                    stage: playlogobj.stage,
                     score: playlogobj.score,
                     created: now,
                     data: buf

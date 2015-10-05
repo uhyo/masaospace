@@ -213,6 +213,13 @@
   .form {
     padding-left: 200px;
   }
+  .game-play-comments-playlog {
+    max-width: 800px;
+    margin: 0.5rem 0 0.5rem 200px;
+    padding: 5px;
+
+    background-color: $color-lightbox-background;
+  }
 }
 
 
@@ -229,3 +236,12 @@
   @include subsection;
   margin: 0.8rem 0 0 0;
 }
+
+//playloglist
+.game-parts-playlog-list-list {
+  list-style-type: none;
+}
+.game-parts-playlog-list-checked {
+  color: #00aa00;
+}
+
