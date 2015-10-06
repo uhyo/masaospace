@@ -22,6 +22,8 @@ module.exports = React.createClass({
     },
     getInitialState(){
         return {
+            //モード（新着順/スコア順）
+            mode: "new",
             loading: true,
             comments: null,
             playlog: null
@@ -41,12 +43,16 @@ module.exports = React.createClass({
         });
         this.load(this.props.game)
     },
-    load(game){
+    load(game,mode){
+        if(mode==null){
+            mode=this.state.mode;
+        }
         //request
         api("/api/comment/find",{
             game,
             skip: 0,
-            limit: 50
+            limit: 50,
+            sort: mode
         })
         .then((obj)=>{
             this.setState({
@@ -77,6 +83,7 @@ module.exports = React.createClass({
                 if(idx<0){
                     idx=null;
                 }
+                console.log("foo!",idx,obj,this.props.playlogs);
                 this.setState({
                     playlog: idx
                 });
@@ -107,7 +114,35 @@ module.exports = React.createClass({
                 {playlogArea}
                 {commentForm}
             </div>
+            {this.selecter()}
             {comments}
         </section>;
     },
+    selecter(){
+        if(this.state.comments==null || this.state.comments.length===0){
+            return null;
+        }
+        return <div className="game-play-comments-select">{
+            ["new","score"].map((m)=>{
+                var cl="game-play-comments-select-box";
+                if(this.state.mode===m){
+                    cl+=" game-play-comments-select-current";
+                }
+                return <div key={m} className={cl} onClick={this.handleModeChange(m)}>{
+                    m==="new" ? "新着順" :
+                    m==="score" ? "スコア順" : null
+                }</div>;
+            })
+        }</div>;
+    },
+    handleModeChange(mode){
+        return (e)=>{
+            e.preventDefault();
+            this.setState({
+                mode,
+                //loading: true //あえていらない
+            });
+            this.load(this.props.game, mode);
+        }
+    }
 });

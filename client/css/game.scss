@@ -218,6 +218,14 @@
     }
   }
 }
+.comments-comment-none {
+  max-width: 800px;
+  margin: 0.5rem auto;
+  padding-left: 200px;
+
+}
+
+
 .game-play-comments-form-wrapper {
   max-width: 800px;
   margin: 0.5rem auto;
@@ -231,6 +239,27 @@
     padding: 5px;
 
     background-color: $color-lightbox-background;
+  }
+}
+.game-play-comments-select {
+  max-width: 800px;
+  margin: 0.5rem auto;
+
+  display: flex;
+
+  .game-play-comments-select-box {
+    flex: auto 1 1;
+    padding: 8px;
+    margin: 0 3px;
+
+    cursor: pointer;
+
+    background-color: $color-box-background;
+    text-align: center;
+
+    &.game-play-comments-select-current {
+      background-color: #eeee88;
+    }
   }
 }
 

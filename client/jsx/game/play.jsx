@@ -131,10 +131,13 @@ module.exports = React.createClass({
                         [this.state.playlog_score]) :
                     (this.state.playlog_clear!=null ?
                         [this.state.playlog_clear] : []);
+                var handlePlay=(obj)=>{
+                    this.handlePlay(obj.buffer);
+                };
 
                 player=<div>
                     <p>保存されたプレイログ：</p>
-                    <PlaylogList playlogs={plist} onPlay={this.handlePlay}/>
+                    <PlaylogList playlogs={plist} onPlay={handlePlay}/>
                 </div>;
             }
             playlogArea = <div className="game-play-logs">

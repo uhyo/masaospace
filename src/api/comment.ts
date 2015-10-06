@@ -108,6 +108,9 @@ class C{
         });
 
         //コメントを列挙する（playlog情報も追加）
+        //IN page?: 何個か
+        //IN limit?: 最大何個
+        //IN sort: "new" / "score"  ソート方法
         router.post("/find",(req,res)=>{
             req.validateBody("page").isInteger().optional();
             req.validateBody("limit").isInteger().optional();
@@ -120,12 +123,21 @@ class C{
             if(limit>50){
                 limit=50;
             }
+            var sortmode = req.body.sort;
+            var sort;
+            if(sortmode==="score"){
+                //スコア順
+                sort={score:-1};
+            }else{
+                //新着順
+                sort={id:-1};
+            }
 
 
             var qu:CommentQuery={
                 skip:skip,
                 limit:limit,
-                sort:{id:-1}
+                sort
             };
 
             if(isFinite(req.body.game)){

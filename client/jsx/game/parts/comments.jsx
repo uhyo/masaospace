@@ -18,7 +18,9 @@ module.exports = React.createClass({
     render(){
         var comments=this.props.comments;
         if(comments.length===0){
-            return <p>コメントはまだありません。</p>;
+            return <div className="comments-comment-none">
+                <p>コメントはまだありません。</p>
+            </div>
         }
         return <div>{
             comments.map((obj,i)=>{

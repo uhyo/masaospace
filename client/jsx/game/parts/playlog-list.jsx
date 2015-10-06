@@ -28,7 +28,7 @@ module.exports = React.createClass({
             this.props.playlogs.map((obj,i)=>{
                 var onPlay=this.props.onPlay, clickHandler=(e)=>{
                     e.preventDefault;
-                    onPlay(obj.buffer);
+                    onPlay(obj);
                 };
                 var play=null;
                 if(onPlay!=null){
