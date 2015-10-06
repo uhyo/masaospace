@@ -873,8 +873,9 @@ declare module "express"{
         class Request{
             accepts(str:string):string;
             accepts(strs:string[]):string;
+            acceptsEncodings(...encodings:Array<string>):string|boolean;
             acceptsLanguages():Array<string>;
-            acceptsLanguages(arr:Array<string>):any;    //string|boolean
+            acceptsLanguages(arr:Array<string>):string|boolean;
             acceptsLanguages(...arr:Array<string>):any;
             get(name:string):string;
             header(name:string):string;
@@ -934,8 +935,6 @@ declare module "express"{
             jsonp(status:number,body?:any):void;
             type(type:string):void;
             sendfile(path:string,option?:any,fn?:Function):void;
-
-            acceptsEncodings(...encodings:Array<string>):string|boolean;
             
             //本当はないが、このアプリでの拡張view.tsでの拡張用に
             public errorHandler:(err:any)=>void;

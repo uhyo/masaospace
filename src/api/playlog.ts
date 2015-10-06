@@ -81,8 +81,9 @@ class C{
                     return;
                 }
                 //binはgzipされている
-                if(res.acceptsEncodings("gzip")!==false){
+                if(req.acceptsEncodings("gzip")!==false){
                     //gzipをacceptするのでこのまま流す
+                    res.set("Content-Encoding","gzip");
                     res.send(bin.read(0,bin.length()));
                     res.end();
                 }else{

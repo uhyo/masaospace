@@ -189,8 +189,20 @@
   margin: 1rem auto 0;
 
 
-  .comments-user {
+  .comments-info {
     flex: 200px 0 0;
+    background-color: $color-lightbox-background;
+
+    font-size: 0.9em;
+    color: $color-lightcolor;
+
+    .comments-playlog {
+      padding: 3px;
+    }
+
+    .comments-playlog-cleared {
+      color: #eeee00;
+    }
   }
   .comments-body {
     flex: auto 1 0;

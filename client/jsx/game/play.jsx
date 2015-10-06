@@ -170,11 +170,11 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <GameTools config={this.props.config} game={this.props.game} metadata={metadata} audioLink={audioLink}/>
-                <GameComment game={metadata.id} playlogs={playlogs} config={this.props.config} session={session} />
+                <GameComment game={metadata.id} playlogs={playlogs} config={this.props.config} session={session} onPlay={this.handlePlay}/>
             </section>
         );
     },
-    //playlogが来たので
+    //ゲームからplaylogが来たので
     handlePlaylog(obj){
         var playlog_clear = this.state.playlog_clear, playlog_score = this.state.playlog_score, flag=false;
         console.log(playlog_clear, obj);
@@ -195,9 +195,9 @@ module.exports = React.createClass({
         }
     },
     //再生要求
-    handlePlay(obj){
+    handlePlay(buffer){
         this.setState({
-            playlog_playing_data: obj.buffer
+            playlog_playing_data: buffer
         });
     },
 });

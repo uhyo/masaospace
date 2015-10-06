@@ -18,6 +18,7 @@ module.exports = React.createClass({
         playlogs: React.PropTypes.array.isRequired,
         config: React.PropTypes.object.isRequired,
         session: React.PropTypes.object.isRequired,
+        onPlay: React.PropTypes.func.isRequired,
     },
     getInitialState(){
         return {
@@ -98,7 +99,7 @@ module.exports = React.createClass({
         if(this.state.loading===true){
             comments=<Loading/>;
         }else{
-            comments=<Comments comments={this.state.comments} />;
+            comments=<Comments comments={this.state.comments} onPlay={this.props.onPlay}/>;
         }
         return <section className="game-play-comments">
             <h1>コメント</h1>
