@@ -127,7 +127,7 @@ class C{
             var sort;
             if(sortmode==="score"){
                 //スコア順
-                sort={score:-1};
+                sort={score:-1,cleared:-1};
             }else{
                 //新着順
                 sort={id:-1};

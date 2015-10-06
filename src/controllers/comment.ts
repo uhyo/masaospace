@@ -36,6 +36,7 @@ export default class CommentController{
                     coll.createIndex({
                         game:1,
                         score:-1,
+                        cleared:-1,
                         id:1
                     },{
                     },d.intercept((result)=>{

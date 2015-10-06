@@ -28,7 +28,7 @@ module.exports = React.createClass({
                 if(obj.playlog!=null){
                     playlogArea=<div className="comments-playlog">
                         <p>{obj.cleared===true ? <span className="comments-playlog-cleared">★</span> : null}スコア: {obj.score}　<span className="clickable" onClick={this.handlePlay(obj.playlog)}>再生</span></p>
-                        {obj.cleard!==true && obj.stage>0 ? <p>ステージ{obj.stage}までクリア</p> : null}
+                        {obj.cleared!==true && obj.stage>0 ? <p>ステージ{obj.stage}までクリア</p> : null}
                         <p></p>
                     </div>;
                 }
