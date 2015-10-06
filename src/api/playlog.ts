@@ -35,31 +35,10 @@ class C{
                     return;
                 }
                 let game=obj.game;
-                //データがvalidか確かめる
-                let buf=new Buffer(req.body.data,"base64");
-                let playlogobj;
-                try{
-                    playlogobj = masao.playlog.parse(buf);
-                }catch(e){
-                    res.json({
-                        error: String(e)
-                    });
-                    return;
-                }
-                //scoreとstageが来た
-                var now=new Date();
-                //ステージあったのでplaylogを入れる
-                c.playlog.newPlaylog({
-                    id: null,
+                c.playlog.newPlaylog(game, {
                     owner: req.session.user,
-                    game: obj.game.id,
-                    game_id: String(obj.game._id),
-                    cleared: masao.getLastStage(game)===playlogobj.stage,
-                    stage: playlogobj.stage,
-                    score: playlogobj.score,
-                    created: now,
-                    data: null
-                },buf,(err,newid)=>{
+                    dataBase64: req.body.data
+                },(err,id)=>{
                     if(err){
                         res.json({
                             error: String(err)
@@ -68,7 +47,7 @@ class C{
                     }
                     //OK
                     res.json({
-                        id: newid
+                        id
                     });
                 });
             });

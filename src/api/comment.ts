@@ -16,6 +16,7 @@ class C{
         // コメントを投稿する
         // IN game:number ゲームID
         // IN comment: 文字列
+        // IN playlog?: プレイログ(Base64 encoded)
         // OUT id: 新しいコメントのid
         router.post("/new",util.apim.useUser,(req,res)=>{
             req.validateBody("game").isInteger();
@@ -40,24 +41,44 @@ class C{
                     return;
                 }
                 //あるみたいなので処理をすすめる（たぶん消えないでしょ）
-                var commentobj:Comment = {
-                    id: null,
-                    game: gameid,
-                    userid: req.session.user,
-                    gameowner: obj.metadata.owner,
-                    comment: req.body.comment,
-                    time: new Date()
-                };
-                c.comment.newComment(commentobj,(err,newid:number)=>{
+                (req.body.data!=null ? (callback)=>{
+                    c.playlog.newPlaylog(obj.game,{
+                        owner: req.session.user,
+                        dataBase64: req.body.data
+                    },(err,plid)=>{
+                        callback(err,plid);
+                    });
+                }  : (callback)=>{
+                    //プレイログがない場合はとにかく進める
+                    callback(null,null);
+                })((err,plid)=>{
                     if(err){
                         res.json({
-                            error:String(err)
+                            error: String(err)
                         });
                         return;
                     }
-                    //できた
-                    res.json({
-                        id: newid
+                    var commentobj:Comment = {
+                        id: null,
+                        game: gameid,
+                        userid: req.session.user,
+                        gameowner: obj.metadata.owner,
+                        comment: req.body.comment,
+                        playlog: plid,
+                        time: new Date()
+                    };
+                    c.comment.newComment(commentobj,(err,newid:number)=>{
+                        if(err){
+                            logger.warning("PLaylog id: "+plid+" isfloating");
+                            res.json({
+                                error:String(err)
+                            });
+                            return;
+                        }
+                        //できた
+                        res.json({
+                            id: newid
+                        });
                     });
                 });
             });

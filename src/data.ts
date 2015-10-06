@@ -182,6 +182,8 @@ export interface Comment{
 
     //内容
     comment:string;
+    //添付するプレイログのID(nullable)
+    playlog:string;
     //日時
     time:Date;
 }
@@ -239,6 +241,11 @@ export interface Mail{
     type: string;
 }
 
+//プレイログ（挿入）
+export interface NewPlaylog{
+    owner:string;   //誰がアップロードしたプレイログか
+    dataBase64:string;  //base64形式のデータ
+}
 //プレイログ
 export interface Playlog{
     id:string;  //プレイログのID(sha)
