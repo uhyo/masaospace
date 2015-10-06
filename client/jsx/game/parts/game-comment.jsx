@@ -65,34 +65,6 @@ module.exports = React.createClass({
     render(){
         //プレイログを選択
         var playlogs = this.props.playlogs, playlogArea=null;
-        if(playlogs.length>0){
-            var ps=null;
-            if(this.state.playlog==null){
-                ps=<p>コメントと一緒にプレイログを投稿するには、以下から選択してください。</p>;
-            }else{
-                var clk=(e)=>{
-                    e.preventDefault();
-                    this.setState({
-                        playlog: null
-                    });
-                };
-                ps=<p><span className="clickable" onClick={clk}>プレイログの投稿を取り消す</span></p>;
-            }
-            var hp=(obj)=>{
-                var idx=this.props.playlogs.indexOf(obj);
-                if(idx<0){
-                    idx=null;
-                }
-                console.log("foo!",idx,obj,this.props.playlogs);
-                this.setState({
-                    playlog: idx
-                });
-            };
-            playlogArea=<div className="game-play-comments-playlog">
-                {ps}
-                <PlaylogList playlogs={playlogs} playString="選択" selected={this.state.playlog} onPlay={hp}/>
-            </div>;
-        }
         var selectedPlaylog = this.state.playlog==null ? null : this.props.playlogs[this.state.playlog];
         var commentForm, comments;
         if(this.props.session.loggedin===false){
@@ -101,6 +73,34 @@ module.exports = React.createClass({
                 <p>コメントを投稿するにはログインする必要があります。</p>
             </NeedLogin>;
         }else{
+            if(playlogs.length>0){
+                var ps=null;
+                if(this.state.playlog==null){
+                    ps=<p>コメントと一緒にプレイログを投稿するには、以下から選択してください。</p>;
+                }else{
+                    var clk=(e)=>{
+                        e.preventDefault();
+                        this.setState({
+                            playlog: null
+                        });
+                    };
+                    ps=<p><span className="clickable" onClick={clk}>プレイログの投稿を取り消す</span></p>;
+                }
+                var hp=(obj)=>{
+                    var idx=this.props.playlogs.indexOf(obj);
+                    if(idx<0){
+                        idx=null;
+                    }
+                    console.log("foo!",idx,obj,this.props.playlogs);
+                    this.setState({
+                        playlog: idx
+                    });
+                };
+                playlogArea=<div className="game-play-comments-playlog">
+                    {ps}
+                    <PlaylogList playlogs={playlogs} playString="選択" selected={this.state.playlog} onPlay={hp}/>
+                </div>;
+            }
             commentForm=<CommentForm game={this.props.game} config={this.props.config} playlog={selectedPlaylog && selectedPlaylog.buffer} session={this.props.session} onComment={this.handleComment}/>
         }
         if(this.state.loading===true){
