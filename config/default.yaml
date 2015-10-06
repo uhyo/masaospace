@@ -90,7 +90,7 @@ session:
   # cookie secret
   secret: test
   # session TTL (in seconds)
-  life: 86400
+  life: 864000
 
 # tickets
 ticket:
