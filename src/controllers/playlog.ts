@@ -50,7 +50,7 @@ export default class PlaylogController{
     }
     //新しいログを追加
     //playlog.idとplaylog.dataはnullでいいという感じがする
-    newPlaylog(game:GameData&{_id:any},playlog:NewPlaylog,callback:Callback<string>):void{
+    newPlaylog(game:GameData&{_id:any},playlog:NewPlaylog,callback:Callback<Playlog>):void{
         this.getCollection((err,coll)=>{
             if(err){
                 callback(err,null);
@@ -97,7 +97,7 @@ export default class PlaylogController{
                         return;
                     }
                     //OK
-                    callback(null,id);
+                    callback(null,pl);
                 });
             });
         });
@@ -135,6 +135,35 @@ export default class PlaylogController{
                     return;
                 }
                 callback(null,docs);
+            });
+        });
+    }
+    //idで一覧にする
+    joinPlaylogs(ids:Array<string>,callback:Callback<{
+        [id:string]:Playlog;
+    }>):void{
+        this.getCollection((err,coll)=>{
+            if(err){
+                callback(err,null);
+                return;
+            }
+            let result:{
+                [id:string]:Playlog;
+            }={};
+            coll.find({
+                id: {
+                    $in: ids
+                }
+            }).toArray((err,docs:Array<Playlog>)=>{
+                if(err){
+                    callback(err,null);
+                    return;
+                }
+                for(let i=0,l=docs.length;i<l;i++){
+                    let p=docs[i];
+                    result[p.id]=p;
+                }
+                callback(null,result);
             });
         });
     }

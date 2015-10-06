@@ -35,6 +35,9 @@ module.exports = React.createClass({
         }
     },
     handleComment(){
+        this.setState({
+            playlog: null
+        });
         this.load(this.props.game)
     },
     load(game){
@@ -53,20 +56,6 @@ module.exports = React.createClass({
         .catch(errorStore.emit);
     },
     render(){
-        var commentForm, comments;
-        if(this.props.session.loggedin===false){
-            //未ログイン
-            commentForm=<NeedLogin>
-                <p>コメントを投稿するにはログインする必要があります。</p>
-            </NeedLogin>;
-        }else{
-            commentForm=<CommentForm game={this.props.game} config={this.props.config} session={this.props.session} onComment={this.handleComment}/>
-        }
-        if(this.state.loading===true){
-            comments=<Loading/>;
-        }else{
-            comments=<Comments comments={this.state.comments} />;
-        }
         //プレイログを選択
         var playlogs = this.props.playlogs, playlogArea=null;
         if(playlogs.length>0){
@@ -95,6 +84,21 @@ module.exports = React.createClass({
                 {ps}
                 <PlaylogList playlogs={playlogs} playString="選択" selected={this.state.playlog} onPlay={hp}/>
             </div>;
+        }
+        var selectedPlaylog = this.state.playlog==null ? null : this.props.playlogs[this.state.playlog];
+        var commentForm, comments;
+        if(this.props.session.loggedin===false){
+            //未ログイン
+            commentForm=<NeedLogin>
+                <p>コメントを投稿するにはログインする必要があります。</p>
+            </NeedLogin>;
+        }else{
+            commentForm=<CommentForm game={this.props.game} config={this.props.config} playlog={selectedPlaylog && selectedPlaylog.buffer} session={this.props.session} onComment={this.handleComment}/>
+        }
+        if(this.state.loading===true){
+            comments=<Loading/>;
+        }else{
+            comments=<Comments comments={this.state.comments} />;
         }
         return <section className="game-play-comments">
             <h1>コメント</h1>

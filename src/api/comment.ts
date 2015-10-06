@@ -9,7 +9,7 @@ import config=require('config');
 
 import util=require('../util');
 
-import {Comment, CommentWithUserData, CommentQuery} from '../data';
+import {Comment, CommentWithUserData, CommentQuery, Playlog} from '../data';
 
 class C{
     route(router:express._Router,c:Controller):void{
@@ -41,35 +41,58 @@ class C{
                     return;
                 }
                 //あるみたいなので処理をすすめる（たぶん消えないでしょ）
-                (req.body.data!=null ? (callback)=>{
+                (req.body.playlog!=null ? (callback:Callback<Playlog>)=>{
                     c.playlog.newPlaylog(obj.game,{
                         owner: req.session.user,
-                        dataBase64: req.body.data
+                        dataBase64: req.body.playlog
                     },(err,plid)=>{
                         callback(err,plid);
                     });
                 }  : (callback)=>{
                     //プレイログがない場合はとにかく進める
                     callback(null,null);
-                })((err,plid)=>{
+                })((err,pl:Playlog)=>{
                     if(err){
                         res.json({
                             error: String(err)
                         });
                         return;
                     }
-                    var commentobj:Comment = {
-                        id: null,
-                        game: gameid,
-                        userid: req.session.user,
-                        gameowner: obj.metadata.owner,
-                        comment: req.body.comment,
-                        playlog: plid,
-                        time: new Date()
-                    };
+                    var commentobj:Comment;
+                    if(pl!=null){
+                        //プレイログがある
+                        commentobj = {
+                            id: null,
+                            game: gameid,
+                            userid: req.session.user,
+                            gameowner: obj.metadata.owner,
+                            comment: req.body.comment,
+                            playlog: pl.id,
+                            cleared: pl.cleared,
+                            stage: pl.stage,
+                            score: pl.score,
+                            time: new Date()
+                        };
+                    }else{
+                        //プレイログがない
+                        commentobj = {
+                            id: null,
+                            game: gameid,
+                            userid: req.session.user,
+                            gameowner: obj.metadata.owner,
+                            comment: req.body.comment,
+                            playlog: null,
+                            cleared: false,
+                            stage: 0,
+                            score: 0,
+                            time: new Date()
+                        };
+                    }
                     c.comment.newComment(commentobj,(err,newid:number)=>{
                         if(err){
-                            logger.warning("PLaylog id: "+plid+" isfloating");
+                            if(pl!=null){
+                                logger.warning("Playlog id: "+pl.id+" isfloating");
+                            }
                             res.json({
                                 error:String(err)
                             });
@@ -84,7 +107,7 @@ class C{
             });
         });
 
-        //コメントを列挙する
+        //コメントを列挙する（playlog情報も追加）
         router.post("/find",(req,res)=>{
             req.validateBody("page").isInteger().optional();
             req.validateBody("limit").isInteger().optional();

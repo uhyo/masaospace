@@ -184,6 +184,10 @@ export interface Comment{
     comment:string;
     //添付するプレイログのID(nullable)
     playlog:string;
+    //プレイログの情報
+    cleared:boolean;
+    stage:number;
+    score:number;
     //日時
     time:Date;
 }

@@ -34,12 +34,19 @@ export default class CommentController{
                 },{
                 },d.intercept((result)=>{
                     coll.createIndex({
-                        userid:1,
-                        id:-1
+                        game:1,
+                        score:-1,
+                        id:1
                     },{
                     },d.intercept((result)=>{
-                        //redisをあれする
-                        this.initRedis(callback);
+                        coll.createIndex({
+                            userid:1,
+                            id:-1
+                        },{
+                        },d.intercept((result)=>{
+                            //redisをあれする
+                            this.initRedis(callback);
+                        }));
                     }));
                 }));
             }));

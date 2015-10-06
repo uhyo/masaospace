@@ -1,5 +1,7 @@
 var React=require('react/addons');
 
+var base64ArrayBuffer=require('base64-arraybuffer');
+
 var api=require('../../../actions/api');
 var errorStore=require('../../../stores/error');
 
@@ -10,6 +12,7 @@ module.exports = React.createClass({
     propTypes:{
         game: React.PropTypes.number.isRequired,
         config: React.PropTypes.object.isRequired,
+        playlog: React.PropTypes.object,    //ArrayBuffer?
 
         onComment: React.PropTypes.func
     },
@@ -20,9 +23,11 @@ module.exports = React.createClass({
     },
     handleSubmit(e){
         e.preventDefault();
+        console.log(this.props);
         api("/api/comment/new",{
             game: this.props.game,
-            comment: this.state.comment
+            comment: this.state.comment,
+            playlog: this.props.playlog && base64ArrayBuffer.encode(this.props.playlog)
         })
         .then(()=>{
             if("function"===typeof this.props.onComment){

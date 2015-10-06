@@ -19,6 +19,7 @@
     ]
   },
   "dependencies": {
+    "base64-arraybuffer": "^0.1.2",
     "body-parser": "^1.12.2",
     "bytes": "^2.1.0",
     "config": "^1.12.0",
