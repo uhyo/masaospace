@@ -372,6 +372,19 @@ declare module "readline"{
 
     }
 }
+declare module "zlib"{
+    import stream=require('stream');
+    export function createGzip():Gzip;
+    export function createGunzip():Gunzip;
+    export function gzip(buf:string|Buffer,callback:Callback<Buffer>):void;
+    export function gunzip(buf:string|Buffer,callback:Callback<Buffer>):void;
+    interface Zlib extends stream.Duplex{
+    }
+    interface Gzip extends Zlib{
+    }
+    interface Gunzip extends Zlib{
+    }
+}
 //
 //
 //
@@ -860,8 +873,9 @@ declare module "express"{
         class Request{
             accepts(str:string):string;
             accepts(strs:string[]):string;
+            acceptsEncodings(...encodings:Array<string>):string|boolean;
             acceptsLanguages():Array<string>;
-            acceptsLanguages(arr:Array<string>):any;    //string|boolean
+            acceptsLanguages(arr:Array<string>):string|boolean;
             acceptsLanguages(...arr:Array<string>):any;
             get(name:string):string;
             header(name:string):string;

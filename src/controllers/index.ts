@@ -11,6 +11,7 @@ import SessionController from './session';
 import GameController from './game';
 import CommentController from './comment';
 import SeriesController from './series';
+import PlaylogController from './playlog';
 import MailController from './mail';
 import mum=require('my-user-mongo');
 
@@ -26,6 +27,7 @@ class Controller{
     public game:GameController;
     public comment:CommentController;
     public series:SeriesController;
+    public playlog:PlaylogController;
     public mail:MailController;
 
     constructor(private db:db.DBAccess){
@@ -53,6 +55,7 @@ class Controller{
         this.game  =new GameController(db);
         this.comment= new CommentController(db);
         this.series=new SeriesController(db);
+        this.playlog=new PlaylogController(db);
         this.mail  =new MailController(db);
 
         logger.debug("Controller: initialization start.");
@@ -71,10 +74,13 @@ class Controller{
                                     logger.debug("Controller.comment initialized.");
                                     this.series.init(d.intercept(()=>{
                                         logger.debug("Controller.series initialized.");
-                                        this.mail.init(d.intercept(()=>{
-                                            logger.debug("Controller.mail initialized.");
-                                            d.exit();
-                                            callback(null);
+                                        this.playlog.init(d.intercept(()=>{
+                                            logger.debug("Controller.playlog initialized.");
+                                            this.mail.init(d.intercept(()=>{
+                                                logger.debug("Controller.mail initialized.");
+                                                d.exit();
+                                                callback(null);
+                                            }));
                                         }));
                                     }));
                                 }));

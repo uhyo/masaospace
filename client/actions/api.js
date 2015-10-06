@@ -3,13 +3,21 @@
 module.exports = api;
 
 //returns Promise!
-function api(path,params,contentType){
+//path: APIのパス
+//params: APIに渡すquery
+//contentType: multipart/form-dataとか
+//raw: JSONでパースせずにArrayBufferで受け取る
+function api(path,params,contentType,raw){
     var Promise = require('native-promise-only');
     if(params == null){
         params = {};
     }
     var xhr=new XMLHttpRequest();
     xhr.open("POST",path);
+    if(raw){
+        //???
+        xhr.responseType="arraybuffer";
+    }
     var requestBody;
     if(contentType==="multipart/form-data"){
         //FormDataを使ってあれする
@@ -40,6 +48,11 @@ function api(path,params,contentType){
             if(xhr.status!==200){
                 console.error(xhr.status,xhr.responseText);
                 reject(xhr.responseText);
+                return;
+            }
+            if(raw){
+                //そのままうけとる
+                resolve(xhr.response);
                 return;
             }
             var obj;

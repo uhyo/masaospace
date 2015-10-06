@@ -1,13 +1,15 @@
 var React = require('react');
 
 var queryString=require('query-string'),
+    scrollIntoView=require('dom-scroll-into-view'),
     path=require('../../scripts/path');
 
 var GameView=require('./game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
     Datetime=require('../commons/datetime.jsx'),
     RichText=require('../commons/rich-text.jsx'),
-    GameComment=require('./parts/game-comment.jsx');
+    GameComment=require('./parts/game-comment.jsx'),
+    PlaylogList=require('./parts/playlog-list.jsx');
 
 
 module.exports = React.createClass({
@@ -28,7 +30,13 @@ module.exports = React.createClass({
     },
     getInitialState(){
         return {
-            audio_switch: true
+            audio_switch: true,
+            playlog_switch: true,
+            //保存したプレイログ
+            playlog_score: null,    //スコアがいちばん
+            playlog_clear: null,     //進みがいちばん
+            //今プレイ中のプレイログ（データのみ）
+            playlog_playing_data: null
         };
     },
     render:function(){
@@ -92,12 +100,64 @@ module.exports = React.createClass({
                 });
             }
         };
+
+        //プレイログをとったら表示
+        var playlogArea=null;
+        //プレイログ
+        var playlogs = this.state.playlog_score!=null ?
+            (this.state.playlog_score!==this.state.playlog_clear ?
+                [this.state.playlog_clear, this.state.playlog_score] :
+                [this.state.playlog_score]) :
+            (this.state.playlog_clear!=null ?
+                [this.state.playlog_clear] : []);
+        var player = null;
+        if(playlogs.length>0 || this.state.playlog_playing_data!=null){
+            var stopper = null;
+            if(this.state.playlog_playing_data!=null){
+                var clickHandler=(e)=>{
+                    e.preventDefault();
+                    this.setState({
+                        playlog_playing_data:null
+                    });
+                };
+                stopper = <p>
+                    <span className="clickable" onClick={clickHandler}>再生を停止</span>
+                </p>;
+            }
+            var player = null;
+            if(this.state.playlog_score!=null || this.state.playlog_clear!=null){
+                var plist = this.state.playlog_score!=null ?
+                    (this.state.playlog_score!==this.state.playlog_clear ?
+                        [this.state.playlog_clear, this.state.playlog_score] :
+                        [this.state.playlog_score]) :
+                    (this.state.playlog_clear!=null ?
+                        [this.state.playlog_clear] : []);
+                var handlePlay=(obj)=>{
+                    this.handlePlay(obj.buffer);
+                };
+
+                player=<div>
+                    <p>保存されたプレイログ：</p>
+                    <PlaylogList playlogs={plist} onPlay={handlePlay}/>
+                </div>;
+            }
+            playlogArea = <div className="game-play-logs">
+                {stopper}
+                {player}
+            </div>;
+        }
+        //gameviewにわたすやつ
+        var playlogCallback = null;
+        if(this.state.playlog_switch===true && this.state.playlog_playing_data==null){
+            playlogCallback = this.handlePlaylog;
+        }
         return (
             <section>
                 <h1>{metadata.title}</h1>
-                <div className="game-play-container">
-                    <GameView game={this.props.game} audio_enabled={this.state.audio_switch}/>
+                <div className="game-play-container" ref="gamecontainer">
+                    <GameView game={this.props.game} audio_enabled={this.state.audio_switch} playlogCallback={playlogCallback} playlog={this.state.playlog_playing_data}/>
                 </div>
+                {playlogArea}
                 <div className="game-play-info">
                     <div className="game-play-info-meta">
                         <p><Datetime date={new Date(metadata.created)} /> 投稿</p>
@@ -114,10 +174,40 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <GameTools config={this.props.config} game={this.props.game} metadata={metadata} audioLink={audioLink}/>
-                <GameComment game={metadata.id} config={this.props.config} session={session} />
+                <GameComment game={metadata.id} playlogs={playlogs} config={this.props.config} session={session} onPlay={this.handlePlay}/>
             </section>
         );
-    }
+    },
+    //ゲームからplaylogが来たので
+    handlePlaylog(obj){
+        var playlog_clear = this.state.playlog_clear, playlog_score = this.state.playlog_score, flag=false;
+        console.log(playlog_clear, obj);
+        if(playlog_clear==null || obj.cleared && !playlog_clear.cleared || obj.stage>playlog_clear.stage || obj.cleared===playlog_clear.cleared && obj.stage===playlog_clear.stage && obj.score>playlog_clear.score){
+            //更新
+            playlog_clear = obj;
+            flag=true;
+        }
+        if(playlog_score==null || playlog_score.score < obj.score){
+            playlog_score = obj;
+            flag=true;
+        }
+        if(flag===true){
+            this.setState({
+                playlog_score,
+                playlog_clear
+            });
+        }
+    },
+    //再生要求
+    handlePlay(buffer){
+        //表示する
+        scrollIntoView(React.findDOMNode(this.refs.gamecontainer), window, {
+            onlyScrollIfNeeded: true
+        });
+        this.setState({
+            playlog_playing_data: buffer
+        });
+    },
 });
 
 var GameTools = React.createClass({

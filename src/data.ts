@@ -182,6 +182,12 @@ export interface Comment{
 
     //内容
     comment:string;
+    //添付するプレイログのID(nullable)
+    playlog:string;
+    //プレイログの情報
+    cleared:boolean;
+    stage:number;
+    score:number;
     //日時
     time:Date;
 }
@@ -237,4 +243,36 @@ export interface Mail{
     text: string;
 
     type: string;
+}
+
+//プレイログ（挿入）
+export interface NewPlaylog{
+    owner:string;   //誰がアップロードしたプレイログか
+    dataBase64:string;  //base64形式のデータ
+}
+//プレイログ
+export interface Playlog{
+    id:string;  //プレイログのID(sha)
+    owner:string;   //誰がアップロードしたプレイログか
+    game:number;   //ゲームID
+    game_id:string;    //ステージのgameの_id（変わってるかもしれないので）
+    cleared:boolean;    //クリアしたかどうか
+    stage:number;       //到達ステージ
+    score:number;       //最終スコア
+
+    //プレイログがアップロードされた時間
+    created:Date;
+
+    //プレイログのバイナリデータ(Buffer. gzipped)
+    data:any;
+}
+
+export interface PlaylogQuery{
+    id?:string;
+    owner?:string;
+    game?:number;
+
+    skip?:number;
+    limit?:number;
+    sort?:any;
 }

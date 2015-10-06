@@ -9,6 +9,15 @@
 .game-play-container {
   margin: 0.5rem 0 0.5rem 0;
 }
+.game-play-logs {
+  max-width: 800px;
+  margin: 4px auto;
+  padding: 3px;
+
+  font-size: 0.9em;
+  color: $color-boldcolor;
+  background-color: $color-box-background;
+}
 .game-play-info {
   display: flex;
   max-width: 800px;
@@ -180,8 +189,20 @@
   margin: 1rem auto 0;
 
 
-  .comments-user {
+  .comments-info {
     flex: 200px 0 0;
+    background-color: $color-lightbox-background;
+
+    font-size: 0.9em;
+    color: $color-lightcolor;
+
+    .comments-playlog {
+      padding: 3px;
+    }
+
+    .comments-playlog-cleared {
+      color: #eeee00;
+    }
   }
   .comments-body {
     flex: auto 1 0;
@@ -197,12 +218,48 @@
     }
   }
 }
+.comments-comment-none {
+  max-width: 800px;
+  margin: 0.5rem auto;
+  padding-left: 200px;
+
+}
+
+
 .game-play-comments-form-wrapper {
   max-width: 800px;
   margin: 0.5rem auto;
 
   .form {
     padding-left: 200px;
+  }
+  .game-play-comments-playlog {
+    max-width: 800px;
+    margin: 0.5rem 0 0.5rem 200px;
+    padding: 5px;
+
+    background-color: $color-lightbox-background;
+  }
+}
+.game-play-comments-select {
+  max-width: 800px;
+  margin: 0.5rem auto;
+
+  display: flex;
+
+  .game-play-comments-select-box {
+    flex: auto 1 1;
+    padding: 8px;
+    margin: 0 3px;
+
+    cursor: pointer;
+
+    background-color: $color-box-background;
+    text-align: center;
+
+    &.game-play-comments-select-current {
+      background-color: #eeee88;
+    }
   }
 }
 
@@ -220,3 +277,12 @@
   @include subsection;
   margin: 0.8rem 0 0 0;
 }
+
+//playloglist
+.game-parts-playlog-list-list {
+  list-style-type: none;
+}
+.game-parts-playlog-list-checked {
+  color: #00aa00;
+}
+

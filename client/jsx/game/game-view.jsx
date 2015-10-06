@@ -9,7 +9,11 @@ module.exports = React.createClass({
     mixins:[React.addons.PureRenderMixin],
     propTypes:{
         game: React.PropTypes.object,
-        audio_enabled: React.PropTypes.bool
+        audio_enabled: React.PropTypes.bool,
+        //プレイログをとってほしい場合
+        playlogCallback: React.PropTypes.func,
+        //プレイログを再生してほしい場合
+        playlog: React.PropTypes.object
     },
     getInitialState:function(){
         return {
@@ -22,7 +26,7 @@ module.exports = React.createClass({
         this.endGame();
     },
     componentDidUpdate:function(prevProps, prevState){
-        if(prevProps.game!==this.props.game){
+        if(prevProps.game!==this.props.game || prevProps.playlogCallback!==this.props.playlogCallback || prevProps.playlog != this.props.playlog){
             this.endGame();
             this.setGame(this.props.game);
         }else if(prevProps.audio_enabled!==this.props.audio_enabled){
@@ -43,22 +47,32 @@ module.exports = React.createClass({
         }
         React.findDOMNode(this).id=this.gameid;
         var p=masao.localizeGame(game);
-        console.log("p",p);
+        //CanvasMasaoのオプション
+        var options = {
+            extensions: []
+        };
+        if(game.version==="kani2"){
+            //MasaoKani2だ
+            options.extensions.push(CanvasMasao.MasaoKani2);
+        }
+        if(this.props.playlog!=null){
+            //再生する
+            options.extensions.push(CanvasMasao.InputPlayer);
+            options.inputdata = this.props.playlog;
+        }else if(this.props.playlogCallback!=null){
+            //playlogをとってほしい
+            options.extensions.push(CanvasMasao.InputRecorder);
+            options.inputdataCallback=this.props.playlogCallback;
+            options.requiresCallback = (obj)=>{
+                return true;
+            };
+        }
+
         if(game.version==="2.8"){
             //2.8だ
-            this.game=new CanvasMasao_v28.Game(p,this.gameid);
-        }else if(game.version==="kani2"){
-            //MasaoKani2だ
-            this.game=new CanvasMasao.Game(p,this.gameid,{
-                extensions: [CanvasMasao.MasaoKani2]
-            });
+            this.game=new CanvasMasao_v28.Game(p,this.gameid, options);
         }else{
-            this.game=new CanvasMasao.Game(p,this.gameid,{
-                /*extensions: [CanvasMasao.InputRecorder],
-                inputdataCallback: (result)=>{
-                    console.log(result);
-                }*/
-            });
+            this.game=new CanvasMasao.Game(p,this.gameid,options);
         }
         if(this.props.audio_enabled!==true){
             if(this.game.__mc && this.game.__mc.soundOff){
