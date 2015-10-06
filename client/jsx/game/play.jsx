@@ -1,6 +1,7 @@
 var React = require('react');
 
 var queryString=require('query-string'),
+    scrollIntoView=require('dom-scroll-into-view'),
     path=require('../../scripts/path');
 
 var GameView=require('./game-view.jsx'),
@@ -153,7 +154,7 @@ module.exports = React.createClass({
         return (
             <section>
                 <h1>{metadata.title}</h1>
-                <div className="game-play-container">
+                <div className="game-play-container" ref="gamecontainer">
                     <GameView game={this.props.game} audio_enabled={this.state.audio_switch} playlogCallback={playlogCallback} playlog={this.state.playlog_playing_data}/>
                 </div>
                 {playlogArea}
@@ -199,6 +200,10 @@ module.exports = React.createClass({
     },
     //再生要求
     handlePlay(buffer){
+        //表示する
+        scrollIntoView(React.findDOMNode(this.refs.gamecontainer), window, {
+            onlyScrollIfNeeded: true
+        });
         this.setState({
             playlog_playing_data: buffer
         });

@@ -28,6 +28,7 @@
     "cron": "^1.0.9",
     "csurf": "^1.7.0",
     "deep-extend": "^0.4.0",
+    "dom-scroll-into-view": "^1.0.1",
     "ect": "^0.5.9",
     "express": "^4.12.3",
     "express-session": "^1.10.4",
