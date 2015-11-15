@@ -59,6 +59,19 @@ export default class FileController{
         });
     }
     addFile(f:FileData,filepath:string,callback:Callback<File>):void{
+        //ファイルタイプが問題ないか判定
+        let typ_norm = mime.lookup(mime.extension(f.type)); //タイプをmime正規化
+        if(typ_norm !== mime.lookup(f.name)){
+            //ファイル名とタイプが一致しない
+            callback("ファイル名とMIMEタイプが一致しません。", null);
+            return;
+        }
+        let white_types:Array<string> = config.get("filedata.types");
+        if(white_types.indexOf(typ_norm)===-1){
+            //存在しなかった
+            callback("その形式のファイルはアップロードできません。",null);
+            return;
+        }
         //add file to db
         this.getCollection((err,coll)=>{
             if(err){
@@ -74,7 +87,7 @@ export default class FileController{
                 }
                 var baseid=uniqueToken(config.get("file.idLength"));
                 //新しいファイル名をつくる
-                var id=baseid+"."+mime.extension(f.type);
+                var id=baseid+path.extname(f.name).toLowerCase();
                 var fi:File={
                     id:id,
                     type: f.type,

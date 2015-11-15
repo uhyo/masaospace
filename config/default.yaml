@@ -38,6 +38,16 @@ filedata:
     maxLength: 250
   description:
     maxLength: 1024
+  # whitelist of mime types
+  types:
+    - image/bmp
+    - image/jpeg
+    - image/gif
+    - image/png
+    - image/svg+xml
+    - audio/mpeg
+    - audio/x-wav
+    - audio/ogg
 
 # web server config
 webserver:
