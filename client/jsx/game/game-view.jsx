@@ -58,13 +58,17 @@ module.exports = React.createClass({
         if(this.props.playlog!=null){
             //再生する
             options.extensions.push(CanvasMasao.InputPlayer);
-            options.inputdata = this.props.playlog;
+            options.InputPlayer = {
+                inputdata: this.props.playlog
+            };
         }else if(this.props.playlogCallback!=null){
             //playlogをとってほしい
             options.extensions.push(CanvasMasao.InputRecorder);
-            options.inputdataCallback=this.props.playlogCallback;
-            options.requiresCallback = (obj)=>{
-                return true;
+            options.InputRecorder = {
+                inputdataCallback:this.props.playlogCallback,
+                requiresCallback: (obj)=>{
+                    return true;
+                }
             };
         }
 
