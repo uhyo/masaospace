@@ -41,7 +41,7 @@ module.exports = React.createClass({
         };
     },
     render:function(){
-        var metadata=this.props.metadata, series=this.props.series, session=this.props.session;
+        const game=this.props.game, metadata=this.props.metadata, series=this.props.series, session=this.props.session;
         var ownertools = null;
         if(session.user===metadata.owner){
             //わたしがオーナーだ！
@@ -154,11 +154,12 @@ module.exports = React.createClass({
         }
         //GameView
         var gameView;
-        if(false){
-            //TODO: 条件判定
-            gameView = <GameView game={this.props.game} audio_enabled={this.state.audio_switch} playlogCallback={playlogCallback} playlog={this.state.playlog_playing_data}/>;
+        if(game.script == null){
+            //拡張JSがないものはsandboxに入れずに実行する
+            //TODO jsファイルのやつは？
+            gameView = <GameView game={game} audio_enabled={this.state.audio_switch} playlogCallback={playlogCallback} playlog={this.state.playlog_playing_data}/>;
         }else{
-            gameView = <SafeGameView game={this.props.game} audio_enabled={this.state.audio_switch} config={this.props.config} session={session}/>;
+            gameView = <SafeGameView game={game} audio_enabled={this.state.audio_switch} config={this.props.config} session={session}/>;
         }
         return (
             <section>

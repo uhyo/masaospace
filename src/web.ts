@@ -291,6 +291,7 @@ export class WebServer{
                 res.render("sandbox.ect",{
                     constructorName:  obj.game.version==="2.8" ? "CanvasMasao_v28" : "CanvasMasao",
                     params: localGame,
+                    script: obj.game.script,
                     metadata: obj.metadata,
                     config: config
                 });

@@ -23,8 +23,19 @@
   </head>
   <body>
     <div id="game"></div>
+    <% if @script? : %>
+        <script type="text/javascript" id="script" data-script="<%= @script %>">
+          var scriptelm = document.getElementById('script');
+          var script = scriptelm.getAttribute('data-script');
+          var scriptelm2= document.createElement('script');
+          scriptelm2.textContent = script;
+          scriptelm.parentNode.insertBefore(scriptelm2, scriptelm.nextSibling);
+        </script>
+    <% endif %>
     <script>
-      new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game");
+      new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game", {
+        userJSCallback: ("userJSCallback" in this ? userJSCallback : null)
+      });
     </script>
   </body>
 </html>
