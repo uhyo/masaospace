@@ -3,6 +3,10 @@
 
 .game-view {
   text-align: center;
+
+  & > iframe {
+    border: none;
+  }
 }
 
 //play

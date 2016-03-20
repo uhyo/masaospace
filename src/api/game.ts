@@ -281,7 +281,9 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
                     target: obj.target,
                     id: obj.id
                 };
-            })
+            }),
+            //TODO
+            script: null
         };
         var metadataobj: GameMetadataUpdate = {
             id: null,

@@ -147,6 +147,8 @@ export interface GameData{
         //ファイルのID
         id:string;
     }>;
+    //外部スクリプト
+    script:string;
 }
 //過去のデータ
 export interface GamePastData{

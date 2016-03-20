@@ -71,6 +71,25 @@ export class WebServer{
         this.app.set("views",views);
         this.app.set("view engine","ect");
         this.app.engine("ect",ectRenderer.render);
+        // switching by hostname
+        this.app.use((req,res,next)=>{
+            //hostnameとsandboxHostnameが一致（テスト環境）する場合はどっちも通す書き方
+            if(/^\u002fsandbox\u002f/.test(req.path)){
+                //sandbox用のhostnameはsandboxしか提供しない（セキュリティ的に）
+                if(req.hostname===config.get("service.sandboxHostname")){
+                    next();
+                }else{
+                    res.sendStatus(404);
+                }
+            }else{
+                //それ以外はsandbox用hostnameでは提供しない
+                if(req.hostname===config.get("service.hostname")){
+                    next();
+                }else{
+                    res.sendStatus(404);
+                }
+            }
+        })
         // bodyparser
         this.app.use(bodyParser.urlencoded({
             extended: false,
@@ -225,12 +244,41 @@ export class WebServer{
             c.game.getGame(id,true,(err,obj)=>{
                 if(err){
                     logger.error(err);
-                    res.send(500);
+                    res.sendStatus(500);
                     return;
                 }
                 if(obj==null){
                     //そのゲームはなかった
-                    res.send(404);
+                    res.sendStatus(404);
+                    return;
+                }
+                if(obj.metadata.hidden===true){
+                    //非公開の正男
+                    res.status(403).render("embed-hidden.ect");
+                    return;
+                }
+                //正男をローカライズ
+                var localGame=masao.localizeGame(obj.game);
+                res.render("embed.ect",{
+                    constructorName:  obj.game.version==="2.8" ? "CanvasMasao_v28" : "CanvasMasao",
+                    params: localGame,
+                    metadata: obj.metadata,
+                    config: config
+                });
+            });
+        });
+        this.app.get("/sandbox/:id",(req,res)=>{
+            var id=parseInt(req.params.id);
+            //ゲームを探してみる
+            c.game.getGame(id,true,(err,obj)=>{
+                if(err){
+                    logger.error(err);
+                    res.sendStatus(500);
+                    return;
+                }
+                if(obj==null){
+                    //そのゲームはなかった
+                    res.sendStatus(404);
                     return;
                 }
                 if(obj.metadata.hidden===true){
@@ -239,8 +287,8 @@ export class WebServer{
                     return;
                 }
                 //正男をローカライズ
-                var localGame=masao.localizeGame(obj.game);
-                res.render("embed.ect",{
+                var localGame=masao.localizeGame(obj.game, config.get("service.domain"));
+                res.render("sandbox.ect",{
                     constructorName:  obj.game.version==="2.8" ? "CanvasMasao_v28" : "CanvasMasao",
                     params: localGame,
                     metadata: obj.metadata,
