@@ -14,10 +14,10 @@ module.exports = React.createClass({
         audio_enabled: React.PropTypes.bool,
     },
     render(){
-        const {game, config} = this.props;
+        const {game, config, audio_enabled} = this.props;
         return (
             <div className="game-view">
-                <iframe src={`//${config.service.sandboxDomain}/sandbox/${game.id}`} width="512" height="320" />
+                <iframe sandbox="allow-scripts" src={`//${config.service.sandboxDomain}/sandbox/${game.id}`} width="512" height="320" />
             </div>
         );
     }

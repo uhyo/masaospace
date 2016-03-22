@@ -280,6 +280,12 @@
 .game-masao-preview {
   @include subsection;
   margin: 0.8rem 0 0 0;
+  height: 440px;
+  transition: height ease 0.4s;
+}
+.game-masao-preview-closed {
+  height: 0;
+  transition: height ease 0.4s;
 }
 
 //playloglist

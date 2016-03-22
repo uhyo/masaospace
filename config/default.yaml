@@ -126,6 +126,8 @@ game:
   tag:
     maxNumber: 10
     maxLength: 20
+  script:
+    maxLength: 102400
 
 # comments
 comment:

@@ -84,15 +84,15 @@ module.exports = React.createClass({
         var game=this.state.game;
         return <div>
             <MasaoSelector resources={this.state.resources} onSelect={this.masaoSelected} defaultGame={this.state.game}/>
-            {game!=null ? this.preview() : null}
             {this.files()}
+            {game!=null ? this.preview() : null}
             {game!=null ? this.form() : null}
         </div>;
     },
     preview:function(){
         return <section className="game-masao-preview">
             <h1>正男プレビュー</h1>
-            <GameView game={this.state.game} />
+            <GameView allowScripts game={this.state.game} />
         </section>;
     },
     files:function(){
@@ -158,7 +158,7 @@ module.exports = React.createClass({
             submit=<NeedLogin>
                 <p>正男を投稿するにはログインが必要です。</p>
                 <p>ページ上部からログインしても作った正男は失われません。</p>
-                <p>アカウントをお持ちではありませんか？　<a href="/entry/page" target="_blank">新規登録</a>を行なってください。</p>
+                <p>アカウントをお持ちではありませんか？　<a href="/entry/page" target="_blank">新規登録</a>を行ってください。</p>
             </NeedLogin>;
         }else{
             submit= <form className="form">

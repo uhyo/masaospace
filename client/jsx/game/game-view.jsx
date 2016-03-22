@@ -13,7 +13,9 @@ module.exports = React.createClass({
         //プレイログをとってほしい場合
         playlogCallback: React.PropTypes.func,
         //プレイログを再生してほしい場合
-        playlog: React.PropTypes.object
+        playlog: React.PropTypes.object,
+        //スクリプトの実行を許すか否か
+        allowScripts: React.PropTypes.bool
     },
     getInitialState:function(){
         return {
@@ -41,7 +43,7 @@ module.exports = React.createClass({
             }
         }
     },
-    setGame:function(game){
+    setGame:function(game, allowScripts){
         if(this.gameid==null){
             this.gameid=Math.random().toString(36).slice(2);
         }
@@ -70,6 +72,19 @@ module.exports = React.createClass({
                     return true;
                 }
             };
+        }
+        if(this.props.allowScripts===true && game.script!=null){
+            //JavaScriptを許可(scriptがuserJSCallbackを定義する)
+            var userJSCallback = eval(`(function(){
+                                          ${game.script}
+                                          if("undefined"!==typeof userJSCallback){
+                                              return userJSCallback;
+                                          }
+                                       })()`);
+            console.log(typeof userJSCallback);
+            if("function"===typeof userJSCallback){
+                options.userJSCallback = userJSCallback;
+            }
         }
 
         if(game.version==="2.8"){

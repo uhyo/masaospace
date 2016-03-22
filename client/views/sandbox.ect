@@ -31,7 +31,7 @@
           scriptelm2.textContent = script;
           scriptelm.parentNode.insertBefore(scriptelm2, scriptelm.nextSibling);
         </script>
-    <% endif %>
+    <% end %>
     <script>
       new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game", {
         userJSCallback: ("userJSCallback" in this ? userJSCallback : null)

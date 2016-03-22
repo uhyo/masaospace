@@ -118,7 +118,7 @@ gulp.task('batch-tsc',function(){
 
 gulp.task('watch',['watch-jsx','css','tsc'],function(){
     //w
-    gulp.watch("client/css/*.scss",['css']);
+    gulp.watch(["client/css/*.scss", "masao-editor/css/*.scss"],['css']);
     gulp.watch("src/**/*.ts",['tsc']);
 });
 

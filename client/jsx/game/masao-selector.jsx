@@ -412,14 +412,18 @@ var FromEditor = React.createClass({
             testplay=<section className="game-masao-preview">
                 <h1>テストプレイ</h1>
                 <p><span className="clickable" onClick={this.handleCloseTestplay}>テストプレイを終了</span></p>
-                <GameView game={this.state.testgame}/>
+                <GameView allowScripts game={this.state.testgame}/>
             </section>;
+        }else{
+            testplay=<section className="game-masao-preview-closed"/>;
         }
         var defaultGame = null;
         if(this.props.defaultGame){
+            //masao.spaceの形式をmasao-json-formatにする
             defaultGame = masao.format.make({
                 version: masao.categoryToVersion(this.props.defaultGame.version),
-                params: this.props.defaultGame.params
+                params: this.props.defaultGame.params,
+                script: this.props.defaultGame.script
             });
         }
         //ファイル名をアレする
@@ -449,7 +453,7 @@ var FromEditor = React.createClass({
 
         return <div>
             {testplay}
-            <MasaoEditorCore filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultGame={defaultGame} externalCommands={externals}/>
+            <MasaoEditorCore jsWarning filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} filename_chips="/static/images/chips.png" defaultGame={defaultGame} externalCommands={externals}/>
         </div>;
     },
     handleSave(obj){
@@ -458,7 +462,8 @@ var FromEditor = React.createClass({
             id: null,
             version: masao.versionCategory(obj.version),
             params: obj.params,
-            resources: null
+            resources: null,
+            script: obj.script
         };
 
         if("function"===typeof this.props.onSelect){
@@ -478,7 +483,8 @@ var FromEditor = React.createClass({
                 id: null,
                 version: masao.versionCategory(obj.version),
                 params: obj.params,
-                resources: this.props.resources
+                resources: this.props.resources,
+                script: obj.script
             }
         });
     },
