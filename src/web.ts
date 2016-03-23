@@ -70,6 +70,7 @@ export class WebServer{
         });
         this.app.set("views",views);
         this.app.set("view engine","ect");
+        this.app.set("trust proxy",true as any);
         this.app.engine("ect",ectRenderer.render);
         // switching by hostname
         const mainHostname = config.get("service.hostname"),
@@ -78,14 +79,14 @@ export class WebServer{
             //hostnameとsandboxHostnameが一致（テスト環境）する場合はどっちも通す書き方
             if(/^\u002fsandbox\u002f/.test(req.path)){
                 //sandbox用のhostnameはsandboxしか提供しない（セキュリティ的に）
-                if(req.hostname===config.get("service.sandboxHostname")){
+                if(req.hostname===sandboxHostname){
                     next();
                 }else{
                     res.sendStatus(404);
                 }
             }else{
                 //それ以外はsandbox用hostnameでは提供しない
-                if(req.hostname===config.get("service.hostname")){
+                if(req.hostname===mainHostname){
                     next();
                 }else{
                     res.sendStatus(404);
