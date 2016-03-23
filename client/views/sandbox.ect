@@ -39,11 +39,13 @@
         });
         if(location.search!=="?audio_enabled"){
           (function(game,ui){
-            game.__mc.userInit = function(){
-              ui.apply(game.__mc);
-              game.__mc.soundOff();
-              game.__mc.userInit = ui;
-            };
+            if(game.__mc.soundOff){
+              game.__mc.userInit = function(){
+                ui.apply(game.__mc);
+                game.__mc.soundOff();
+                game.__mc.userInit = ui;
+              };
+            }
           })(game, game.__mc.userInit);
         }
         window.addEventListener("message", function(e){
