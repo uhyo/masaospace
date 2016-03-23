@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <title><%= @metadata.title %></title>
+    <style>
+      html, body, p {
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+      }
+      html {
+        overflow: hidden;
+      }
+      #game {
+        width: 512px;
+        height: 320px;
+        overflow-y: hidden;
+      }
+    </style>
+    <script type="text/javascript" src="//<%= @config.service.domain %>/static/CanvasMasao.min.js"></script>
+  </head>
+  <body>
+    <div id="game"></div>
+    <% if @script? : %>
+        <script type="text/javascript" id="script" data-script="<%= @script %>">
+          var scriptelm = document.getElementById('script');
+          var script = scriptelm.getAttribute('data-script');
+          var scriptelm2= document.createElement('script');
+          scriptelm2.textContent = script;
+          scriptelm.parentNode.insertBefore(scriptelm2, scriptelm.nextSibling);
+        </script>
+    <% end %>
+    <script>
+      (function(){
+        var game = new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game", {
+          userJSCallback: ("userJSCallback" in this ? userJSCallback : null)
+        });
+        if(location.search!=="?audio_enabled"){
+          (function(game,ui){
+            game.__mc.userInit = function(){
+              ui.apply(game.__mc);
+              game.__mc.soundOff();
+              game.__mc.userInit = ui;
+            };
+          })(game, game.__mc.userInit);
+        }
+        window.addEventListener("message", function(e){
+          var message = e.data;
+          if(message.message==="audio_enabled" && game.__mc && game.__mc.soundOn){
+            if(message.audio_enabled){
+              game.__mc.soundOn();
+            }else{
+              game.__mc.soundOff();
+            }
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
+
+

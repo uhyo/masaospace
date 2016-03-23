@@ -1,0 +1,12 @@
+{
+    "compilerOptions":{
+        "module":"commonjs",
+        "target":"es5",
+        "outDir":"js/"
+    },
+    "exclude":[
+        "node_modules",
+        "masao-editor",
+        "mc_canvas"
+    ]
+}

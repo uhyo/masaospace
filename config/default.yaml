@@ -60,9 +60,14 @@ webserver:
 # service
 service:
   name: MasaoSpace
-  domain: localhost
-  url: "http://localhost/"
+  url: "http://localhost:8080/"
   mail: "mail@localhost"
+  # host name of service
+  hostname: localhost
+  domain: "localhost:8080"
+  # host name of sandbox
+  sandboxHostname: localhost
+  sandboxDomain: "localhost:8080"
 
 # logging
 log:
@@ -121,6 +126,8 @@ game:
   tag:
     maxNumber: 10
     maxLength: 20
+  script:
+    maxLength: 102400
 
 # comments
 comment:

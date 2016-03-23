@@ -467,8 +467,9 @@ ul.horizontal-menu {
   height: 32px;
   overflow: hidden;
   background-image: url(/static/images/icons.png);
-  background-size: 192px 120px;
+  background-size: 256px 120px;
   background-repeat: no-repeat;
+  vertical-align: middle;
 
   &.icon-home {
     background-position: -32px 0;
@@ -529,5 +530,10 @@ ul.horizontal-menu {
     width: 64px;
     height: 64px;
     background-position: -128px -56px;
+  }
+  &.icon-warning {
+    width: 64px;
+    height: 64px;
+    background-position: -192px -56px;
   }
 }

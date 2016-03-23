@@ -5,6 +5,7 @@ var queryString=require('query-string'),
     path=require('../../scripts/path');
 
 var GameView=require('./game-view.jsx'),
+    SafeGameView=require('./safe-game-view.jsx'),
     UserTile=require('./parts/user-tile.jsx'),
     Datetime=require('../commons/datetime.jsx'),
     RichText=require('../commons/rich-text.jsx'),
@@ -40,7 +41,7 @@ module.exports = React.createClass({
         };
     },
     render:function(){
-        var metadata=this.props.metadata, series=this.props.series, session=this.props.session;
+        const game=this.props.game, metadata=this.props.metadata, series=this.props.series, session=this.props.session;
         var ownertools = null;
         if(session.user===metadata.owner){
             //わたしがオーナーだ！
@@ -151,12 +152,21 @@ module.exports = React.createClass({
         if(this.state.playlog_switch===true && this.state.playlog_playing_data==null){
             playlogCallback = this.handlePlaylog;
         }
+        //GameView
+        var gameView;
+        if(game.script == null){
+            //拡張JSがないものはsandboxに入れずに実行する
+            //TODO jsファイルのやつは？
+            gameView = <GameView game={game} audio_enabled={this.state.audio_switch} playlogCallback={playlogCallback} playlog={this.state.playlog_playing_data}/>;
+        }else{
+            gameView = <SafeGameView game={game} audio_enabled={this.state.audio_switch} config={this.props.config} session={session}/>;
+        }
         return (
             <section>
                 <h1>{metadata.title}</h1>
-                <div className="game-play-container" ref="gamecontainer">
-                    <GameView game={this.props.game} audio_enabled={this.state.audio_switch} playlogCallback={playlogCallback} playlog={this.state.playlog_playing_data}/>
-                </div>
+                <div className="game-play-container" ref="gamecontainer">{
+                    gameView
+                }</div>
                 {playlogArea}
                 <div className="game-play-info">
                     <div className="game-play-info-meta">

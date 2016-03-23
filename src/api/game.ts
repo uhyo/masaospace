@@ -200,6 +200,23 @@ function validateMetadata(metadata:GameEditableMetadata):boolean{
     return true;
 }
 
+function validateScript(script:string):boolean{
+    if(script==null){
+        //nullは許す
+        return true;
+    }
+    //拡張JavaScriptスクリプト
+    if("string"!==typeof script){
+        //スクリプトは文字列
+        return false;
+    }
+    if(script.length > config.get("game.script.maxLength")){
+        //長すぎる
+        return false;
+    }
+    return true;
+}
+
 //正男のデータをバリデーションとかする
 function processMasao(req:express.Request,c:Controller,callback:Callback<{game:GameData;metadata:GameMetadataUpdate}>):void{
     var game:GameData, metadata:GameEditableMetadata;
@@ -223,6 +240,11 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
     //メタ情報のバリデーション
     if(!validateMetadata(metadata)){
         callback("ゲーム情報が不正です。(3)",null);
+        return;
+    }
+    //スクリプト
+    if(!validateScript(game.script)){
+        callback("ゲーム情報が不正です。(6)",null);
         return;
     }
     //リソース情報を除去
@@ -281,7 +303,8 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
                     target: obj.target,
                     id: obj.id
                 };
-            })
+            }),
+            script: game.script || null
         };
         var metadataobj: GameMetadataUpdate = {
             id: null,
