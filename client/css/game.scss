@@ -2,10 +2,38 @@
 @import "./mixins.scss";
 
 .game-view {
+  height: 320px;
   text-align: center;
 
-  & > iframe {
+  //safe-game-view
+  iframe.game-safe-view {
     border: none;
+  }
+
+  .game-safe-view-confirm {
+    width: 512px;
+    height: 320px;
+    margin: 0 auto;
+    padding: 1rem;
+    line-height: 1.2;
+
+    background-color: #5e5e5e;
+    color: white;
+
+    p:first-child {
+      font-size: 1.5rem;
+    }
+    .game-safe-view-confirm-button {
+      background-color: #999999;
+      width: 320px;
+      margin: 2rem auto 0;
+      padding: 1.4rem 0;
+      font-size: 1.2rem;
+      color: #000000;
+      font-weight: bold;
+
+      cursor: pointer;
+    }
   }
 }
 
