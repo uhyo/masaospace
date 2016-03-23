@@ -14,14 +14,38 @@ module.exports = React.createClass({
         audio_enabled: React.PropTypes.bool,
     },
     componentWillReceiveProps(nextProps){
-        this.setState({
-            confirm: false
-        });
+        if(this.props.game!==nextProps.game){
+            //ゲームが変わったら再度確認
+            this.setState({
+                confirm: false
+            });
+        }
+    },
+    componentDidUpdate(prevProps, prevState){
+        if(prevProps.audio_enabled !== this.props.audio_enabled && this.state.confirm===true){
+            //音声の有無が変わったからゲームに通知しないと
+            this.setAudio(this.props.audio_enabled);
+        }
+    },
+    setAudio(audio_enabled){
+        var iframe = React.findDOMNode(this.refs.frame);
+        var w = iframe.contentWindow;
+        if(w==null){
+            return;
+        }
+        //音声のあれの指令を出す
+        w.postMessage({
+            message: "audio_enabled",
+            audio_enabled: audio_enabled
+        }, "*");
+        console.log("yes, audio", audio_enabled);
     },
     getInitialState(){
         return {
             //実行を承諾
-            confirm: false
+            confirm: false,
+            //iframeのURLに使う用のaudio_enablde
+            initial_audio_enabled: true
         };
     },
     render(){
@@ -29,7 +53,8 @@ module.exports = React.createClass({
         var content;
         if(this.state.confirm){
             //了承済
-            content = <iframe className="game-safe-view" sandbox="allow-scripts" src={`//${config.service.sandboxDomain}/sandbox/${game.id}`} width="512" height="320" />;
+            var au = this.state.initial_audio_enabled ? "?audio_enabled" : "";
+            content = <iframe ref="frame" className="game-safe-view" sandbox="allow-scripts" src={`//${config.service.sandboxDomain}/sandbox/${game.id}${au}`} width="512" height="320" />;
         }else{
             //警告を表示
             content = <div className="game-safe-view-confirm" onClick={this.handleClick}>
@@ -53,7 +78,8 @@ module.exports = React.createClass({
     handleClick(e){
         e.preventDefault();
         this.setState({
-            confirm: true
+            confirm: true,
+            initial_audio_enabled: this.props.audio_enabled
         });
     },
 });

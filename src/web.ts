@@ -72,6 +72,8 @@ export class WebServer{
         this.app.set("view engine","ect");
         this.app.engine("ect",ectRenderer.render);
         // switching by hostname
+        const mainHostname = config.get("service.hostname"),
+              sandboxHostname = config.get("service.sandboxHostname");
         this.app.use((req,res,next)=>{
             //hostnameとsandboxHostnameが一致（テスト環境）する場合はどっちも通す書き方
             if(/^\u002fsandbox\u002f/.test(req.path)){
@@ -197,7 +199,7 @@ export class WebServer{
     }
     //front pages
     front(c:Controller):void{
-        var r=makeFrontRouter(c);
+        const r=makeFrontRouter(c);
 
         // pathに対応するページのデータをあげる
         this.app.post("/api/front",(req,res)=>{

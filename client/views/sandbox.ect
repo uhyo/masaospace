@@ -33,9 +33,30 @@
         </script>
     <% end %>
     <script>
-      new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game", {
-        userJSCallback: ("userJSCallback" in this ? userJSCallback : null)
-      });
+      (function(){
+        var game = new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game", {
+          userJSCallback: ("userJSCallback" in this ? userJSCallback : null)
+        });
+        if(location.search!=="?audio_enabled"){
+          (function(game,ui){
+            game.__mc.userInit = function(){
+              ui.apply(game.__mc);
+              game.__mc.soundOff();
+              game.__mc.userInit = ui;
+            };
+          })(game, game.__mc.userInit);
+        }
+        window.addEventListener("message", function(e){
+          var message = e.data;
+          if(message.message==="audio_enabled" && game.__mc && game.__mc.soundOn){
+            if(message.audio_enabled){
+              game.__mc.soundOn();
+            }else{
+              game.__mc.soundOff();
+            }
+          }
+        });
+      })();
     </script>
   </body>
 </html>
