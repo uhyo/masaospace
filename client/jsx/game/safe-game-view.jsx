@@ -54,7 +54,7 @@ module.exports = React.createClass({
         if(this.state.confirm){
             //了承済
             var au = this.state.initial_audio_enabled ? "?audio_enabled" : "";
-            content = <iframe ref="frame" className="game-safe-view" sandbox="allow-scripts" src={`//${config.service.sandboxDomain}/sandbox/${game.id}${au}`} width="512" height="320" />;
+            content = <iframe ref="frame" className="game-safe-view" sandbox="allow-scripts" src={`//${config.service.sandboxDomain}/sandbox/${game.id}${au}`} width="512" height="356" />;
         }else{
             //警告を表示
             content = <div className="game-safe-view-confirm" onClick={this.handleClick}>
