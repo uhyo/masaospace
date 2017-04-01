@@ -1,10 +1,11 @@
 ///<reference path="./data.d.ts" />
-import Controller=require('../controllers/index');
+import Controller from '../controllers/index';
 
-import config=require('config');
 import logger=require('../logger');
 
-import {outUserData} from '../util';
+import {
+    outUserData,
+} from '../util';
 
 export default function(c:Controller,r:_Router):void{
     //about game
@@ -13,10 +14,13 @@ export default function(c:Controller,r:_Router):void{
     r.add("/play/:number",(obj,callback:Callback<View>)=>{
         var id=parseInt(obj[":number"]);
         //results
-        var game=null, metadata=null, owner=null, series=null;
+        var game: any =null;
+        var metadata: any = null;
+        var owner: any = null;
+        var series: any = null;
         var errend=false;
         //結果を収集
-        var next=(err)=>{
+        var next=(err: any)=>{
             if(errend===true){
                 return;
             }
@@ -31,7 +35,7 @@ export default function(c:Controller,r:_Router):void{
                         data: null
                     });
                 }else{
-                    callback(err,null);
+                    callback(err, null);
                 }
                 return;
             }
@@ -78,7 +82,7 @@ export default function(c:Controller,r:_Router):void{
             c.user.user.findOneUser({
                 id:obj.metadata.owner
             },(err,usr)=>{
-                if(err){
+                if(err || usr == null){
                     logger.error(err);
                     next(err);
                     return;
@@ -91,7 +95,7 @@ export default function(c:Controller,r:_Router):void{
         });
         //シリーズ情報を検索
         c.series.findSeries({games: id},(err,docs)=>{
-            if(err){
+            if(err || docs == null){
                 next(err);
                 return;
             }
@@ -126,7 +130,7 @@ export default function(c:Controller,r:_Router):void{
             id,
             limit: 1
         },(err,docs)=>{
-            if(err){
+            if(err || docs == null){
                 callback(err,null);
                 return;
             }
@@ -141,9 +145,10 @@ export default function(c:Controller,r:_Router):void{
                 });
                 return;
             }
-            var metadatas=null, owner=null;
+            var metadatas: any =null;
+            var owner: any = null;
             var errend=false;
-            var next=(err)=>{
+            var next=(err: any)=>{
                 if(errend===true){
                     return;
                 }
@@ -169,7 +174,7 @@ export default function(c:Controller,r:_Router):void{
             c.game.findGames({
                 ids: s.games
             },(err,games)=>{
-                if(err){
+                if(err || games == null){
                     callback(err,null);
                     return;
                 }
@@ -188,7 +193,7 @@ export default function(c:Controller,r:_Router):void{
             c.user.user.findOneUser({
                 id:s.owner
             },(err,usr)=>{
-                if(err){
+                if(err || usr == null){
                     logger.error(err);
                     next(err);
                     return;
@@ -214,7 +219,7 @@ export default function(c:Controller,r:_Router):void{
     });
 
     /////game管理
-    r.add("/game/new",(obj,callback:Callback<View>)=>{
+    r.add("/game/new",(_,callback:Callback<View>)=>{
         //新しいゲームを投稿
         callback(null,{
             title: "新しい正男を投稿",

@@ -2,12 +2,10 @@
 import express=require('express');
 import multer=require('multer');
 
-import Controller=require('../controllers/index');
+import Controller from '../controllers/index';
 
 
 import masao=require('../../lib/masao');
-import logger=require('../logger');
-import validator=require('../validator');
 
 import config=require('config');
 
@@ -16,7 +14,7 @@ import util=require('../util');
 import {File, FileData, FileQuery} from '../data';
 
 class C{
-    route(router:express._Router,c:Controller):void{
+    route(router:express.Router, c:Controller):void{
         //ファイルをアップロード
         //IN file: ファイル
         //IN name: オリジナルのファイル名
@@ -54,9 +52,9 @@ class C{
 
             //ファイルの合計サイズが制限を超えないか確かめる
             c.file.sumFileSize({
-                owner: req.session.user
+                owner: req.session!.user
             },(err,size)=>{
-                if(err){
+                if(err || size == null){
                     res.json({
                         error: String(err)
                     });
@@ -72,7 +70,7 @@ class C{
                 }
                 var fd:FileData = {
                     type: req.body.type,
-                    owner: req.session.user,
+                    owner: req.session!.user,
                     name: req.body.name,
                     usage: req.body.usage,
                     description: req.body.description,
@@ -81,7 +79,7 @@ class C{
                 };
 
                 c.file.addFile(fd, file.path, (err,f)=>{
-                    if(err){
+                    if(err || f == null){
                         res.json({
                             error: String(err)
                         });
@@ -113,8 +111,8 @@ class C{
                 return;
             }
             //まずファイルを取得
-            c.file.getFiles({id: req.body.id, owner: req.session.user},(err,files)=>{
-                if(err){
+            c.file.getFiles({id: req.body.id, owner: req.session!.user},(err,files)=>{
+                if(err || files == null){
                     res.json({
                         error: String(err)
                     });
@@ -152,8 +150,8 @@ class C{
         router.post("/del",util.apim.useUser,(req,res)=>{
             var id=req.body.id;
             //まずファイルが存在するか確認
-            c.file.getFiles({id: id,owner:req.session.user},(err,files)=>{
-                if(err){
+            c.file.getFiles({id: id,owner:req.session!.user},(err,files)=>{
+                if(err || files == null){
                     res.json({
                         error: String(err)
                     });
@@ -171,9 +169,9 @@ class C{
                         //他のファイルで置き換える
                         c.file.getFiles({
                             id: req.body.alternativeFile,
-                            owner: req.session.user
+                            owner: req.session!.user
                         },(err,files)=>{
-                            if(err){
+                            if(err || files == null){
                                 res.json({
                                     error: String(err)
                                 });
@@ -190,7 +188,7 @@ class C{
                         });
                     } : (callback:Cont)=>{
                         //ファイルをデフォルトで置き換える
-                        c.game.replaceResource(id,null,callback);
+                        c.game.replaceResource(id, null, callback);
                     })(callback);
                 } : (callback:Cont)=>{
                     callback(null);
@@ -203,7 +201,7 @@ class C{
                     }
                     //このファイルを使うゲームがないか確認
                     c.game.countResourceUsingGames(id,(err,num)=>{
-                        if(err){
+                        if(err || num == null){
                             res.json({
                                 error: String(err)
                             });

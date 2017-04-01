@@ -1,10 +1,14 @@
 ///<reference path="./node.d.ts" />
 
 //各種のデータを定義
-import mum=require('my-user-mongo');
+import {
+    User,
+} from 'my-user-mongo';
 
 //ユーザー
-export import User=mum.User;
+export {
+    User,
+};
 
 //一般に見せられるユーザー情報
 export interface UserOpenData{
@@ -15,7 +19,7 @@ export interface UserOpenData{
     //自己紹介
     profile:string;
     //アイコン（ファイルID）
-    icon:string;
+    icon:string | null;
     //URL
     url:string;
 }
@@ -38,15 +42,9 @@ export interface UserOneQuery{
 }
 
 //セッション
-export interface Session extends UserOpenData{
+export interface Session extends Express.Session, UserOpenData{
     //user id. ログインしていなかったらnull
-    user:string;
-
-    //methods provided by express-session
-    regenerate(callback:Cont):void;
-    destroy(callback:Cont):void;
-    reload(callback:Cont):void;
-    save(callback:Cont):void;
+    user:string | null;
 }
 
 
@@ -148,7 +146,7 @@ export interface GameData{
         id:string;
     }>;
     //外部スクリプト
-    script:string;
+    script:string | null;
 }
 //過去のデータ
 export interface GamePastData{
@@ -185,7 +183,7 @@ export interface Comment{
     //内容
     comment:string;
     //添付するプレイログのID(nullable)
-    playlog:string;
+    playlog:string | null;
     //プレイログの情報
     cleared:boolean;
     stage:number;

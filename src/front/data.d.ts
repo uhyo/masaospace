@@ -1,7 +1,7 @@
 interface View{
     status?:number;
-    title:string;
-    page:string;
+    title:string | null;
+    page:string | null;
     data:any;
 }
 

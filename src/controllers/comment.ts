@@ -27,24 +27,24 @@ export default class CommentController{
                 id:1
             },{
                 unique: true
-            },d.intercept((result)=>{
+            },d.intercept(()=>{
                 coll.createIndex({
                     game:1,
                     id:-1
                 },{
-                },d.intercept((result)=>{
+                },d.intercept(()=>{
                     coll.createIndex({
                         game:1,
                         score:-1,
                         cleared:-1,
                         id:1
                     },{
-                    },d.intercept((result)=>{
+                    },d.intercept(()=>{
                         coll.createIndex({
                             userid:1,
                             id:-1
                         },{
-                        },d.intercept((result)=>{
+                        },d.intercept(()=>{
                             //redisをあれする
                             this.initRedis(callback);
                         }));
@@ -57,11 +57,15 @@ export default class CommentController{
     newComment(comment:Comment,callback:Callback<number>):void{
         this.getCollection((err,coll)=>{
             //コメントIDをRedisから発行
+            if (err != null || coll == null){
+                callback(err, null);
+                return;
+            }
             var r=this.db.redis.getClient();
-            r.incr(redis_nextid_key, (err,result)=>{
+            r.incr(redis_nextid_key, (err: any, result: number)=>{
                 if(err){
                     logger.error(err);
-                    callback(err,null);
+                    callback(err, null);
                     return;
                 }
                 //newid番目を確保した
@@ -69,8 +73,8 @@ export default class CommentController{
                 comment.id=newid;
 
                 //DBに保存
-                coll.insertOne(comment,(err,result)=>{
-                    if(err){
+                coll.insertOne(comment,(err)=>{
+                    if(err != null){
                         logger.warning("Comment id: "+newid+" is missing");
                         logger.error(err);
                         callback(err,null);
@@ -85,7 +89,7 @@ export default class CommentController{
     //コメントを探す
     findComments(query:CommentQuery,callback:Callback<Array<Comment>>):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -134,7 +138,7 @@ export default class CommentController{
                     nextid=doc.id+1;
                 }
                 //redisに保存
-                r.set(redis_nextid_key, String(nextid), d.intercept((result)=>{
+                r.set(redis_nextid_key, String(nextid), d.intercept(()=>{
                     //OK
                     callback(null);
                 }));
@@ -147,6 +151,7 @@ export default class CommentController{
             if(err){
                 logger.critical(err);
                 callback(err,null);
+                return;
             }
             callback(null,col);
         });

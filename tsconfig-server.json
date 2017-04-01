@@ -13,10 +13,10 @@
     "strictNullChecks": true,
     "removeComments": true,
     "module":"commonjs",
-    "target":"es5"
+    "target":"es5",
+    "outDir": "dist-server/"
   },
-  "exclude":[
-    "node_modules",
-    "mc_canvas"
+  "include": [
+    "src/**/*.ts"
   ]
 }

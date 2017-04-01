@@ -1,7 +1,7 @@
 ///<reference path="../node.d.ts" />
 ///<reference path="./data.d.ts" />
 
-import Controller=require('../controllers/index');
+import Controller from '../controllers/index';
 import Router=require('my-router');
 //make front views
 

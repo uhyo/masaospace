@@ -13,13 +13,13 @@ import CommentController from './comment';
 import SeriesController from './series';
 import PlaylogController from './playlog';
 import MailController from './mail';
-import mum=require('my-user-mongo');
+import * as mum from 'my-user-mongo';
 
 import {addDailyJob} from '../util';
 
 
 // 各種の操作
-class Controller{
+export default class Controller{
     public user:mum.Manager;
     public ticket:TicketController;
     public file:FileController;
@@ -51,7 +51,7 @@ class Controller{
         });
         this.ticket=new TicketController(db);
         this.file  =new FileController(db);
-        this.session= new SessionController(db,this.user);
+        this.session= new SessionController(this.user);
         this.game  =new GameController(db);
         this.comment= new CommentController(db);
         this.series=new SeriesController(db);
@@ -94,8 +94,8 @@ class Controller{
     //ユーザー関連のコレクションの初期化
     private initUser(callback:Cont):void{
         var d=domain.create();
-        d.on("error",(err)=>{
-            logger.critical(err);
+        d.on("error", (err: Error)=>{
+            logger.critical(err.toString());
             callback(err);
         });
         this.db.mongo.collection(config.get("mongodb.collection.user"),d.intercept((coll)=>{
@@ -104,22 +104,22 @@ class Controller{
                 id:1
             },{
                 unique:true
-            },d.intercept((result)=>{
+            },d.intercept(()=>{
                 coll.createIndex({
                     "data.screen_name_lower":1
                 },{
                     unique:true
-                },d.intercept((result)=>{
+                },d.intercept(()=>{
                     coll.createIndex({
                         "data.mail":1
                     },{
                         unique:true
-                    },d.intercept((result)=>{
+                    },d.intercept(()=>{
                         coll.createIndex({
                             "data.activated":1,
                             "data.created":1
                         },{
-                        },d.intercept((result)=>{
+                        },d.intercept(()=>{
                             callback(null);
 
                         }));
@@ -130,7 +130,7 @@ class Controller{
         //たまにいらないデータをアレする
         addDailyJob(()=>{
             this.db.mongo.collection(config.get("mongodb.collection.user"),(err,coll)=>{
-                if(err){
+                if(err || coll == null){
                     logger.error(err);
                     return;
                 }
@@ -143,7 +143,7 @@ class Controller{
                     }
                 },(err)=>{
                     if(err){
-                        logger.error(err);
+                        logger.error(err.toString());
 
                     }
                 });
@@ -158,5 +158,3 @@ class Controller{
         return this.db.redis.getClient();
     }
 }
-
-export = Controller;

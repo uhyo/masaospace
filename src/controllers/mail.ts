@@ -115,10 +115,10 @@ export default class MailController{
             text: this.modifyText(mail.text),
             messageId: this.generateMessageId(mail.type)
         };
-        this.transporter.sendMail(m,callback);
+        this.transporter.sendMail(m,callback || (()=>{}));
         //メールをDBに保存
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 logger.error(err);
                 return;
             }

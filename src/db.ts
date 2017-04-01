@@ -3,10 +3,9 @@ import mongodb=require('mongodb');
 import redis=require('redis');
 
 import config=require('config');
-import logger=require('./logger');
 
 export import Collection=mongodb.Collection;
-export import ObjectId=mongodb.ObjectId;
+export import ObjectID=mongodb.ObjectID;
 
 //DBアクセス
 export class DBAccess{
@@ -68,9 +67,9 @@ export class Mongo{
     getClient():mongodb.Db{
         return this.db;
     }
-    collection(name:string,callback:(error:any,collection:mongodb.Collection)=>void):void{
+    collection(name:string,callback:(error:any,collection:mongodb.Collection | null)=>void):void{
         if(this.connected!==true || !this.db){
-            callback(new Error("Not connected to DB."),null);
+            callback(new Error("Not connected to DB."), null);
             return;
         }
         this.db.collection(name,callback);
@@ -93,7 +92,7 @@ export class Redis{
             return;
         }
         this.client=redis.createClient(config.get("redis.port"),config.get("redis.host"));
-        this.client.select(config.get("redis.db"),(error:any,result)=>{
+        this.client.select(config.get("redis.db"),(error:any)=>{
             this.connected=true;
             callback(error);
         });

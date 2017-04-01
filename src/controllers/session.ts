@@ -1,13 +1,16 @@
 ///<reference path="../node.d.ts" />
 
-import db=require('../db');
+// import db=require('../db');
 import logger=require('../logger');
 
-import {User, UserOneQuery, Session} from '../data';
+import {
+    UserOneQuery,
+    Session,
+} from '../data';
 import mum=require('my-user-mongo');
 
 export default class SessionController{
-    constructor(private db:db.DBAccess,private user:mum.Manager){
+    constructor(/* private db:db.DBAccess,*/private user:mum.Manager){
     }
     init(callback:Cont):void{
         callback(null);
@@ -28,7 +31,7 @@ export default class SessionController{
         }
         if(flag===false){
             logger.warning("Invalid login query");
-            callback("Invalid login query",false);
+            callback(new Error("Invalid login query"),false);
             return;
         }
         this.user.user.findOneUser(query,(err,u)=>{
@@ -67,8 +70,9 @@ export default class SessionController{
     logout(session:Session,callback:Cont):void{
         //log out!!!!!!!!!
         session.user=null;
-        session.screen_name=null;
-        session.name=null;
+        // FIXME
+        // session.screen_name=null;
+        // session.name=null;
         session.save((err)=>{
             if(err){
                 logger.error(err);

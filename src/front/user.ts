@@ -1,14 +1,13 @@
 ///<reference path="./data.d.ts" />
-import Controller=require('../controllers/index');
+import Controller from '../controllers/index';
 
-import config=require('config');
 import logger=require('../logger');
 
 export default function(c:Controller,r:_Router):void{
     //about user
 
     //new entry
-    r.add("/entry/page",(obj,callback:Callback<View>)=>{
+    r.add("/entry/page",(_,callback:Callback<View>)=>{
         callback(null,{
             title: "新規登録",
             page:"user.entry",
@@ -31,7 +30,7 @@ export default function(c:Controller,r:_Router):void{
     });
 
     //reset password
-    r.add("/entry/reset",(obj,callback:Callback<View>)=>{
+    r.add("/entry/reset",(_,callback:Callback<View>)=>{
         callback(null,{
             title: "パスワード再発行",
             page:"user.reset",
@@ -41,7 +40,7 @@ export default function(c:Controller,r:_Router):void{
     });
 
     //my page
-    r.add("/my",(obj,callback:Callback<View>)=>{
+    r.add("/my",(_,callback:Callback<View>)=>{
         callback(null,{
             title: "マイページ",
             page:"user.my",
@@ -91,7 +90,7 @@ export default function(c:Controller,r:_Router):void{
         });
     });
     //account setting
-    r.add("/my/account",(obj,callback:Callback<View>)=>{
+    r.add("/my/account",(_,callback:Callback<View>)=>{
         callback(null,{
             title:"アカウント設定",
             page:"user.account",

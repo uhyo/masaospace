@@ -1,19 +1,15 @@
 ///<reference path="../node.d.ts" />
 import express=require('express');
-import Controller=require('../controllers/index');
-
-import masao=require('../../lib/masao');
-import logger=require('../logger');
-import validator=require('../validator');
-
-import config=require('config');
+import Controller from '../controllers/index';
 
 import util=require('../util');
 
-import {Series, SeriesQuery} from '../data';
+import {
+    SeriesQuery,
+} from '../data';
 
 class C{
-    route(router:express._Router,c:Controller):void{
+    route(router:express.Router,c:Controller):void{
         // シリーズを作成する
         // IN name: シリーズ名
         // IN description: 説明
@@ -28,8 +24,8 @@ class C{
 
             var now=new Date();
             c.series.newSeries({
-                id: null,
-                owner: req.session.user,
+                id: Number.NaN,
+                owner: req.session!.user,
                 name: req.body.name,
                 description: req.body.description,
                 games: [],
@@ -65,9 +61,9 @@ class C{
             //該当のシリーズを探す
             c.series.findSeries({
                 id: parseInt(req.body.id),
-                owner: req.session.user,
+                owner: req.session!.user,
             },(err,docs)=>{
-                if(err){
+                if(err || docs == null){
                     res.json({
                         error: String(err)
                     });
@@ -81,14 +77,14 @@ class C{
                 }
                 var series=docs[0];
                 //ゲームを探す
-                var gameids=req.body.games.split(",").map((id)=>{
+                var gameids=req.body.games.split(",").map((id: string)=>{
                     return Number(id);
                 });
                 c.game.findGames({
-                    owner: req.session.user,
+                    owner: req.session!.user,
                     ids: gameids
                 },(err,metadatas)=>{
-                    if(err){
+                    if(err || metadatas == null){
                         res.json({
                             error: String(err)
                         });
@@ -153,7 +149,7 @@ class C{
                 limit:1
             };
             c.series.findSeries(qu,(err,docs)=>{
-                if(err){
+                if(err || docs == null){
                     res.json({
                         error: String(err)
                     });

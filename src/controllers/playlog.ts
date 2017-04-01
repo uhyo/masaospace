@@ -24,22 +24,22 @@ export default class PlaylogController{
                 id:1
             },{
                 unique:true
-            },d.intercept((result)=>{
+            },d.intercept(()=>{
                 coll.createIndex({
                     owner:1,
                     game:1
                 },{
-                },d.intercept((result)=>{
+                },d.intercept(()=>{
                     coll.createIndex({
                         game:1,
                         score:-1
                     },{
-                    },d.intercept((result)=>{
+                    },d.intercept(()=>{
                         coll.createIndex({
                             owner:1,
                             created:-1
                         },{
-                        },d.intercept((result)=>{
+                        },d.intercept(()=>{
                             d.exit();
                             callback(null);
                         }));
@@ -52,14 +52,14 @@ export default class PlaylogController{
     //playlog.idとplaylog.dataはnullでいいという感じがする
     newPlaylog(game:GameData&{_id:any},playlog:NewPlaylog,callback:Callback<Playlog>):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
             //まずデータをBufferにする
             let buf=new Buffer(playlog.dataBase64,"base64");
             //データが妥当か調べる
-            let playlogobj;
+            let playlogobj: any;
             try{
                 playlogobj = masao.playlog.parse(buf);
             }catch(e){
@@ -90,7 +90,7 @@ export default class PlaylogController{
                     data: buff
                 };
                 //DBに保存
-                coll.insertOne(pl,(err,result)=>{
+                coll.insertOne(pl,(err)=>{
                     if(err){
                         logger.error(err);
                         callback(err,null);
@@ -104,7 +104,7 @@ export default class PlaylogController{
     }
     findPlaylogs(query:PlaylogQuery,callback:Callback<Array<Playlog>>):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -143,7 +143,7 @@ export default class PlaylogController{
         [id:string]:Playlog;
     }>):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }

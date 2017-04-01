@@ -6,16 +6,11 @@ client/images/
 client/sounds/
 
 # build results
-js/
 dist/
+dist-server/
 batch/**/*.js
 
 #temprary files
-src/**/*.js
 .sass-cache
 client/css/*.css
 client/css/*.css.map
-
-#editor temporary files
-*.swp
-*.swo

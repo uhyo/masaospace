@@ -12,7 +12,6 @@ var uglifyify=require('uglifyify');
 var watchify=require('watchify');
 var uglify=require('gulp-uglify');
 var globule=require('globule');
-var typescript=require('gulp-typescript');
 var del=require('del');
 var changed=require('gulp-changed');
 var sass=require('gulp-sass');
@@ -20,15 +19,20 @@ var rename=require('gulp-rename');
 var replace=require('gulp-replace');
 var concat=require('gulp-concat');
 
-gulp.task('tsc',function(){
-    return gulp.src("src/**/*.ts")
-    .pipe(typescript({
-        module:"commonjs",
-        target:"es5",
-        typescript:require('typescript')
-    }))
+const gulpTs = require('gulp-typescript');
+
+// TypeScript projects
+const serverTsProject = gulpTs.createProject('tsconfig-server.json');
+
+gulp.task('tsc', ()=>{
+    return serverTsProject.src()
+    .pipe(serverTsProject())
     .js
-    .pipe(gulp.dest("js/"));
+    .pipe(gulp.dest("dist-server/"));
+});
+
+gulp.task('watch-tsc', ['tsc'], ()=>{
+    gulp.watch('src/**/*.ts', ['tsc']);
 });
 
 gulp.task('jsx',function(){
@@ -116,10 +120,9 @@ gulp.task('batch-tsc',function(){
     .pipe(gulp.dest("batch/"));
 });
 
-gulp.task('watch',['watch-jsx','css','tsc'],function(){
+gulp.task('watch',['watch-jsx','css','watch-tsc'],function(){
     //w
     gulp.watch(["client/css/*.scss", "masao-editor/css/*.scss"],['css']);
-    gulp.watch("src/**/*.ts",['tsc']);
 });
 
 gulp.task('client',['jsx','css']);

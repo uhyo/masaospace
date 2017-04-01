@@ -5,7 +5,6 @@ import config=require('config');
 import fs=require('fs');
 import path=require('path');
 import url=require('url');
-import https=require('https');
 import express=require('express');
 import extend=require('extend');
 
@@ -25,12 +24,11 @@ import {writeUserInfo} from './util';
 import {makeFrontRouter} from './front/index';
 
 import logger=require('./logger');
-import db=require('./db');
 import validator=require('./validator');
 
 import masao=require('../lib/masao');
 
-import Controller=require('./controllers/index');
+import Controller from './controllers/index';
 
 nodejsx.install({
     harmony:true
@@ -50,13 +48,14 @@ export class WebServer{
         //open web server
         this.app=express();
         // set some methods
-        this.app.request.validationErrorResponse=function(res){
+        this.app.request.validationErrorResponse=function(this: express.Request, res: express.Response){
             /* response with validation errors */
             var e=this._validationErrors;
             if(e.length>0){
+                // FIXME
                 res.json({
                     //TODO
-                    error:JSON.stringify(e)
+                    error:JSON.stringify(e),
                 });
                 return true;
             }
@@ -146,7 +145,7 @@ export class WebServer{
         this.app.use(expressSession(sessoption));
         this.app.use(csurf());
         //error handling
-        this.app.use((err,req,res,next)=>{
+        this.app.use((err: Error,req: express.Request,res: express.Response,_next: any)=>{
             if(req.xhr){
                 //JSON error response
                 logger.error(err);
@@ -167,7 +166,6 @@ export class WebServer{
     }
     //route apis
     route(c:Controller):void{
-        var t=this;
         var apiroot=express.Router();
         // api/を全部読み込む
         var apipath=path.resolve(__dirname,"api");
@@ -175,7 +173,7 @@ export class WebServer{
 
         this.app.use("/api",apiroot);
 
-        function readDir(dirpath:string,router:express._Router):void{
+        function readDir(dirpath:string,router:express.IRouter<any>):void{
             //ディレクトリを読む
             var files:Array<string>=fs.readdirSync(dirpath);
             for(var i=0;i<files.length;i++){
@@ -183,7 +181,8 @@ export class WebServer{
                 var st=fs.statSync(filepath);
                 if(st.isDirectory()){
                     //open subdirectory
-                    var subroute=router.route(files[i]);
+                    var subroute = express.Router();
+                    router.use(files[i], subroute);
                     readDir(filepath,subroute);
                 }else if(path.extname(files[i])===".js"){
                     //js file
@@ -212,7 +211,7 @@ export class WebServer{
             }
             var u=url.parse(req.body.path,true);
             //?があるかも
-            var re=r.route(u.pathname);
+            var re=r.route(u.pathname || '');
             if(re==null){
                 res.json({
                     error: "page does not exist"
@@ -220,7 +219,7 @@ export class WebServer{
                 return;
             }
             re.result(extend({session: req.session},u.query,re.params),(err,view)=>{
-                if(err){
+                if(err || view == null){
                     res.json({
                         error: String(err)
                     });
@@ -308,7 +307,7 @@ export class WebServer{
             if(func==null){
                 /* 404 */
                 res.status(404);
-                func=(obj,callback)=>{
+                func=(_,callback)=>{
                     callback(null,{
                         //TODO
                         title: "Page not found",
@@ -318,7 +317,7 @@ export class WebServer{
                 };
             }
             func(params,(err,view)=>{
-                if(err){
+                if(err || view == null){
                     //throw err;
                     res.send(String(err));
                     return;
@@ -335,7 +334,7 @@ export class WebServer{
                         return;
                     }
                 }
-                var session = req.session.user!=null ? writeUserInfo(req.session) : null;
+                var session = req.session!.user!=null ? writeUserInfo(req.session! as Session) : null;
                 var initialData={
                     config: this.clientConfig,
                     page: view.page,
@@ -379,7 +378,7 @@ function makeClientSession(session:Session):any{
 }
 
 //タイトル
-function pageTitle(title:string):string{
+function pageTitle(title:string | null):string{
     if(title){
         return title+" | "+config.get("service.name");
     }else{

@@ -6,13 +6,19 @@ import db=require('../db');
 import logger=require('../logger');
 import config=require('config');
 
-import extend=require('extend');
+import {
+    GameMetadataUpdate,
+    GameOpenMetadata,
+    GameMetadata,
+    GameOpenMetadataWithOwnerData,
+    GameData,
+    GamePastData,
+    GameQuery,
+} from '../data';
 
-import {UserOpenData, GameEditableMetadata, GameMetadataUpdate, GameOpenMetadata, GameMetadata, GameOpenMetadataWithOwnerData, GameData, GamePastData, GameQuery} from '../data';
-
-import util=require('../util');
-
-import {addUserData} from './util';
+import {
+    addUserData,
+} from './util';
 
 //constants
 const redis_nextid_key:string = "game:nextid";
@@ -35,46 +41,46 @@ export default class GameController{
                 id:1
             },{
                 unique:true
-            },d.intercept((result)=>{
+            },d.intercept(()=>{
                 coll.createIndex({
                     "resources.id":1
                 },{
-                },d.intercept((result)=>{
+                },d.intercept(()=>{
                     //gamedata index
                     this.getMetadataCollection(d.intercept((coll)=>{
                         coll.createIndex({
                             id:1
                         },{
                             unique:1
-                        },d.intercept((result)=>{
+                        },d.intercept(()=>{
                             coll.createIndex({
                                 owner:1,
                                 created:1
                             },{
-                            },d.intercept((result)=>{
+                            },d.intercept(()=>{
                                 coll.createIndex({
                                     hidden:1,
                                     created:1
                                 },{
-                                },d.intercept((result)=>{
+                                },d.intercept(()=>{
                                     coll.createIndex({
                                         hidden: 1,
                                         tags: 1
                                     },{
-                                    },d.intercept((result)=>{
+                                    },d.intercept(()=>{
                                         coll.createIndex({
                                             hidden: 1,
                                             owner: 1,
                                             created: 1
                                         },{
-                                        },d.intercept((result)=>{
+                                        },d.intercept(()=>{
                                             this.getPastCollection(d.intercept((coll)=>{
                                                 //gamepast index
                                                 coll.createIndex({
                                                     id:1,
                                                     created:-1
                                                 },{
-                                                },d.intercept((result)=>{
+                                                },d.intercept(()=>{
                                                     this.initRedis(callback);
                                                 }));
                                             }));
@@ -93,14 +99,14 @@ export default class GameController{
             var now=new Date(), h12=now.getHours()-12;
             var key=redis_tagscore_prefix+(Math.abs(h12)<3 ? "0" : "1");
             this.db.redis.getClient().del(key);
-        },null,true,"Asia/Tokyo");
+        },void 0,true,"Asia/Tokyo");
     }
     //Redisのデータを初期化
     private initRedis(callback:Cont):void{
         var r=this.db.redis.getClient();
         //次のゲーム番号を取得する
         this.getMetadataCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err);
                 return;
             }
@@ -122,7 +128,7 @@ export default class GameController{
                     nextid=doc.id+1;
                 }
                 //Redisに保存
-                r.set(redis_nextid_key, String(nextid), (err,result)=>{
+                r.set(redis_nextid_key, String(nextid), (err)=>{
                     if(err){
                         logger.error(err);
                         callback(err);
@@ -158,14 +164,14 @@ export default class GameController{
         var _this=this, game:GameData&{_id:any}, metadata:GameMetadata&{_id:any}, errend=false;
         //並列な感じで読み込む
         this.getMetadataCollection((err,collm)=>{
-            if(err){
+            if(err || collm == null){
                 if(!errend){
                     errend=true;
                     callback(err,null);
                 }
                 return;
             }
-            collm.findOne({id:id},(err,doc)=>{
+            collm.findOne({id:id},(_,doc)=>{
                 if(doc==null){
                     //ゲームがない
                     if(!errend){
@@ -179,14 +185,14 @@ export default class GameController{
             });
         });
         this.getGameCollection((err,collg)=>{
-            if(err){
+            if(err || collg == null){
                if(!errend){
                     errend=true;
                     callback(err,null);
                 }
                 return;
             }
-            collg.findOne({id:id},(err,doc)=>{
+            collg.findOne({id:id},(_,doc)=>{
                 if(doc==null){
                     //ゲームがない
                     if(!errend){
@@ -208,7 +214,7 @@ export default class GameController{
                 //データ揃った
                 if(playcount && metadata.hidden!==true){
                     _this.addPlayCount(metadata,(err,playcount)=>{
-                        if(err){
+                        if(err || playcount == null){
                             callback(err,null);
                             return;
                         }
@@ -233,18 +239,18 @@ export default class GameController{
     //新しいゲームを作成(callbackでゲームIDを返す）
     newGame(game:GameData,metadata:GameMetadataUpdate,callback:Callback<number>):void{
         this.getGameCollection((err,collg)=>{
-            if(err){
+            if(err || collg == null){
                 callback(err,null);
                 return;
             }
             this.getMetadataCollection((err,collm)=>{
-                if(err){
+                if(err || collm == null){
                     callback(err,null);
                     return;
                 }
                 var r=this.db.redis.getClient();
                 //ゲームIDを発行
-                r.incr(redis_nextid_key,(err,result)=>{
+                r.incr(redis_nextid_key,(err: any,result: number)=>{
                     if(err){
                         logger.error(err);
                         callback(err,null);
@@ -266,21 +272,21 @@ export default class GameController{
                         updated: now
                     };
                     //DBに保存
-                    collg.insertOne(game,(err,result)=>{
+                    collg.insertOne(game,(err)=>{
                         if(err){
                             logger.warning("Game id: "+newid+" is missing");
                             logger.error(err);
                             callback(err,null);
                             return;
                         }
-                        collm.insertOne(metadataobj,(err,result)=>{
+                        collm.insertOne(metadataobj,(err)=>{
                             if(err){
                                 //やばい！！！！！！！gameだけ入った！！！！！！！！
                                 logger.warning("Game id: "+newid+" is missing");
                                 logger.error(err);
                                 collg.deleteOne({
                                     id: newid
-                                },(err2,result)=>{
+                                },(err2)=>{
                                     if(err2){
                                         //もう知らん！！！！！
                                         logger.alert("Failed to remove gamedata id:"+newid);
@@ -306,12 +312,12 @@ export default class GameController{
     editGame(id:number,owner:string,game:GameData,metadata:GameMetadataUpdate,callback:Cont):void{
         game.id=metadata.id=id;
         this.getGameCollection((err,collg)=>{
-            if(err){
+            if(err || collg == null){
                 callback(err);
                 return;
             }
             this.getMetadataCollection((err,collm)=>{
-                if(err){
+                if(err || collm == null){
                     callback(err);
                     return;
                 }
@@ -358,24 +364,24 @@ export default class GameController{
                         };
                         //入れる
                         this.getPastCollection((err,collp)=>{
-                            if(err){
+                            if(err || collp == null){
                                 callback(err);
                                 return;
                             }
-                            collp.insertOne(pastdata,(err,result)=>{
+                            collp.insertOne(pastdata,(err)=>{
                                 if(err){
                                     logger.error(err);
                                     callback(err);
                                     return;
                                 }
                                 //そして本命の変更
-                                collg.replaceOne({id},game,(err,result)=>{
+                                collg.replaceOne({id},game,(err)=>{
                                     if(err){
                                         logger.error(err);
                                         callback(err);
                                         return;
                                     }
-                                    collm.replaceOne({id},newMetadata,(err,result)=>{
+                                    collm.replaceOne({id},newMetadata,(err)=>{
                                         if(err){
                                             logger.error(err);
                                             logger.alert("Game id "+id+" is inconsistent");
@@ -395,7 +401,7 @@ export default class GameController{
     //ゲームを見つける
     findGames(query:GameQuery,callback:Callback<Array<GameMetadata>>):void{
         this.getMetadataCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -437,7 +443,7 @@ export default class GameController{
     //リソースを使用しているゲームを見つける
     countResourceUsingGames(fileid:string,callback:Callback<number>):void{
         this.getGameCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -453,9 +459,9 @@ export default class GameController{
         });
     }
     //リソースIDを変更する（newidがnullだったらリソースなし）
-    replaceResource(oldid:string,newid:string,callback:Cont):void{
+    replaceResource(oldid:string,newid:string | null,callback:Cont):void{
         this.getGameCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err);
                 return;
             }
@@ -479,7 +485,7 @@ export default class GameController{
             }
             coll.updateMany({
                 "resources.id":oldid
-            },op,(err,result)=>{
+            },op,(err)=>{
                 if(err){
                     logger.error(err);
                 }
@@ -492,15 +498,13 @@ export default class GameController{
         addUserData(this.db,games,"owner",callback);
     }
     //閲覧カウントを増やす
-    addPlayCount(metadata:GameMetadata,callback?:Callback<number>):void{
-        if(callback==null){
-            callback=(err,_)=>{};
-        }
+    addPlayCount(metadata:GameMetadata,callbackn?:Callback<number>):void{
+        const callback = callbackn != null ? callbackn : ()=>{};
         var id=metadata.id;
         var r=this.db.redis.getClient();
         //ゲームの閲覧数
         var key:string=redis_playcount_prefix+id;
-        r.incr(key,(err,result)=>{
+        r.incr(key,(err: any,result: number)=>{
             if(err){
                 logger.error(err);
                 callback(err,null);
@@ -510,7 +514,7 @@ export default class GameController{
                 //resultが1だったら何か怪しい（消えてるのでは？）
                 //DBからリストアする
                 this.getMetadataCollection((err,coll)=>{
-                    if(err){
+                    if(err || coll == null){
                         logger.error(err);
                         callback(err,null);
                         return;
@@ -542,7 +546,7 @@ export default class GameController{
                 //100単位で保存
                 callback(null,result);
                 this.getMetadataCollection((err,coll)=>{
-                    if(err){
+                    if(err || coll == null){
                         logger.error(err);
                         callback(err,null);
                         return;
@@ -554,7 +558,7 @@ export default class GameController{
                         $set: {
                             playcount: Number(result)
                         }
-                    },(err,result2)=>{
+                    },(err)=>{
                         if(err){
                             logger.error(err);
                         }

@@ -1,6 +1,11 @@
 ///<reference path="./node.d.ts" />
 import randomString=require('random-string');
 import cron=require('cron');
+
+import {
+    Request,
+    Response,
+} from 'express';
 //some utils
 
 import {UserData, UserOpenData, Session} from './data';
@@ -42,7 +47,7 @@ export function outUserData(data:UserData):UserOpenData{
 export function addDailyJob(job:()=>void,hour:number=3):void{
     new cron.CronJob("0 0 "+hour+" * * *",()=>{
         job();
-    },null,true,"Asia/Tokyo");
+    },void 0,true,"Asia/Tokyo");
 }
 
 //秒数をJapaneseにする
@@ -55,9 +60,9 @@ export function secondToString(secs:number):string{
 
 // api middleware
 export module apim{
-    export function useUser(req,res,next){
+    export function useUser(req: Request,res: Response, next: ()=>void){
         //ログインしていなかったらエラー
-        if(req.session.user==null){
+        if(req.session == null || req.session.user==null){
             res.json({
                 error: "ログインしていません。"
             });

@@ -1,18 +1,22 @@
 ///<reference path="../node.d.ts" />
 import express=require('express');
-import Controller=require('../controllers/index');
+import Controller from '../controllers/index';
 
 import logger=require('../logger');
-import validator=require('../validator');
+// import validator=require('../validator');
 
-import config=require('config');
+// import config=require('config');
 
 import util=require('../util');
 
-import {Comment, CommentWithUserData, CommentQuery, Playlog} from '../data';
+import {
+    Comment,
+    CommentQuery,
+    Playlog,
+} from '../data';
 
 class C{
-    route(router:express._Router,c:Controller):void{
+    route(router:express.Router,c:Controller):void{
         // コメントを投稿する
         // IN game:number ゲームID
         // IN comment: 文字列
@@ -43,12 +47,12 @@ class C{
                 //あるみたいなので処理をすすめる（たぶん消えないでしょ）
                 (req.body.playlog!=null ? (callback:Callback<Playlog>)=>{
                     c.playlog.newPlaylog(obj.game,{
-                        owner: req.session.user,
+                        owner: req.session!.user,
                         dataBase64: req.body.playlog
                     },(err,plid)=>{
                         callback(err,plid);
                     });
-                }  : (callback)=>{
+                }  : (callback: Callback<Playlog>)=>{
                     //プレイログがない場合はとにかく進める
                     callback(null,null);
                 })((err,pl:Playlog)=>{
@@ -62,9 +66,9 @@ class C{
                     if(pl!=null){
                         //プレイログがある
                         commentobj = {
-                            id: null,
+                            id: Number.NaN,
                             game: gameid,
-                            userid: req.session.user,
+                            userid: req.session!.user,
                             gameowner: obj.metadata.owner,
                             comment: req.body.comment,
                             playlog: pl.id,
@@ -76,9 +80,9 @@ class C{
                     }else{
                         //プレイログがない
                         commentobj = {
-                            id: null,
+                            id: Number.NaN,
                             game: gameid,
-                            userid: req.session.user,
+                            userid: req.session!.user,
                             gameowner: obj.metadata.owner,
                             comment: req.body.comment,
                             playlog: null,
@@ -148,7 +152,7 @@ class C{
             }
 
             c.comment.findComments(qu,(err,docs)=>{
-                if(err){
+                if(err || docs == null){
                     res.json({
                         error: String(err)
                     });

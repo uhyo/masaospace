@@ -2,7 +2,7 @@
 import express=require('express');
 import extend=require('extend');
 import typeis=require('type-is');
-import Controller=require('../controllers/index');
+import Controller from '../controllers/index';
 
 import logger=require('../logger');
 
@@ -10,16 +10,21 @@ import config=require('config');
 
 import util=require('../util');
 
-import {User,UserData, UserOneQuery, Session} from '../data';
+import {
+    User,
+    UserData,
+    UserOneQuery,
+    Session,
+} from '../data';
 
 
 //User auth&session
 class C{
-    route(router:express._Router,c:Controller):void{
+    route(router:express.Router,c:Controller):void{
         // 自分の情報
         router.post("/mydata",util.apim.useUser,(req,res)=>{
             c.user.user.findOneUser({
-                id: req.session.user
+                id: req.session!.user
             },(err,user)=>{
                 if(err){
                     res.json({
@@ -28,7 +33,7 @@ class C{
                     return;
                 }
                 if(user==null){
-                    logger.warning("Session for non-existent user: "+req.session.user);
+                    logger.warning("Session for non-existent user: "+req.session!.user);
                     res.json({
                         error: "そのユーザーは存在しません。"
                     });
@@ -97,7 +102,7 @@ class C{
                 }
                 //ユーザーを登録
                 c.user.entry(data,(err,result)=>{
-                    if(err){
+                    if(err || result == null){
                         logger.error(err);
                         res.json({
                             error:String(err)
@@ -108,9 +113,10 @@ class C{
                     //登録完了。チケットを発行
                     c.ticket.newTicket({
                         type: "setpassword",
-                        user: u.id
+                        //FIXME
+                        user: u.id!,
                     },(err,t)=>{
-                        if(err){
+                        if(err || t == null){
                             res.json({
                                 error:String(err)
                             });
@@ -180,7 +186,7 @@ class C{
                 c.user.user.findOneUser({
                     id: t.user
                 },(err,u)=>{
-                    if(err){
+                    if(err || u == null){
                         logger.error(err);
                         res.json({
                             error:String(err)
@@ -202,7 +208,7 @@ class C{
                         activated: true
                     });
                     //セーブ
-                    c.user.user.saveUser(u,(err,result)=>{
+                    c.user.user.saveUser(u,(err)=>{
                         if(err){
                             logger.error(err);
                             res.json({
@@ -259,9 +265,10 @@ class C{
                 //パスワード再発行チケットを発行
                 c.ticket.newTicket({
                     type: "resetpassword",
-                    user: user.id,
+                    // FIXME
+                    user: user.id!,
                 },(err,t)=>{
-                    if(err){
+                    if(err || t == null){
                         res.json({
                             error:String(err)
                         });
@@ -289,7 +296,7 @@ class C{
 
             //ユーザー情報をupdateする
             c.user.user.findOneUser({
-                id:req.session.user
+                id: req.session!.user
             },(err,user)=>{
                 if(err){
                     throw err;
@@ -306,9 +313,9 @@ class C{
                 }) : (callback:Cont)=>{
                     c.file.getFiles({
                         id: req.body.icon,
-                        owner: req.session.user
+                        owner: req.session!.user
                     },(err,files)=>{
-                        if(err){
+                        if(err || files == null){
                             throw err;
                         }
                         if(files.length===0){
@@ -332,20 +339,20 @@ class C{
                         icon:req.body.icon || null,
                         url:req.body.url
                     });
-                    c.user.user.saveUser(user,(err,result)=>{
+                    c.user.user.saveUser(user,(err)=>{
                         if(err){
                             logger.error(err);
                             throw err;
                         }
-                        req.session.name = req.body.name;
-                        req.session.profile = req.body.profile;
-                        req.session.icon = req.body.icon || null;
-                        req.session.url = req.body.url;
-                        req.session.save((err)=>{
+                        req.session!.name = req.body.name;
+                        req.session!.profile = req.body.profile;
+                        req.session!.icon = req.body.icon || null;
+                        req.session!.url = req.body.url;
+                        req.session!.save((err)=>{
                             if(err){
                                 throw err;
                             }
-                            res.json(util.writeUserInfo(req.session,{
+                            res.json(util.writeUserInfo(req.session! as Session,{
                                 success:true
                             }));
                         });
@@ -361,9 +368,9 @@ class C{
                 return;
             }
             c.user.user.findOneUser({
-                id: req.session.user
+                id: req.session!.user
             },(err,u)=>{
-                if(err){
+                if(err || u == null){
                     logger.error(err);
                     res.json({
                         error:String(err)
@@ -380,7 +387,7 @@ class C{
                 }
                 //新しいパスワードをセット
                 u.setData(u.getData(),req.body.newpassword);
-                c.user.user.saveUser(u,(err,result)=>{
+                c.user.user.saveUser(u,(err)=>{
                     if(err){
                         logger.error(err);
                         res.json({
@@ -402,7 +409,7 @@ class C{
             }
 
             c.user.user.findOneUser({
-                id: req.session.user,
+                id: req.session!.user,
                 "data.activated":true
             },(err,u)=>{
                 if(err){
@@ -414,7 +421,7 @@ class C{
                 }
                 if(u==null){
                     //?????
-                    logger.warning("Session for non-existent user: "+req.session.user);
+                    logger.warning("Session for non-existent user: "+req.session!.user);
                     res.json({
                         error: "ログインしていません？"
                     });
@@ -423,10 +430,10 @@ class C{
                 //メールアドレス変更チケットを発行
                 c.ticket.newTicket({
                     type: "setmail",
-                    user: req.session.user,
+                    user: req.session!.user,
                     data: req.body.mail
                 },(err,t)=>{
-                    if(err){
+                    if(err || t == null){
                         res.json({
                             error:String(err)
                         });
@@ -463,7 +470,7 @@ class C{
                 c.user.user.findOneUser({
                     id: t.user
                 },(err,u)=>{
-                    if(err){
+                    if(err || u == null){
                         logger.error(err);
                         res.json({
                             error:String(err)
@@ -492,7 +499,7 @@ class C{
                         return;
                     }
                     //セーブ
-                    c.user.user.saveUser(u,(err,r)=>{
+                    c.user.user.saveUser(u,(err)=>{
                         if(err){
                             logger.error(err);
                             res.json({
@@ -534,7 +541,7 @@ class C{
                 };
             }
             //login
-            c.session.login(req.session,uq,password,(err,result)=>{
+            c.session.login(req.session! as Session,uq,password,(err,result)=>{
                 if(err){
                     res.json({
                         error:String(err)
@@ -545,14 +552,14 @@ class C{
                     });
                 }else{
                     //success
-                    res.json(util.writeUserInfo(req.session,{
+                    res.json(util.writeUserInfo(req.session! as Session,{
                         error:null,
                     }));
                 }
             });
         });
         router.post("/logout",(req,res)=>{
-            c.session.logout(req.session,(err)=>{
+            c.session.logout(req.session! as Session,(err)=>{
                 if(err){
                     res.json({
                         error:String(err)

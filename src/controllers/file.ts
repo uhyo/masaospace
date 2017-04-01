@@ -28,7 +28,7 @@ export default class FileController{
                 return;
             }
             //next prepare databases
-            this.getCollection((err,coll)=>{
+            this.getCollection((err: any, coll: db.Collection)=>{
                 if(err){
                     callback(err);
                     return;
@@ -37,7 +37,7 @@ export default class FileController{
                     id:1
                 },{
                     unique:true
-                },(err,result)=>{
+                },(err)=>{
                     if(err){
                         logger.critical(err);
                         callback(err);
@@ -46,7 +46,7 @@ export default class FileController{
                     coll.createIndex({
                         owner:1
                     },{
-                    },(err,result)=>{
+                    },(err)=>{
                         if(err){
                             logger.critical(err);
                             callback(err);
@@ -63,18 +63,18 @@ export default class FileController{
         let typ_norm = mime.lookup(mime.extension(f.type)); //タイプをmime正規化
         if(typ_norm !== mime.lookup(f.name)){
             //ファイル名とタイプが一致しない
-            callback("ファイル名とMIMEタイプが一致しません。", null);
+            callback(new Error("ファイル名とMIMEタイプが一致しません。"), null);
             return;
         }
         let white_types:Array<string> = config.get("filedata.types");
         if(white_types.indexOf(typ_norm)===-1){
             //存在しなかった
-            callback("その形式のファイルはアップロードできません。",null);
+            callback(new Error("その形式のファイルはアップロードできません。"), null);
             return;
         }
         //add file to db
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -113,7 +113,7 @@ export default class FileController{
                         });
                         return;
                     }
-                    coll.insertOne(fi,(err,result)=>{
+                    coll.insertOne(fi,(err)=>{
                         if(err){
                             logger.error(err);
                             fs.unlink(newpath,(err2)=>{
@@ -137,13 +137,13 @@ export default class FileController{
     //ファイルを書き換える
     saveFile(fileid:string,f:File,callback:Cont):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err);
                 return;
             }
             //念の為IDをセット
             f.id=fileid;
-            coll.replaceOne({id: fileid},f,(err,result)=>{
+            coll.replaceOne({id: fileid},f,(err)=>{
                 if(err){
                     logger.error(err);
                     callback(err);
@@ -157,11 +157,11 @@ export default class FileController{
     deleteFile(id:string,callback:Cont):void{
         //まずDBから消す
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err);
                 return;
             }
-            coll.deleteOne({id},(err,result)=>{
+            coll.deleteOne({id},(err)=>{
                 if(err){
                     callback(err);
                     return;
@@ -188,7 +188,7 @@ export default class FileController{
             delete q.ids;
         }
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -207,6 +207,10 @@ export default class FileController{
     //ファイルの合計サイズ
     sumFileSize(q:FileQuery,callback:Callback<number>):void{
         this.getCollection((err,coll)=>{
+            if (err || coll == null){
+                callback(err, null);
+                return;
+            }
             coll.aggregate([
                 {$match: q},
                 {$project:{size:1}},

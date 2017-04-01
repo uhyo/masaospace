@@ -23,16 +23,16 @@ export default class SeriesController{
                 id:1
             },{
                 unique:true
-            },d.intercept((result)=>{
+            },d.intercept(()=>{
                 coll.createIndex({
                     owner:1,
                     id:-1
                 },{
-                },d.intercept((result)=>{
+                },d.intercept(()=>{
                     coll.createIndex({
                         games:1
                     },{
-                    },d.intercept((result)=>{
+                    },d.intercept(()=>{
                         d.exit();
                         this.initRedis(callback);
                     }));
@@ -61,7 +61,7 @@ export default class SeriesController{
                     nextid=doc.id+1;
                 }
                 //redisに保存
-                r.set(redis_nextid_key, String(nextid), d.intercept((result)=>{
+                r.set(redis_nextid_key, String(nextid), d.intercept(()=>{
                     //OK
                     d.exit();
                     callback(null);
@@ -73,12 +73,12 @@ export default class SeriesController{
     //series.idはnullでいいという感じがする
     newSeries(series:Series,callback:Callback<number>):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
             var r=this.db.redis.getClient();
-            r.incr(redis_nextid_key, (err,result)=>{
+            r.incr(redis_nextid_key, (err: any,result: number)=>{
                 //シリーズIDを発行した
                 if(err){
                     logger.error(err);
@@ -89,7 +89,7 @@ export default class SeriesController{
                 series.id=newid;
 
                 //DBに保存
-                coll.insertOne(series,(err,result)=>{
+                coll.insertOne(series,(err)=>{
                     if(err){
                         logger.warning("Series id: "+newid+" is missing");
                         logger.error(err);
@@ -105,13 +105,13 @@ export default class SeriesController{
     //シリーズを更新する
     updateSeries(series:Series,callback:Cont):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err);
                 return;
             }
             coll.replaceOne({
                 id: series.id
-            },series,(err,result)=>{
+            },series,(err)=>{
                 if(err){
                     callback(err);
                     return;
@@ -122,7 +122,7 @@ export default class SeriesController{
     }
     findSeries(query:SeriesQuery,callback:Callback<Array<Series>>):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }

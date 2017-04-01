@@ -11,7 +11,7 @@ import {UserOpenData} from '../data';
 //docsの各docにuserデータを付加してあげる
 export function addUserData(db:db.DBAccess,docs:Array<any>,userfield:string,callback:Callback<Array<{user:UserOpenData}>>):void{
     db.mongo.collection(config.get("mongodb.collection.user"),(err,coll)=>{
-        if(err){
+        if(err || coll == null){
             logger.error(err);
             callback(err,null);
             return;

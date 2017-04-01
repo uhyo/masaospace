@@ -15,7 +15,7 @@ export default class TicketController{
     init(callback:Cont):void{
         //init dbs
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err);
                 return;
             }
@@ -24,7 +24,7 @@ export default class TicketController{
                 token:1
             },{
                 unique:true
-            },(err,result)=>{
+            },(err)=>{
                 if(err){
                     logger.critical(err);
                     callback(err);
@@ -35,7 +35,7 @@ export default class TicketController{
                     created:1
                 },{
                     expireAfterSeconds:config.get("ticket.life")
-                },(err,result)=>{
+                },(err)=>{
                     if(err){
                         logger.critical(err);
                     }
@@ -49,11 +49,11 @@ export default class TicketController{
     newTicket(t:TicketData,callback:Callback<Ticket>):void{
         if(!this.checkTicket(t)){
             logger.error("Invalid ticket "+JSON.stringify(t));
-            callback("Invalid ticket",null);
+            callback(new Error("Invalid ticket"),null);
             return;
         }
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -67,7 +67,7 @@ export default class TicketController{
                 data: t.data || null,
                 created:new Date()
             };
-            coll.insertOne(ti,(err,result)=>{
+            coll.insertOne(ti,(err)=>{
                 if(err){
                     logger.error(err);
                     callback(err,null);
@@ -81,7 +81,7 @@ export default class TicketController{
     //チケットがあるか調べる
     findTicket(token:string,callback:Callback<Ticket>):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err,null);
                 return;
             }
@@ -97,11 +97,11 @@ export default class TicketController{
     //チケットを消す
     removeTicket(token:string,callback:Cont):void{
         this.getCollection((err,coll)=>{
-            if(err){
+            if(err || coll == null){
                 callback(err);
                 return;
             }
-            coll.deleteOne({token:token},(err,result)=>{
+            coll.deleteOne({token:token},(err)=>{
                 if(err){
                     logger.error(err);
                     return;

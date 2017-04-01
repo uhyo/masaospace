@@ -1,20 +1,15 @@
 ///<reference path="../node.d.ts" />
 import express=require('express');
-import Controller=require('../controllers/index');
+import Controller from '../controllers/index';
 
 import zlib=require('zlib');
 
-import logger=require('../logger');
-import masao=require('../../lib/masao');
-
-import config=require('config');
-
 import util=require('../util');
 
-import {Playlog, PlaylogQuery} from '../data';
+// import {Playlog, PlaylogQuery} from '../data';
 
 class C{
-    route(router:express._Router,c:Controller):void{
+    route(router:express.Router,c:Controller):void{
         //自分のプレイログをアップロードする
         //IN game:number ステージID
         //IN data:string Base64でのデータ
@@ -27,8 +22,8 @@ class C{
                 return;
             }
             //まずステージを調べる
-            c.game.getGame(parseInt(req.body.game), false, (obj)=>{
-                if(obj==null){
+            c.game.getGame(parseInt(req.body.game), false, (err, obj)=>{
+                if(err || obj==null){
                     res.json({
                         error: "そのゲームは存在しません。"
                     });
@@ -36,7 +31,7 @@ class C{
                 }
                 let game=obj.game;
                 c.playlog.newPlaylog(game, {
-                    owner: req.session.user,
+                    owner: req.session!.user,
                     dataBase64: req.body.data
                 },(err,id)=>{
                     if(err){
@@ -63,7 +58,7 @@ class C{
             c.playlog.findPlaylogs({
                 id
             },(err,logs)=>{
-                if(err){
+                if(err || logs == null){
                     res.status(500).end(err);
                     return;
                 }
