@@ -22,17 +22,29 @@ var concat=require('gulp-concat');
 const gulpTs = require('gulp-typescript');
 
 // TypeScript projects
+const clientTsProject = gulpTs.createProject('tsconfig-client.json');
 const serverTsProject = gulpTs.createProject('tsconfig-server.json');
 
-gulp.task('tsc', ()=>{
+gulp.task('tsc-server', ()=>{
     return serverTsProject.src()
     .pipe(serverTsProject())
     .js
     .pipe(gulp.dest("dist-server/"));
 });
 
-gulp.task('watch-tsc', ['tsc'], ()=>{
-    gulp.watch('src/**/*.ts', ['tsc']);
+gulp.task('watch-tsc-server', ['tsc-server'], ()=>{
+    gulp.watch('src/**/*.ts', ['tsc-server']);
+});
+
+gulp.task('tsc-client', ()=>{
+    return clientTsProject.src()
+    .pipe(clientTsProject())
+    .js
+    .pipe(gulp.dest('dist-client/'));
+});
+
+gulp.task('watch-tsc-client', ['tsc-client'], ()=>{
+    gulp.watch(['client/**/*.ts', 'client/**/*.tsx'], ['tsc-client']);
 });
 
 gulp.task('jsx',function(){
@@ -102,8 +114,8 @@ gulp.task('css',function(){
 gulp.task('clean',function(cb){
     del([
         //tsc
-        "js",
-        "src/**/*.js",
+        'dist-client',
+        'dist-server',
         //jsx
         "dist",
     ],cb);
@@ -120,13 +132,13 @@ gulp.task('batch-tsc',function(){
     .pipe(gulp.dest("batch/"));
 });
 
-gulp.task('watch',['watch-jsx','css','watch-tsc'],function(){
+gulp.task('watch',['watch-jsx','css','watch-tsc-server'],function(){
     //w
     gulp.watch(["client/css/*.scss", "masao-editor/css/*.scss"],['css']);
 });
 
 gulp.task('client',['jsx','css']);
-gulp.task('default',['tsc','jsx','css','mc_canvas','static','batch-tsc']);
+gulp.task('default',['tsc-server','jsx','css','mc_canvas','static','batch-tsc']);
 
 //jsx compiling
 function jsxCompiler(watch){

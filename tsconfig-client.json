@@ -14,11 +14,11 @@
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "removeComments": true,
-    "target":"es5"
+    "target":"es5",
+    "outDir": "dist-client/"
   },
-  "include":[
+  "include": [
     "client/**/*.ts",
-    "client/**/*.tsx",
-    "src/**/*.ts"
+    "client/**/*.tsx"
   ]
 }

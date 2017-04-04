@@ -2,6 +2,7 @@
   "compilerOptions":{
     "lib": ["dom", "es2015"],
     "alwaysStrict": true,
+    "declaration": true,
     "jsx":"React",
     "module": "es2015",
     "moduleResolution": "Node",
@@ -14,11 +15,10 @@
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "removeComments": true,
-    "target":"es5"
+    "target":"es5",
+    "outDir": "dist/"
   },
   "include":[
-    "client/**/*.ts",
-    "client/**/*.tsx",
     "src/**/*.ts"
   ]
 }

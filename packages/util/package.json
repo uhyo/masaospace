@@ -1,0 +1,21 @@
+{
+  "name": "@uhyo/masaospace-util",
+  "version": "1.0.0",
+  "description": "Shared package for masaospace",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "uhyo",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^2.2.2"
+  },
+  "dependencies": {
+    "masao": "^0.1.0"
+  }
+}

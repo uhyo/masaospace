@@ -9,17 +9,8 @@
   },
   "author": "uhyo",
   "license": "undetermined",
-  "browserify": {
-    "transform": [
-      [
-        "reactify",
-        {
-          "es6": true
-        }
-      ]
-    ]
-  },
   "dependencies": {
+    "@uhyo/masaospace-util": "file:./packages/util",
     "base64-arraybuffer": "^0.1.5",
     "body-parser": "^1.15.2",
     "bytes": "^2.4.0",
@@ -74,6 +65,8 @@
     "@types/mongodb": "^2.1.41",
     "@types/multer": "0.0.33",
     "@types/node": "^7.0.12",
+    "@types/react": "^15.0.21",
+    "@types/react-dom": "^0.14.23",
     "@types/redis": "^0.12.36",
     "babelify": "^7.3.0",
     "browserify": "^14.1.0",
@@ -86,6 +79,8 @@
     "gulp-ruby-sass": "^2.1.1",
     "gulp-sass": "^3.1.0",
     "gulp-typescript": "^3.1.2",
+    "masao-editor-core": "git://github.com/uhyo/masao-editor-core.git#upgrade",
+    "react-dom": "^15.4.2",
     "reactify": "^1.1.1",
     "typescript": "^2.0.9",
     "vinyl-source-stream": "^1.1.0"
