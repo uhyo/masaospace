@@ -2,12 +2,13 @@
 import * as React from 'react';
 
 import {
-   localizeGame,
-} from '../../../lib/masao';
-
-import {
+    masao,
     Game,
 } from '../data';
+
+const {
+   localizeGame,
+} = masao;
 
 declare var CanvasMasao: any;
 declare var CanvasMasao_v28: any;

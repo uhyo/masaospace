@@ -4,7 +4,7 @@ import api from '../../actions/api';
 
 import errorStore from '../../stores/error';
 
-import Loading from '../commons/loading.jsx';
+import Loading from '../commons/loading';
 
 import {
     getValue,

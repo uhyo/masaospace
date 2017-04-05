@@ -5,8 +5,12 @@ import {
 } from '../../scripts/react-util';
 
 import {
+    masao,
+    ResourceKind,
+} from '../data';
+const {
     resourceKinds,
-} from '../../../lib/masao';
+} = masao;
 
 export interface IPropFileDataForm{
     config: any;
@@ -76,7 +80,7 @@ export default class FileDataForm extends React.Component<IPropFileDataForm, ISt
             defaultFile,
         } = this.props;
         //ファイルの情報をアレする
-        const usages=Object.keys(resourceKinds).map((key)=> [key, resourceKinds[key]]);
+        const usages=Object.keys(resourceKinds).map((key: ResourceKind)=> [key, resourceKinds[key]]);
         const config=this.props.config.filedata;
         //プレビュー
         let preview = null;

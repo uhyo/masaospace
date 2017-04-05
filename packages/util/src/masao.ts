@@ -229,7 +229,7 @@ export function validateResourceKind(kind: string): kind is ResourceKind{
 
 //サーバー側のゲームオブジェクトを実際のcanvas正男用オブジェクトに直したりする
 //game: GameDataオブジェクト, domain: データを読み込む元のドメイン
-export function localizeGame(game: Game, domain: string | null){
+export function localizeGame(game: Game, domain?: string | null){
     if(domain==null){
         domain="";
     }else{

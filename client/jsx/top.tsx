@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import * as path from '../scripts/path';
 
-import QueryList from './game/parts/query-list.jsx';
+import QueryList from './game/parts/query-list';
 
 import {
     Session,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import EntryForm from '../commons/entry-form.jsx';
+import EntryForm from '../commons/entry-form';
 
 export interface IPropEntry{
     config: any;

@@ -20,6 +20,7 @@ var replace=require('gulp-replace');
 var concat=require('gulp-concat');
 
 const gulpTs = require('gulp-typescript');
+const webpack = require('webpack');
 
 // TypeScript projects
 const clientTsProject = gulpTs.createProject('tsconfig-client.json');
@@ -47,12 +48,12 @@ gulp.task('watch-tsc-client', ['tsc-client'], ()=>{
     gulp.watch(['client/**/*.ts', 'client/**/*.tsx'], ['tsc-client']);
 });
 
-gulp.task('jsx',function(){
-    return jsxCompiler(false);
+gulp.task('webpack', ()=>{
+    return makeWebpack(false);
 });
 
-gulp.task('watch-jsx',function(){
-    return jsxCompiler(true);
+gulp.task('watch-webpack', ()=>{
+    return makeWebpack(true);
 });
 
 gulp.task("mc_canvas-static",function(){
@@ -137,45 +138,36 @@ gulp.task('watch',['watch-jsx','css','watch-tsc-server'],function(){
     gulp.watch(["client/css/*.scss", "masao-editor/css/*.scss"],['css']);
 });
 
-gulp.task('client',['jsx','css']);
-gulp.task('default',['tsc-server','jsx','css','mc_canvas','static','batch-tsc']);
+gulp.task('client',['webpack','css']);
+gulp.task('default',['tsc-server','css','watch-webpack','mc_canvas','static','batch-tsc']);
 
-//jsx compiling
-function jsxCompiler(watch){
-    //init browserify bundler
-    var opts={
-        entries:[path.join(__dirname,"client/entrypoint.jsx")],
-        extensions:[".js",".jsx"],
-        basedir:__dirname
-    };
-    if(watch){
-        opts.cache={};
-        opts.packageCache={};
-        opts.fullPaths=true;
-    }
-    var b=browserify(opts);
-    if(watch){
-        b=watchify(b);
-    }
-    //chain
-    b.transform(babelify)
-    .transform(reactify)
-    .transform(uglifyify,{global:true});
 
-    b.on('update',bundle);
-    bundle();
-    return b;
+// make
+function makeWebpack(watch){
+  const compiler = webpack(require('./webpack.config.js'));
 
-    function bundle(){
-        gulputil.log('recompiling jsx');
-
-        b
-        .bundle()
-        .on('error',function(err){
-            console.error(err);
-        })
-        .pipe(duration("compiled jsx"))
-        .pipe(source("components.js"))
-        .pipe(gulp.dest("dist/"));
-    }
+  const handleStats = (stats, watch)=>{
+      console.log(stats.toString({
+          chunks: !watch,
+          colors: true,
+      }));
+  };
+  if (watch){
+      return compiler.watch({
+      }, (err, stats)=>{
+          if (err){
+              console.error(err);
+              return;
+          }
+          handleStats(stats, true);
+      });
+  }else{
+      return compiler.run((err, stats)=>{
+          if (err){
+              console.error(err);
+              return;
+          }
+          handleStats(stats, false);
+      });
+  }
 }

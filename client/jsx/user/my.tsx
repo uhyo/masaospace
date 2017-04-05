@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import NeedLogin from '../commons/need-login.jsx';
+import NeedLogin from '../commons/need-login';
 
 import {
     Session,
