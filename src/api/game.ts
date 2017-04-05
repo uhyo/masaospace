@@ -2,20 +2,19 @@
 import * as express from 'express';
 import Controller from '../controllers/index';
 
-import * as masao from '../../lib/masao';
+import {
+    masao,
+    GameEditableMetadata,
+    GameMetadataUpdate,
+    GameData,
+    GameQuery,
+} from '@uhyo/masaospace-util';
 // import * as logger from '../logger';
 import * as validator from '../validator';
 
 import * as config from 'config';
 
 import * as util from '../util';
-
-import {
-    GameEditableMetadata,
-    GameMetadataUpdate,
-    GameData,
-    GameQuery,
-} from '../data';
 
 export default class C{
     route(router:express.Router,c:Controller):void{

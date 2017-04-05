@@ -1,6 +1,11 @@
 // my lib. to handle Reflux
 import * as React from 'react';
+import * as Promise from 'native-promise-only';
 const Reflux: any = require('reflux');
+const RefluxPromise = require('reflux-promise');
+
+// plugin
+Reflux.use(RefluxPromise(Promise));
 
 // ========== Actions ==========
 export interface Action<T>{

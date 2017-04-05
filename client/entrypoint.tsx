@@ -20,6 +20,8 @@ if("undefined"!==typeof window){
 //session
 userAction.init(data.session);
 
+console.log('ROOT', data);
+
 const root = React.createElement(Root,data);
 
 ReactDOM.render(root,app);

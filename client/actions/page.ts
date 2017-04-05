@@ -1,7 +1,7 @@
 import {
     createAsyncAction,
 } from '../scripts/reflux-util';
-var api=require('./api');
+import api from './api';
 
 /* page action
  */

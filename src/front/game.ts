@@ -1,7 +1,7 @@
 ///<reference path="./data.d.ts" />
 import Controller from '../controllers/index';
 
-import logger=require('../logger');
+import * as logger from '../logger';
 
 import {
     outUserData,

@@ -25,9 +25,9 @@ export interface IStateHeader{
 export default class Header extends React.Component<IPropHeader, IStateHeader>{
     constructor(props: IPropHeader){
         super(props);
-        this.setState({
+        this.state = {
             loginform: false,
-        });
+        };
     }
     protected handleLogout(e: React.SyntheticEvent<HTMLElement>){
         e.preventDefault();
@@ -114,10 +114,12 @@ export default class Header extends React.Component<IPropHeader, IStateHeader>{
 interface IDefnGlobalMessages{
     error: ErrorState;
 }
-interface IStateGlobalMessages{
-    logs: Array<void>;
-}
-class GlobalMessages extends RefluxComponent<IDefnGlobalMessages, {}, IStateGlobalMessages>{
+class GlobalMessages extends RefluxComponent<IDefnGlobalMessages, {}, {}>{
+    constructor(props: {}){
+        super(props, {
+            error: errorStore,
+        });
+    }
     protected reset(){
         errorStore.reset();
     }
@@ -137,7 +139,7 @@ class GlobalMessages extends RefluxComponent<IDefnGlobalMessages, {}, IStateGlob
         </div>;
     }
     protected resetButton(){
-        if(this.state.logs.length===0){
+        if(this.state.error.logs.length===0){
             return null;
         }
         return <p className="header-logs-resetbutton" onClick={this.reset}>

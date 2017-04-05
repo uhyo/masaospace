@@ -20,6 +20,7 @@ var replace=require('gulp-replace');
 var concat=require('gulp-concat');
 
 const gulpTs = require('gulp-typescript');
+const sourcemaps = require('gulp-sourcemaps');
 const webpack = require('webpack');
 
 // TypeScript projects
@@ -39,8 +40,10 @@ gulp.task('watch-tsc-server', ['tsc-server'], ()=>{
 
 gulp.task('tsc-client', ()=>{
     return clientTsProject.src()
+    .pipe(sourcemaps.init())
     .pipe(clientTsProject())
     .js
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist-client/'));
 });
 
@@ -133,7 +136,7 @@ gulp.task('batch-tsc',function(){
     .pipe(gulp.dest("batch/"));
 });
 
-gulp.task('watch',['watch-jsx','css','watch-tsc-server'],function(){
+gulp.task('watch',['watch-tsc-client','watch-webpack','css','watch-tsc-server'],function(){
     //w
     gulp.watch(["client/css/*.scss", "masao-editor/css/*.scss"],['css']);
 });

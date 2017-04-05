@@ -16,7 +16,8 @@
     "strictNullChecks": true,
     "removeComments": true,
     "target":"es5",
-    "outDir": "dist/"
+    "outDir": "dist-module/",
+    "declarationDir": "dist/"
   },
   "include":[
     "src/**/*.ts"

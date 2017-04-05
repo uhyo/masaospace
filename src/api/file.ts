@@ -1,19 +1,21 @@
 ///<reference path="../node.d.ts" />
-import express=require('express');
-import multer=require('multer');
+import * as express from 'express';
+import * as multer from 'multer';
 
 import Controller from '../controllers/index';
 
 
-import masao=require('../../lib/masao');
+import {
+    masao,
+} from '@uhyo/masaospace-util';
 
-import config=require('config');
+import * as config from 'config';
 
-import util=require('../util');
+import * as util from '../util';
 
 import {File, FileData, FileQuery} from '../data';
 
-class C{
+export default class C{
     route(router:express.Router, c:Controller):void{
         //ファイルをアップロード
         //IN file: ファイル
@@ -261,5 +263,3 @@ class C{
         });
     }
 }
-
-export = C;

@@ -14,7 +14,7 @@ import PlaylogList from './parts/playlog-list';
 
 import {
     Session,
-    UserData,
+    UserOpenDataWithId,
     Game,
     GameOpenMetadata,
 } from '../data';
@@ -22,7 +22,7 @@ import {
 export interface IPropPlay{
     game: Game;
     metadata: GameOpenMetadata;
-    owner: UserData;
+    owner: UserOpenDataWithId;
     series: Array<{
         id: number;
         name: string;

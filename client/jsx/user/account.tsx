@@ -15,11 +15,11 @@ import {
     getValue,
 } from '../../scripts/react-util';
 import {
-    UserData,
+    UserDataWithId,
     File,
     Session,
     Series,
-    GameAllMetadata,
+    GameMetadata,
     ResourceKind,
 } from '../data';
 
@@ -29,7 +29,7 @@ export interface IPropAccount{
 }
 export interface IStateAccount{
     page: 'profile' | 'password' | 'mail' | 'file' | 'series';
-    userdata: UserData | null;
+    userdata: UserDataWithId | null;
 }
 export default class Account extends React.Component<IPropAccount, IStateAccount>{
     constructor(props: IPropAccount){
@@ -134,7 +134,7 @@ export default class Account extends React.Component<IPropAccount, IStateAccount
 //サブコンテンツ
 interface IPropProfileForm{
     config: any;
-    userdata: UserData;
+    userdata: UserDataWithId;
 }
 interface IStateProfileForm{
     name: string;
@@ -148,7 +148,7 @@ class ProfileForm extends React.Component<IPropProfileForm, IStateProfileForm>{
         super(props);
         this.state = this.makeStateFromProps(props);
     }
-    protected makeStateFromProps(props: IPropProfileForm){
+    protected makeStateFromProps(props: IPropProfileForm): IStateProfileForm{
         const {
             userdata,
         } = props;
@@ -254,7 +254,7 @@ class ProfileForm extends React.Component<IPropProfileForm, IStateProfileForm>{
 
 interface IPropIconEdit{
     config: any;
-    userdata: UserData;
+    userdata: UserDataWithId;
     icon: string | null;
     onChange(icon: File | null): void;
 }
@@ -410,7 +410,7 @@ class ChangePasswordForm extends React.Component<IPropChangePasswordForm, IState
 }
 
 interface IPropMailForm{
-    userdata: UserData;
+    userdata: UserDataWithId;
 }
 interface IStateMailForm{
     end: boolean;
@@ -839,7 +839,7 @@ interface IPropSeriesForm{
 }
 interface IStateSeriesForm{
     loading: boolean;
-    games: Array<GameAllMetadata>;
+    games: Array<GameMetadata>;
 }
 class SeriesForm extends React.Component<IPropSeriesForm, IStateSeriesForm>{
     constructor(props: IPropSeriesForm){
@@ -899,7 +899,7 @@ class SeriesForm extends React.Component<IPropSeriesForm, IStateSeriesForm>{
         if(loading===true){
             gamesArea = <Loading/>;
         }else if(useGamesEdit===true){
-            const handleGamesChange = (games: Array<GameAllMetadata>)=>{
+            const handleGamesChange = (games: Array<GameMetadata>)=>{
                 this.setState({
                     games,
                 });
@@ -947,8 +947,8 @@ class SeriesForm extends React.Component<IPropSeriesForm, IStateSeriesForm>{
 interface IPropGameList{
     config: any;
     owner: string;
-    games: Array<GameAllMetadata>;
-    onChange(games: Array<GameAllMetadata>): void;
+    games: Array<GameMetadata>;
+    onChange(games: Array<GameMetadata>): void;
 }
 interface IStateGameList{
     newMode: boolean;
@@ -1112,7 +1112,7 @@ class GameList extends React.Component<IPropGameList, IStateGameList>{
             }
         };
     }
-    protected gameSelectHandler(game: GameAllMetadata){
+    protected gameSelectHandler(game: GameMetadata){
         //新しいゲームがきた
         const {
             games,
@@ -1133,12 +1133,12 @@ class GameList extends React.Component<IPropGameList, IStateGameList>{
 
 interface IPropGameListSelector{
     owner: string;
-    onSelect(game: GameAllMetadata): void;
+    onSelect(game: GameMetadata): void;
     onClose?(): void;
 }
 interface IStateGameListSelector{
     loading: boolean;
-    games: Array<GameAllMetadata>;
+    games: Array<GameMetadata>;
 }
 class GameListSelector extends React.Component<IPropGameListSelector, IStateGameListSelector>{
     constructor(props: IPropGameListSelector){

@@ -1,7 +1,7 @@
 //handle links
 
-const pageAction = require('../actions/page');
-const pageStore = require('../stores/page');
+import * as pageAction from '../actions/page';
+import pageStore from '../stores/page';
 
 export default function handleEvents(){
     //handle click event

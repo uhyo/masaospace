@@ -5,7 +5,7 @@ import Loading from '../../commons/loading';
 import GameList from './game-list';
 
 import {
-    GameAllMetadata,
+    GameOpenMetadataWithOwnerData,
 } from '../../data';
 
 export interface IPropQueryList{
@@ -18,7 +18,7 @@ export interface IPropQueryList{
 export interface IStateQueryList{
     loading: boolean;
     page: number;
-    games: Array<GameAllMetadata>;
+    games: Array<GameOpenMetadataWithOwnerData>;
 }
 export default class QueryList extends React.Component<IPropQueryList, IStateQueryList>{
     constructor(props: IPropQueryList){

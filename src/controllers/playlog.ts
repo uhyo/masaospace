@@ -1,13 +1,20 @@
 //<reference path="../node.d.ts" />
-import {Playlog, NewPlaylog, PlaylogQuery, GameData} from '../data';
-import domain=require('domain');
-import crypto=require('crypto');
-import zlib=require('zlib');
+import {
+    Playlog,
+    NewPlaylog,
+    PlaylogQuery,
+    GameData,
+} from '../data';
+import * as domain from 'domain';
+import * as crypto from 'crypto';
+import * as zlib from 'zlib';
 
-import db=require('../db');
-import config=require('config');
-import logger=require('../logger');
-import masao=require('../../lib/masao');
+import * as db from '../db';
+import * as config from 'config';
+import * as logger from '../logger';
+import {
+    masao,
+} from '@uhyo/masaospace-util';
 
 export default class PlaylogController{
     constructor(private db:db.DBAccess){

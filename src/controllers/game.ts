@@ -1,20 +1,21 @@
 ///<reference path="../node.d.ts" />
-import domain=require('domain');
-import cron=require('cron');
+import * as domain from 'domain';
+import * as cron from 'cron';
 
-import db=require('../db');
-import logger=require('../logger');
-import config=require('config');
+import * as db from '../db';
+import * as logger from '../logger';
+import * as config from 'config';
 
 import {
+    Game as GameData,
+    GamePastData,
     GameMetadataUpdate,
     GameOpenMetadata,
     GameMetadata,
     GameOpenMetadataWithOwnerData,
-    GameData,
-    GamePastData,
     GameQuery,
-} from '../data';
+} from '@uhyo/masaospace-util';
+
 
 import {
     addUserData,

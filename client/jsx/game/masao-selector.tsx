@@ -261,7 +261,7 @@ class FromFile extends React.Component<IPropFromFile, {}>{
         const title = te ? te.textContent || '' : "";
 
         const game: Game = {
-            id: null,
+            id: Number.NaN,
             version,
             params,
             resources: [],
@@ -302,7 +302,7 @@ class FromFile extends React.Component<IPropFromFile, {}>{
         }
         
         this.setGame({
-            id: null,
+            id: Number.NaN,
             version: masao.versionCategory(gameobj.version),
             params,
             resources: [],
@@ -491,7 +491,7 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
     protected handleSave(obj: Game){
         //gameは適当につくる
         const game={
-            id: null,
+            id: Number.NaN,
             version: masao.versionCategory(obj.version),
             params: obj.params,
             resources: [],
@@ -512,7 +512,7 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
         this.setState({
             testplay: true,
             testgame: {
-                id: null,
+                id: Number.NaN,
                 version: masao.versionCategory(obj.version),
                 params: obj.params,
                 resources: this.props.resources,

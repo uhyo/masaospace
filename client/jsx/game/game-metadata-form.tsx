@@ -4,7 +4,7 @@ import * as React from 'react';
 import StrList from '../commons/form-strlist';
 
 import {
-    GameMetadata,
+    GameEditableMetadata,
 } from '../data';
 
 import {
@@ -16,7 +16,7 @@ export interface IPropGameMetadataForm{
     description: string;
     tags: Array<string>;
     hidden: boolean;
-    onChange?(metadata: GameMetadata): void;
+    onChange?(metadata: GameEditableMetadata): void;
 }
 export interface IStateGameMetadataForm{
     tags: Array<string>;

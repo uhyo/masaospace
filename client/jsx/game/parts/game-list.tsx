@@ -3,11 +3,11 @@ import * as React from 'react';
 import GameTile from './game-tile';
 
 import {
-    GameAllMetadata,
+    GameOpenMetadataWithOwnerData,
 } from '../../data';
 
 export interface IPropGameList{
-    games: Array<GameAllMetadata>;
+    games: Array<GameOpenMetadataWithOwnerData>;
     zero?: string;
 }
 export default class GameList extends React.Component<IPropGameList, void>{

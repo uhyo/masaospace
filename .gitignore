@@ -15,3 +15,7 @@ batch/**/*.js
 .sass-cache
 client/css/*.css
 client/css/*.css.map
+
+#config files
+config/*
+!config/default.yaml

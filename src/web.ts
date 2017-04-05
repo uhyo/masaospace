@@ -1,40 +1,37 @@
 ///<reference path="./node.d.ts" />
 // Web server
-import config=require('config');
+import * as config from 'config';
 
-import fs=require('fs');
-import path=require('path');
-import url=require('url');
-import express=require('express');
-import extend=require('extend');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as url from 'url';
+import * as express from 'express';
 
-import bodyParser=require('body-parser');
-import expressSession=require('express-session');
-import connectRedis=require('connect-redis');
-import csurf=require('csurf');
-import st=require('st');
-import ect=require('ect');
+import * as bodyParser from 'body-parser';
+import * as expressSession from 'express-session';
+import * as connectRedis from 'connect-redis';
+import * as csurf from 'csurf';
+// import * as st from 'st';
+// import * as ect from 'ect';
+const st = require('st');
+const ect = require('ect');
 
-import React=require('react');
-import nodejsx=require('node-jsx');
+// import * as React from 'react';
+// import * as ReactDOMServer from 'react-dom/server';
 
 import {Session} from './data';
 import {writeUserInfo} from './util';
 
 import {makeFrontRouter} from './front/index';
 
-import logger=require('./logger');
-import validator=require('./validator');
+import * as logger from './logger';
+import * as validator from './validator';
 
-import masao=require('../lib/masao');
+import {
+    masao,
+} from '@uhyo/masaospace-util';
 
 import Controller from './controllers/index';
-
-nodejsx.install({
-    harmony:true
-});
-
-var Root=require('../client/jsx/root.jsx');
 
 export class WebServer{
     private app:express.Express;
@@ -218,7 +215,11 @@ export class WebServer{
                 });
                 return;
             }
-            re.result(extend({session: req.session},u.query,re.params),(err,view)=>{
+            re.result({
+                session: req.session,
+                ... u.query,
+                ... re.params,
+            },(err,view)=>{
                 if(err || view == null){
                     res.json({
                         error: String(err)
@@ -303,7 +304,11 @@ export class WebServer{
             var re=r.route(req.path);
             var func = re ? re.result : null;
             var params = re ? re.params : {};
-            params=extend({session: req.session},req.query,params);
+            params = {
+                session: req.session,
+                ... req.query,
+                ... params,
+            };
             if(func==null){
                 /* 404 */
                 res.status(404);
@@ -345,7 +350,8 @@ export class WebServer{
                 res.render("index.ect",{
                     title: pageTitle(view.title),
                     initial: initialData,
-                    content: React.renderToString(React.createElement(Root,initialData))
+                    // content: ReactDOMServer.renderToString(React.createElement(Root,initialData))
+                    content: '',
                 });
             });
         });

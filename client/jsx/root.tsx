@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import  {
+import pageStore, {
    PageState,
 } from '../stores/page';
-import  {
+import  sessionStore, {
    SessionState,
 } from '../stores/session';
 
@@ -38,6 +38,12 @@ export interface IPropRoot{
     data: any;
 }
 export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}>{
+    constructor(props: IPropRoot){
+        super(props, {
+            page: pageStore,
+            session: sessionStore,
+        });
+    }
     componentDidUpdate(_: IPropRoot, prevState: IDefnRoot){
         if(prevState.page!==this.state.page){
             //pageが変わったら一番上へ

@@ -4,10 +4,10 @@ import Datetime from '../../commons/datetime';
 import UserTile from './user-tile';
 
 import {
-    GameAllMetadata,
+    GameOpenMetadataWithOwnerData,
 } from '../../data';
 export interface IPropGameTile{
-    metadata: GameAllMetadata;
+    metadata: GameOpenMetadataWithOwnerData;
 }
 
 export default ({metadata}: IPropGameTile)=>{

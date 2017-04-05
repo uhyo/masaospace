@@ -1,8 +1,7 @@
-///<reference path="./node.d.ts" />
-import mongodb=require('mongodb');
-import redis=require('redis');
+import * as mongodb from 'mongodb';
+import * as redis from 'redis';
 
-import config=require('config');
+import * as config from 'config';
 
 export import Collection=mongodb.Collection;
 export import ObjectID=mongodb.ObjectID;
@@ -51,10 +50,8 @@ export class Mongo{
             return;
         }
         mongodb.MongoClient.connect("mongodb://"+config.get("mongodb.user")+":"+config.get("mongodb.password")+"@"+config.get("mongodb.host")+":"+config.get("mongodb.port")+"/"+config.get("mongodb.db"),{
-            db:{
-                w:"majority"
-            }
-        },(error:any,db:mongodb.Db)=>{
+            w:"majority", 
+        } as any,(error:any,db:mongodb.Db)=>{
             if(error){
                 callback(error);
                 return;

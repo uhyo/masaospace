@@ -15,7 +15,7 @@ import {
     File,
     Session,
     Game,
-    GameMetadata,
+    GameEditableMetadata,
     Resource,
 } from '../data';
 //とりあえずよく使うやつ
@@ -25,16 +25,16 @@ interface IPropMasaoEdit{
     config: any;
     session: Session;
     game?: Game;
-    metadata?: GameMetadata;
+    metadata?: GameEditableMetadata;
     saveButton: string;
     onSave(obj: {
         game: Game;
-        metadata: GameMetadata;
+        metadata: GameEditableMetadata;
     }): void;
 }
 interface IStateMasaoEdit{
     game: Game | undefined;
-    metadata: GameMetadata;
+    metadata: GameEditableMetadata;
     resources: Array<Resource>;
 
     filesPage: string;
@@ -58,7 +58,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
             filesPage2:null,    //otherのとき
         };
     }
-    protected masaoSelected(game: Game, metadata: GameMetadata){
+    protected masaoSelected(game: Game, metadata: GameEditableMetadata){
         const {
             resources,
             metadata: m,
@@ -84,7 +84,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
             },
         });
     }
-    protected handleMetadata(metadata: GameMetadata){
+    protected handleMetadata(metadata: GameEditableMetadata){
         this.setState({
             metadata: {
                 ... this.state.metadata,
@@ -200,7 +200,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
             },
         } = this;
         //正男メタデータを入力するフォーム
-        const m: Partial<GameMetadata> = metadata || {};
+        const m: Partial<GameEditableMetadata> = metadata || {};
         let submit = null;
         if(session.user==null){
             submit = <NeedLogin>

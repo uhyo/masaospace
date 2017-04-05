@@ -152,13 +152,6 @@ declare module "ect"{
         render:any;
     };
 }
-declare module "node-jsx"{
-    export function install(option?:{
-        extension?:string;
-        additionalTransform?:(str: string)=>string;
-        harmony?:boolean;
-    }):void;
-}
 declare module "nodemailer"{
     export function createTransport(option?:any):Transport;
 

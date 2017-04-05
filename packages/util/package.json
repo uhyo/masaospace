@@ -3,16 +3,22 @@
   "version": "1.0.0",
   "description": "Shared package for masaospace",
   "main": "dist/index.js",
-  "module": "dist/index.js",
+  "module": "dist-module/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:tsc": "tsc",
+    "build:babel": "babel dist-module --out-dir dist",
+    "build": "npm-run-all -s build:tsc build:babel",
+    "watch:tsc": "tsc --watch",
+    "watch:babel": "babel dist-module --watch --out-dir dist",
+    "watch": "npm-run-all -p watch:*"
   },
   "author": "uhyo",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
+    "npm-run-all": "^4.0.2",
     "typescript": "^2.2.2"
   },
   "dependencies": {

@@ -1,6 +1,6 @@
 ///<reference path="./node.d.ts" />
-import randomString=require('random-string');
-import cron=require('cron');
+const randomString = require('random-string');
+import * as cron from 'cron';
 
 import {
     Request,
