@@ -707,6 +707,14 @@ interface IStateSeriesPage{
     selected: number | null;
 }
 class SeriesPage extends React.Component<IPropSeriesPage, IStateSeriesPage>{
+    constructor(props: IPropSeriesPage){
+        super(props);
+        this.state = {
+            loading: true,
+            series: [],
+            selected: null,
+        };
+    }
     componentDidMount(){
         this.load();
     }

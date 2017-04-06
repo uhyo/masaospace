@@ -2,14 +2,18 @@ import * as React from 'react';
 
 import * as userActions from '../../actions/user';
 
+import {
+    getValue,
+} from '../../scripts/react-util';
+
 //Login Form
 export interface IPropLoginForm{
 }
 export default class LoginForm extends React.Component<IPropLoginForm, {}>{
     render(){
         const handleSubmit = (e: React.FormEvent<HTMLFormElement>)=>{
-            const userid = (this.refs['id'] as HTMLInputElement).value;
-            const password = (this.refs['password'] as HTMLInputElement).value;
+            const userid = getValue(this, 'userid');
+            const password = getValue(this, 'password');
             e.preventDefault();
             //login request
             userActions.login({

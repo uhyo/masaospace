@@ -43,7 +43,7 @@ export default class EntryForm extends React.Component<IPropEntryForm, IStateEnt
         const config=this.props.config.user;
         if(this.state.form){
             return <div>
-                <form className="form" onSubmit={this.handleSubmit}>
+                <form className="form" onSubmit={this.handleSubmit.bind(this)}>
                     <p>
                         <label className="form-row">
                             <span>ユーザーID</span>

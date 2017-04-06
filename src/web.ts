@@ -99,7 +99,8 @@ export class WebServer{
             this.app.use(st({
                 path:path.resolve(__dirname,"..","dist"),
                 url:"/static",
-                index:false
+                index:false,
+                cache:false,
             }));
             //uploaded files
             this.app.use(st({
@@ -183,7 +184,11 @@ export class WebServer{
                     readDir(filepath,subroute);
                 }else if(path.extname(files[i])===".js"){
                     //js file
-                    var mod=require(filepath);
+                    let mod=require(filepath);
+                    // ad-hoc
+                    if ("function" === typeof mod.default){
+                        mod = mod.default;
+                    }
                     if("function"===typeof mod){
                         var subroute=express.Router();
                         (<any>router).use("/"+path.basename(files[i],".js"),subroute);
