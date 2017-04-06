@@ -34,7 +34,6 @@ export default function handleEvents(){
                 title: state.title,
                 path: state.path,
                 page: state.page,
-                data: state.data
             });
         }else{
             //load

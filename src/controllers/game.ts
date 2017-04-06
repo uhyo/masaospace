@@ -590,13 +590,19 @@ export default class GameController{
         next=(err:any,result:Array<string>)=>{
             //arrayにはtagとscoreが順に入っている
             if(err){
-                logger.error(err);
-                if(cnt>=0){
-                    callback(err,null);
-                    //2回エラーを送らないように
-                    cnt=-1;
+                if (err.code === 'WRONGTYPE'){
+                    // データがなかったかも
+                    logger.warning(err);
+                    err = null;
+                    result = [];
+                }else{
+                    if(cnt>=0){
+                        callback(err,null);
+                        //2回エラーを送らないように
+                        cnt=-1;
+                    }
+                    return;
                 }
-                return;
             }
             if(cnt<0){
                 return;

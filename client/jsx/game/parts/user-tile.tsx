@@ -3,7 +3,6 @@ import * as React from 'react';
 import UserIcon from '../../commons/user-icon';
 
 export interface IPropUserTile{
-    id: string;
     screen_name: string;
     name: string;
     icon: string | null;

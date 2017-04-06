@@ -1,8 +1,14 @@
 ///<reference path="../node.d.ts" />
-///<reference path="./data.d.ts" />
 
 import Controller from '../controllers/index';
-import Router=require('my-router');
+import {
+    Router,
+} from 'my-router';
+import {
+    PageData,
+    RouteHandler,
+} from '@uhyo/masaospace-util';
+
 //make front views
 
 //parts
@@ -10,10 +16,15 @@ import top from './top';
 import user from './user';
 import game from './game';
 
-export function makeFrontRouter(c:Controller):Router<(obj:any,callback:Callback<View>)=>void>{
-    var r=new Router<(obj:any,callback:Callback<View>)=>void>({
+export interface RouteObject{
+    title: string;
+    page: PageData;
+}
+
+export function makeFrontRouter(c:Controller):Router<RouteHandler>{
+    var r=new Router<RouteHandler>({
         patterns:{
-            ":number": /^\d+$/
+            ":number": /^\d+$/,
         }
     });
 

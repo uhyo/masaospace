@@ -1,14 +1,12 @@
-///<reference path="../node.d.ts" />
-import express=require('express');
-import extend=require('extend');
-import typeis=require('type-is');
+import * as express from 'express';
+import * as typeis from 'type-is';
 import Controller from '../controllers/index';
 
-import logger=require('../logger');
+import * as logger from '../logger';
 
-import config=require('config');
+import * as config from 'config';
 
-import util=require('../util');
+import * as util from '../util';
 
 import {
     User,
@@ -19,7 +17,7 @@ import {
 
 
 //User auth&session
-class C{
+export default class C{
     route(router:express.Router,c:Controller):void{
         // 自分の情報
         router.post("/mydata",util.apim.useUser,(req,res)=>{
@@ -40,11 +38,12 @@ class C{
                     return;
                 }
                 //ユーザーの情報をあげるけど……
-                var data=extend({},user.getData(),{
-                    id: user.id
-                });
+                const data = {
+                    ... user.getData(),
+                    id: user.id,
+                };
                 res.json({
-                    data: data
+                    data,
                 });
             });
         });
@@ -333,12 +332,14 @@ class C{
                     if(err){
                         throw err;
                     }
+                    console.log('らいてぃーん', req.body);
                     user.writeData({
                         name:req.body.name,
                         profile:req.body.profile,
                         icon:req.body.icon || null,
                         url:req.body.url
                     });
+                    console.log('らいとん');
                     c.user.user.saveUser(user,(err)=>{
                         if(err){
                             logger.error(err);
@@ -573,4 +574,3 @@ class C{
         });
     }
 }
-export = C;

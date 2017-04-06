@@ -3,13 +3,16 @@ import {
 } from '../scripts/reflux-util';
 import api from './api';
 
+import {
+    PageData,
+} from '../jsx/data';
+
 /* page action
  */
 export const load = createAsyncAction<string, {
     title: string;
-    page: any;
     path: string;
-    data: any;
+    page: PageData;
 }>();
 
 load.listen((path: string)=>{
@@ -18,14 +21,13 @@ load.listen((path: string)=>{
     })
     .then((obj: {
         title: string;
-        page: string;
-        data: any;
+        path: string;
+        page: PageData;
     })=>{
         const result = {
             title: obj.title,
-            path: path,
+            path,
             page: obj.page,
-            data: obj.data
         };
         // add history
         if("undefined"!==typeof history && history.pushState){

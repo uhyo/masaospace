@@ -39,7 +39,13 @@ export default class Comments extends React.Component<IPropComments, {}>{
                 }
                 return <div key={obj.id} className="comments-comment">
                     <div className="comments-info">
-                        <UserTile id={obj.userid} {...obj.user} label="投稿者" fullWidth/>
+                        <UserTile
+                            label="投稿者"
+                            fullWidth
+                            icon={obj.user.icon}
+                            name={obj.user.name}
+                            screen_name={obj.user.screen_name}
+                            />
                         {playlogArea}
                     </div>
                     <div className="comments-body">

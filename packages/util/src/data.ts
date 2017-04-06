@@ -55,10 +55,27 @@ export interface Session{
 }
 
 export interface Series{
+    // シリーズID
+    id: number;
+    // オーナー
+    owner: string;
+    // シリーズ名
+    name: string;
+    // 説明
+    description: string;
+    // ゲームたち
+    games: Array<number>;
+    // 作成日時
+    created: Date;
+    // 更新日時
+    updated: Date;
+}
+
+export interface SeriesOfGame{
     id: number;
     name: string;
-    description: string;
-    games: Array<number>;
+    prev: number | null;
+    next: number | null;
 }
 
 export interface Game{

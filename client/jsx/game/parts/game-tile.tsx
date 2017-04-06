@@ -18,7 +18,7 @@ export default ({metadata}: IPropGameTile)=>{
     return <div className="game-tile">
         <p className="game-tile-title"><a href={"/play/"+metadata.id}>{metadata.title}</a></p>
         <p className="game-tile-time">投稿日時：<Datetime date={new Date(metadata.created)} />{hiddenFlag}</p>
-        {metadata.user ? <UserTile id={metadata.owner} label="投稿者" {...metadata.user} fullWidth/> : null}
+        {metadata.user ? <UserTile label="投稿者" {...metadata.user} fullWidth/> : null}
     </div>;
 };
 

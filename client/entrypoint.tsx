@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Root from './jsx/root';
 import * as userAction from './actions/user';
+import * as pageAction from './actions/page';
 
 import handleEvents from './scripts/link';
 
@@ -17,12 +18,17 @@ if("undefined"!==typeof window){
     (window as any)._g_csrfToken = data.csrfToken;
 }
 
-//session
+// session
 userAction.init(data.session);
 
-console.log('ROOT', data);
+// page
+pageAction.load.completed({
+    title: document.title,
+    path: location.pathname,
+    page: data.page,
+});
 
-const root = React.createElement(Root,data);
+const root = <Root {...data} />;
 
 ReactDOM.render(root,app);
 

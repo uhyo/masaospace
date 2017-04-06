@@ -4,10 +4,16 @@ import Datetime from '../commons/datetime';
 import UserTile from '../game/parts/user-tile';
 import GameList from '../game/parts/game-list';
 
+import {
+    Series,
+    UserOpenData,
+    GameOpenMetadataWithOwnerData,
+} from '../data';
+
 export interface IPropSeriesPage{
-    series: any;
-    owner: any;
-    metadatas: Array<any>;
+    series: Series;
+    owner: UserOpenData;
+    metadatas: Array<GameOpenMetadataWithOwnerData>;
 }
 export default ({series, owner, metadatas}: IPropSeriesPage)=>{
     const m = metadatas.map(metadata=> ({

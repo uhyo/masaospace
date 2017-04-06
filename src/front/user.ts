@@ -1,101 +1,109 @@
-///<reference path="./data.d.ts" />
 import Controller from '../controllers/index';
 
-import logger=require('../logger');
+import * as logger from '../logger';
 
-export default function(c:Controller,r:_Router):void{
+import {
+    Router,
+} from './data';
+import {
+    PageData,
+} from '@uhyo/masaospace-util';
+
+export default function(c:Controller,r:Router):void{
     //about user
 
     //new entry
-    r.add("/entry/page",(_,callback:Callback<View>)=>{
-        callback(null,{
+    r.add("/entry/page",()=>{
+        return Promise.resolve({
             title: "新規登録",
-            page:"user.entry",
-            data:{}
+            page: {
+                page: "user.entry",
+            } as PageData,
         });
     });
 
     //ticket checker
     r.addPattern(":ticket",/^[0-9a-zA-Z]+$/);
     r.addPattern(":userid",/^[0-9a-zA-Z_]+$/);
-    r.add("/entry/ticket/:userid/:ticket",(obj,callback:Callback<View>)=>{
-        callback(null,{
+    r.add("/entry/ticket/:userid/:ticket", (obj)=>{
+        return Promise.resolve({
             title: "パスワード設定",
-            page:"user.ticket",
-            data:{
-                screen_name:obj[":userid"],
-                ticket:obj[":ticket"]
-            }
+            page: {
+                page: "user.ticket",
+                screen_name: obj[":userid"],
+                ticket: obj[":ticket"],
+            } as PageData,
         });
     });
 
     //reset password
-    r.add("/entry/reset",(_,callback:Callback<View>)=>{
-        callback(null,{
+    r.add("/entry/reset",()=>{
+        return Promise.resolve({
             title: "パスワード再発行",
-            page:"user.reset",
-            data:{
-            }
+            page: {
+                page:"user.reset",
+            } as PageData,
         });
     });
 
     //my page
-    r.add("/my",(_,callback:Callback<View>)=>{
-        callback(null,{
+    r.add("/my",()=>{
+        return Promise.resolve({
             title: "マイページ",
-            page:"user.my",
-            data:{
-            }
+            page: {
+                page:"user.my",
+            } as PageData,
         });
     });
-    r.add("/my/ticket/:ticket",(obj,callback:Callback<View>)=>{
-        callback(null,{
+    r.add("/my/ticket/:ticket",(obj)=>{
+        return Promise.resolve({
             title: "各種手続",
-            page:"user.ticket",
-            data:{
-                ticket: obj[":ticket"]
-            }
+            page: {
+                page: "user.ticket",
+                ticket: obj[":ticket"],
+            } as PageData,
         });
     });
 
     //user page
-    r.add("/:userid",(obj,callback:Callback<View>)=>{
-        c.user.user.findOneUser({
-            "data.screen_name_lower":obj[":userid"].toLowerCase(),
-            "data.activated": true
-        },(err,user)=>{
-            if(err){
-                logger.error(err);
-                callback(err,null);
-                return;
-            }
-            if(user==null){
-                callback(null,{
-                    status: 404,
-                    title: null,
-                    page: null,
-                    data: null
-                });
-                return;
-            }
-            var d=user.getData();
-            callback(null,{
-                title: d.name,
-                page:"user.page",
-                data:{
-                    userid: user.id,
-                    data: d
+    r.add("/:userid", (obj)=>{
+        return new Promise((resolve, reject)=>{
+            c.user.user.findOneUser({
+                "data.screen_name_lower":obj[":userid"].toLowerCase(),
+                "data.activated": true,
+            },(err,user)=>{
+                if(err){
+                    logger.error(err);
+                    reject(err);
+                    return;
                 }
+                if(user==null){
+                    resolve({
+                        status: 404,
+                        title: null,
+                        page: null,
+                    });
+                    return;
+                }
+                const d = user.getData();
+                resolve({
+                    title: d.name,
+                    page: {
+                        page:"user.page",
+                        userid: user.id,
+                        data: d,
+                    },
+                });
             });
         });
     });
     //account setting
-    r.add("/my/account",(_,callback:Callback<View>)=>{
-        callback(null,{
+    r.add("/my/account",()=>{
+        return Promise.resolve({
             title:"アカウント設定",
-            page:"user.account",
-            data:{
-            }
+            page: {
+                page:"user.account",
+            } as PageData,
         });
     });
 }

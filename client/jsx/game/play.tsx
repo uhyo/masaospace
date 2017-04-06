@@ -17,18 +17,14 @@ import {
     UserOpenDataWithId,
     Game,
     GameOpenMetadata,
+    SeriesOfGame,
 } from '../data';
 
 export interface IPropPlay{
     game: Game;
     metadata: GameOpenMetadata;
     owner: UserOpenDataWithId;
-    series: Array<{
-        id: number;
-        name: string;
-        prev?: number;
-        next?: number;
-    }>;
+    series: Array<SeriesOfGame>;
     config: any;
     session: Session;
 }

@@ -29,6 +29,7 @@ import * as validator from './validator';
 
 import {
     masao,
+    RouteHandler,
 } from '@uhyo/masaospace-util';
 
 import Controller from './controllers/index';
@@ -201,7 +202,7 @@ export class WebServer{
     }
     //front pages
     front(c:Controller):void{
-        const r=makeFrontRouter(c);
+        const r = makeFrontRouter(c);
 
         // pathに対応するページのデータをあげる
         this.app.post("/api/front",(req,res)=>{
@@ -224,24 +225,23 @@ export class WebServer{
                 session: req.session,
                 ... u.query,
                 ... re.params,
-            },(err,view)=>{
-                if(err || view == null){
-                    res.json({
-                        error: String(err)
-                    });
-                    return;
-                }
+            }).then((view)=>{
                 if(view.status){
                     if(view.status===404){
-                        view.title="Page not found";
-                        view.page="404";
-                        view.data={};
+                        view.title = "Page not found";
+                        view.page = {
+                            page: '404',
+                        };
                     }
                 }
                 res.json({
                     title: pageTitle(view.title),
                     page: view.page,
-                    data: view.data
+                });
+            })
+            .catch(err=>{
+                res.json({
+                    error: String(err),
                 });
             });
         });
@@ -305,8 +305,8 @@ export class WebServer{
                 });
             });
         });
-        this.app.get("*",(req,res)=>{
-            var re=r.route(req.path);
+        this.app.get("*", (req,res)=>{
+            var re = r.route(req.path);
             var func = re ? re.result : null;
             var params = re ? re.params : {};
             params = {
@@ -317,28 +317,25 @@ export class WebServer{
             if(func==null){
                 /* 404 */
                 res.status(404);
-                func=(_,callback)=>{
-                    callback(null,{
-                        //TODO
-                        title: "Page not found",
-                        page: "404",
-                        data:{}
+                func = (()=>{
+                    return Promise.resolve({
+                        status: 404,
+                        title: 'Not Found',
+                        page: {
+                            page: '404',
+                        },
                     });
-                };
+                }) as RouteHandler;
             }
-            func(params,(err,view)=>{
-                if(err || view == null){
-                    //throw err;
-                    res.send(String(err));
-                    return;
-                }
+            func(params).then(view=>{
                 if(view.status){
                     //statusを返す
                     if(view.status===404){
                         res.status(404);
-                        view.title="Page not found";
-                        view.page="404";
-                        view.data={};
+                        view.title = "Not Found";
+                        view.page = {
+                            page: "404",
+                        };
                     }else{
                         res.send(view.status);
                         return;
@@ -350,7 +347,6 @@ export class WebServer{
                     page: view.page,
                     csrfToken: req.csrfToken(),
                     session:makeClientSession(session),
-                    data: view.data
                 };
                 res.render("index.ect",{
                     title: pageTitle(view.title),
@@ -358,6 +354,9 @@ export class WebServer{
                     // content: ReactDOMServer.renderToString(React.createElement(Root,initialData))
                     content: '',
                 });
+            })
+            .catch(err=>{
+                res.send(String(err));
             });
         });
     }

@@ -4,12 +4,12 @@ import QueryList from '../game/parts/query-list';
 import UserIcon from '../commons/user-icon';
 
 import {
-    UserData,
+    UserOpenData,
 } from '../data';
 
 export interface IPropUserPage{
     userid: string;
-    data: UserData;
+    data: UserOpenData;
 }
 export default ({userid, data}: IPropUserPage)=>{
     const query = {

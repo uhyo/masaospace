@@ -54,109 +54,96 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}>{
         const {
             session,
         } = this.state;
-        const [elm, props]=this.getPage();
+        const pageArea = this.getPage();
         return <div className="root">
             <Header session={session} />
-            {React.createElement(elm,props)}
+            {pageArea}
             <Footer />
         </div>;
     }
-    protected getPage(): [any, any]{
+    protected getPage(): React.ReactElement<any>{
         const {
             props: {
                 config,
             },
             state: {
-                page,
+                page: {
+                    page,
+                },
                 session,
             },
         } = this;
+        if (page == null){
+            return <NotFound/>;
+        }
         switch(page.page){
             case "top":
                 //top page
-                return [Top, {
-                    config,
-                    session,
-                    data: page.data,
-                }];
+                return <Top
+                    config={config}
+                    session={session}
+                    data={page.data} />;
             ///// user
             case "user.entry":
                 //entry page
-                return [UserEntry, {
-                    config,
-                }];
+                return <UserEntry config={config} />;
             case "user.reset":
                 //password reset page
-                return [UserReset, {
-                    config,
-                }];
+                return <UserReset config={config} />;
             case "user.ticket":
                 //ticket confirmation page
-                return [UserTicket, {
-                    ticket: page.data.ticket,
-                    screen_name: page.data.screen_name,
-                    config,
-                }];
+                return <UserTicket
+                    ticket={page.ticket}
+                    screen_name={page.screen_name}
+                    config={config} />;
             case "user.page":
-                return [UserPage, {
-                    userid: page.data.userid,
-                    data: page.data.data,
-                }];
-
+                return <UserPage
+                    userid={page.userid}
+                    data={page.data} />;
             case "user.my":
                 //mypage
-                return [UserMy, {
-                    session,
-                }];
+                return <UserMy session={session} />;
             case "user.account":
                 //account settings
-                return [UserAccount, {
-                    config,
-                    session,
-                }];
+                return <UserAccount
+                    config={config}
+                    session={session} />;
             ///// game
             case "game.new":
-                return [GameNew, {
-                    config,
-                    session,
-                }];
+                return <GameNew
+                    config={config}
+                    session={session} />;
             case "game.play":
-                return [GamePlay, {
-                    game: page.data.game,
-                    metadata: page.data.metadata,
-                    owner: page.data.owner,
-                    series: page.data.series,
-
-                    config,
-                    session,
-                }];
+                return <GamePlay
+                    game={page.game}
+                    metadata={page.metadata}
+                    owner={page.owner}
+                    series={page.series}
+                    config={config}
+                    session={session} />;
             case "game.list":
-                return [GameList, {
-                    owner: page.data.owner,
-                    tag: page.data.tag,
-                }];
+                return <GameList
+                    owner={page.owner}
+                    tag={page.tag} />;
             case "game.edit":
-                return [GameEdit, {
-                    config,
-                    session,
-                    id: page.data.id
-                }];
+                return <GameEdit
+                    id={page.id}
+                    config={config}
+                    session={session} />;
             case "game.hidden":
-                return [GameHidden, {
-                    id: page.data.id,
-                    owner: page.data.owner,
-                    session,
-                }];
+                return <GameHidden
+                    id={page.id}
+                    owner={page.owner}
+                    session={session} />;
             /////series
             case "series.page":
-                return [SeriesPage, {
-                    series: page.data.series,
-                    owner: page.data.owner,
-                    metadatas: page.data.metadatas,
-                }];
+                return <SeriesPage
+                    series={page.series}
+                    owner={page.owner}
+                    metadatas={page.metadatas} />;
             default:
                 //"404"とか
-                return [NotFound, {}]
+                return <NotFound />;
         }
     }
 }
