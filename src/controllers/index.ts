@@ -1,9 +1,9 @@
-import domain=require('domain');
+import * as domain from 'domain';
 
-import config=require('config');
-import logger=require('../logger');
+import * as config from 'config';
+import * as logger from '../logger';
 
-import db=require('../db');
+import * as db from '../db';
 
 import TicketController from './ticket';
 import FileController from './file';
@@ -17,10 +17,14 @@ import * as mum from 'my-user-mongo';
 
 import {addDailyJob} from '../util';
 
+import {
+    UserData,
+} from '@uhyo/masaospace-util';
+
 
 // 各種の操作
 export default class Controller{
-    public user:mum.Manager;
+    public user:mum.Manager<UserData>;
     public ticket:TicketController;
     public file:FileController;
     public session:SessionController;

@@ -1,16 +1,17 @@
-///<reference path="../node.d.ts" />
-
 // import db=require('../db');
-import logger=require('../logger');
+import * as logger from '../logger';
 
 import {
     UserOneQuery,
+    UserData,
     Session,
 } from '../data';
-import mum=require('my-user-mongo');
+import {
+    Manager,
+} from 'my-user-mongo';
 
 export default class SessionController{
-    constructor(/* private db:db.DBAccess,*/private user:mum.Manager){
+    constructor(/* private db:db.DBAccess,*/private user:Manager<UserData>){
     }
     init(callback:Cont):void{
         callback(null);

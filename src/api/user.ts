@@ -14,7 +14,9 @@ import {
     UserOneQuery,
     Session,
 } from '../data';
-
+import {
+    UserData as MUserData,
+} from 'my-user-mongo';
 
 //User auth&session
 export default class C{
@@ -108,7 +110,7 @@ export default class C{
                         });
                         return;
                     }
-                    let u:User=result.user;
+                    let u: User<MUserData<UserData>>=result.user;
                     //登録完了。チケットを発行
                     c.ticket.newTicket({
                         type: "setpassword",
@@ -193,7 +195,7 @@ export default class C{
                         return;
                     }
                     //screen_name一致チェック
-                    var data:UserData=u.getData();
+                    const data:MUserData<UserData> = u.getData();
                     if(data.screen_name!==screen_name){
                         res.json({
                             error:"screen_nameが一致しません。"

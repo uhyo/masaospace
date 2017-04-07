@@ -1,14 +1,19 @@
-///<reference path="../node.d.ts" />
+import * as nodemailer from 'nodemailer';
 
-import nodemailer=require('nodemailer');
-
-import db=require('../db');
-import logger=require('../logger');
-import config=require('config');
+import * as db from '../db';
+import * as logger from '../logger';
+import * as config from 'config';
 
 import {uniqueToken, secondToString} from '../util';
 
-import {User, Mail} from '../data';
+import {
+    User,
+    Mail,
+    UserData,
+} from '../data';
+import {
+    UserData as MUserData,
+} from 'my-user-mongo';
 
 export default class MailController{
     private transporter:nodemailer.Transport;
@@ -26,7 +31,7 @@ export default class MailController{
     }
 
     //ユーザー登録時のメール
-    userEntryMail(u:User, ticket:string):void{
+    userEntryMail(u:User<MUserData<UserData>>, ticket:string):void{
         var d=u.getData();
         var sname=config.get("service.name");
         var addr=config.get("service.url")+"entry/ticket/"+d.screen_name+"/"+ticket;
@@ -47,7 +52,7 @@ export default class MailController{
         });
     }
     //メールアドレス変更手続きメール
-    changeMailMail(u:User, newmail:string, ticket:string):void{
+    changeMailMail(u:User<MUserData<UserData>>, newmail:string, ticket:string):void{
         var d=u.getData();
         var sname=config.get("service.name");
         var addr=config.get("service.url")+"my/ticket/"+ticket;
@@ -67,7 +72,7 @@ export default class MailController{
                 "このメールを無視すればあなたのメールアドレスが"+sname+"の登録に利用されることはありません。",
         });
     }
-    resetPasswordMail(u:User, ticket:string):void{
+    resetPasswordMail(u:User<MUserData<UserData>>, ticket:string):void{
         var d=u.getData();
         var sname=config.get("service.name");
         var addr=config.get("service.url")+"my/ticket/"+ticket;
