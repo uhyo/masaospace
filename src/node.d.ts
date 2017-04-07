@@ -20,28 +20,6 @@ declare module "helmet"{
     function _m():any;
     export = _m;
 }
-/*
-declare module "connect-redis"{
-    function _m(expressSession?:any):new(options:Options)=>RedisStore;
-    export = _m;
-    class RedisStore{
-        constructor(options:Options);
-    }
-    interface Options{
-        client?: any;
-        host?: string;
-        port?: number;
-        socket?: any;
-
-        ttl?: number;
-        disableTTL?: boolean;
-        db?: number;
-        pass?: string;
-        prefix?: string;
-        unref?: boolean;
-    }
-}
-*/
 declare module "my-validator"{
     export var error:any;
     export var forExpress:any;

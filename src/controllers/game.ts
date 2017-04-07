@@ -573,7 +573,11 @@ export default class GameController{
         if(Array.isArray(metadata.tags)){
             key = redis_tagscore_prefix+((new Date()).getHours()<12 ? "0" : "1");
             for(var i=0;i<metadata.tags.length;i++){
-                r.zincrby(key,1,metadata.tags[i]);
+                r.zincrby(key,1,metadata.tags[i], (err: any)=>{
+                    if (err){
+                        logger.warning(err);
+                    }
+                });
             }
         }
     }

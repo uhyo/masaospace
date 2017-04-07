@@ -138,9 +138,11 @@ export class WebServer{
                 client: c.getRedisClient(),
                 ttl: config.get("session.life"),
                 db: config.get("redis.db"),
-                prefix: "sess:"
-            })
+                prefix: "sess:",
+                logErrors: true,
+            } as any),
         };
+        void connectRedis;
         this.app.use(expressSession(sessoption));
         this.app.use(csurf());
         //error handling

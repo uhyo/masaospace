@@ -41,8 +41,7 @@ module.exports={
     plugins,
     resolve: {
         extensions: ['.js'],
-        // こうしないとなぜかReactがこわれる
-        // modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
+        modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
     },
     externals: {
         fs: {},

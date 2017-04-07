@@ -88,7 +88,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
         this.setState({
             metadata: {
                 ... this.state.metadata,
-                metadata,
+                ... metadata,
             },
         });
     }

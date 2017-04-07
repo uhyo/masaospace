@@ -37,6 +37,7 @@ export default class GameMetadataForm extends React.Component<IPropGameMetadataF
         this.changeEvent();
     }
     protected handleTags(tags: Array<string>){
+        console.log('tags!', tags);
         this.setState({
             tags,
         },()=>{
@@ -70,13 +71,13 @@ export default class GameMetadataForm extends React.Component<IPropGameMetadataF
             <p>
                 <label className="form-row">
                     <span>タイトル</span>
-                    <input type="text" name="title" ref="title" onChange={handleChange} defaultValue={title} />
+                    <input type="text" ref="title" onChange={handleChange} defaultValue={title} />
                 </label>
             </p>
             <p>
                 <label className="form-row">
                     <span>説明</span>
-                    <textarea name="description" ref="description" onChange={handleChange} value={description} />
+                    <textarea ref="description" onChange={handleChange} value={description} />
                 </label>
             </p>
             <div>
@@ -88,7 +89,7 @@ export default class GameMetadataForm extends React.Component<IPropGameMetadataF
             <p>
                 <label className="form-row">
                     <span>非公開</span>
-                    <select name="hidden" value={String(hidden)} onChange={handleChange}>
+                    <select ref="hidden" value={String(hidden)} onChange={handleChange}>
                         <option value="false">非公開にしない</option>
                         <option value="true">非公開にする</option>
                     </select>
