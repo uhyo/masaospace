@@ -16,7 +16,7 @@ declare var CanvasMasao_v28: any;
 interface IPropGameView{
     game: Game;
     audio_enabled?: boolean;
-    playlogCallback?(): void;
+    playlogCallback?(playlog: any): void;
     playlog?: any;
     allowScripts?: boolean;
 }

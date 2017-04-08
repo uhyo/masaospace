@@ -47,6 +47,8 @@ export default class Play extends React.Component<IPropPlay, IStatePlay>{
             playlog_clear: null,
             playlog_playing_data: null
         };
+
+        this.handlePlaylog = this.handlePlaylog.bind(this);
     }
     render(){
         const {
@@ -161,9 +163,9 @@ export default class Play extends React.Component<IPropPlay, IStatePlay>{
             </div>;
         }
         //gameviewにわたすやつ
-        let playlogCallback = null;
+        let playlogCallback: undefined | ((obj: any)=>void) = void 0;
         if(playlog_switch===true && playlog_playing_data==null){
-            playlogCallback = this.handlePlaylog.bind(this);
+            playlogCallback = this.handlePlaylog;
         }
         //GameView
         let gameView;
@@ -205,7 +207,7 @@ export default class Play extends React.Component<IPropPlay, IStatePlay>{
         </section>;
     }
     //ゲームからplaylogが来たので
-    handlePlaylog(obj: any){
+    protected handlePlaylog(obj: any){
         let {
             playlog_clear,
             playlog_score,

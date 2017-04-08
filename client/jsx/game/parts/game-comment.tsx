@@ -124,7 +124,7 @@ export default class GameComment extends React.Component<IPropGameComment, IStat
                     <PlaylogList playlogs={playlogs} playString="選択" selected={playlog} onPlay={hp}/>
                 </div>;
             }
-            commentForm=<CommentForm game={game} config={config} playlog={selectedPlaylog && selectedPlaylog.buffer} onComment={this.handleComment}/>
+            commentForm=<CommentForm game={game} config={config} playlog={selectedPlaylog && selectedPlaylog.buffer} onComment={this.handleComment.bind(this)}/>
         }
         if(loading===true){
             commentsArea=<Loading/>;
