@@ -1,8 +1,5 @@
 import * as React from 'react';
 //masao edit component
-import {
-    masao,
-} from '@uhyo/masaospace-util';
 
 import MasaoSelector from './masao-selector';
 import GameMetadataForm from './game-metadata-form';
@@ -12,11 +9,12 @@ import HorizontalMenu from '../commons/horizontal-menu';
 import FileList from '../file/file-list';
 
 import {
+    masao,
     File,
     Session,
-    Game,
     GameEditableMetadata,
     Resource,
+    MasaoJSONFormat,
 } from '../data';
 //とりあえずよく使うやつ
 const major = ["filename_pattern","filename_title","filename_ending","filename_gameover","filename_haikei","filename_mapchip"];
@@ -24,16 +22,18 @@ const major = ["filename_pattern","filename_title","filename_ending","filename_g
 interface IPropMasaoEdit{
     config: any;
     session: Session;
-    game?: Game;
+    game?: MasaoJSONFormat;
     metadata?: GameEditableMetadata;
+    resources?: Array<Resource>;
     saveButton: string;
     onSave(obj: {
-        game: Game;
+        game: masao.format.MasaoJSONFormat;
         metadata: GameEditableMetadata;
+        resources: Array<Resource>;
     }): void;
 }
 interface IStateMasaoEdit{
-    game: Game | undefined;
+    game: MasaoJSONFormat | undefined;
     metadata: GameEditableMetadata;
     resources: Array<Resource>;
 
@@ -44,7 +44,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
     constructor(props: IPropMasaoEdit){
         super(props);
         this.state = {
-            game:this.props.game || void 0,
+            game: this.props.game || void 0,
             metadata:this.props.metadata || {
                 title: "",
                 description: "",
@@ -52,15 +52,14 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
                 hidden: false
             },
 
-            resources: this.props.game ? this.props.game.resources : [],
+            resources: this.props.resources || [],
 
             filesPage:"filename_pattern",
             filesPage2:null,    //otherのとき
         };
     }
-    protected masaoSelected(game: Game, metadata: GameEditableMetadata){
+    protected masaoSelected(game: MasaoJSONFormat, metadata: GameEditableMetadata){
         const {
-            resources,
             metadata: m,
         } = this.state;
 
@@ -72,12 +71,8 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
                 title: metadata.title
             };
         }
-        //resourcesをひきつぐ
-        if(game!=null){
-            game.resources = resources;
-        }
         this.setState({
-            game: game,
+            game,
             metadata: {
                 ...m,
                 metadata_title,
@@ -97,6 +92,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
         this.props.onSave({
             game: this.state.game!,
             metadata: this.state.metadata,
+            resources: this.state.resources,
         });
     }
     render(){
@@ -112,9 +108,10 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
         </div>;
     }
     protected preview(){
+        const game = masao.formatToGame(this.state.game!);
         return <section className="game-masao-preview">
             <h1>正男プレビュー</h1>
-            <GameView allowScripts game={this.state.game!} />
+            <GameView allowScripts game={game} />
         </section>;
     }
     files(){

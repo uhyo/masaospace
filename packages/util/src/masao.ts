@@ -4,12 +4,16 @@ import {
     param,
     format,
     playlog,
+    load,
 } from 'masao';
 
 import {
     Game,
+    GameEditableMetadata,
     MasaoCategory,
+    Resource,
     ResourceKind,
+    MasaoJSONFormat,
 } from './data';
 
 // export raw masao API
@@ -17,6 +21,7 @@ export {
     param,
     format,
     playlog,
+    load,
 };
 
 // パラメータの長さ限度
@@ -217,10 +222,12 @@ export function removeInvalidParams(params: Record<string, string>): Record<stri
     return result;
 }
 
+/*
 // MasaoSpace的に妥当なバージョンか調べる
 export function validateVersion(version: string){
     return version === '2.8' || version === 'fx' || version === 'kani2';
 }
+*/
 
 //ファイルタイプが妥当か
 export function validateResourceKind(kind: string): kind is ResourceKind{
@@ -397,4 +404,41 @@ export function categoryToVersion(category: MasaoCategory): string{
         return "fx16";
     }
     return category;
+}
+
+// formatの変換
+export function formatToMetadata(format: MasaoJSONFormat): Partial<GameEditableMetadata>{
+    const {
+        metadata,
+    } = format;
+    const title = metadata!=null && 'string'===typeof metadata.title ? metadata.title : '';
+    return {
+        title,
+    };
+}
+export function formatToGame(format: MasaoJSONFormat, resources?: Array<Resource>): Game{
+    const {
+        params,
+        version,
+        script,
+    } = format;
+
+    const game: Game = {
+        id: Number.NaN,
+        version: versionCategory(version),
+        params,
+        resources: resources || [],
+        script: script || null,
+        'advanced-map': format['advanced-map'],
+    };
+    removeResources(game.params);
+    removeInvalidParams(game.params);
+    return game;
+}
+export function gameToFormat(game: Game): MasaoJSONFormat{
+    return format.make({
+        version: categoryToVersion(game.version),
+        params: game.params,
+        script: game.script || void 0,
+    });
 }

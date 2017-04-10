@@ -10,8 +10,10 @@ import Loading from '../commons/loading';
 
 import {
     Session,
-    Game,
-    GameMetadata,
+    GameEditableMetadata,
+    MasaoJSONFormat,
+    Resource,
+    masao,
 } from '../data';
 
 export interface IPropEdit{
@@ -21,8 +23,9 @@ export interface IPropEdit{
 }
 export interface IStateEdit{
     loading: boolean;
-    initialGame: any;
-    initialMetadata: any;
+    initialGame: MasaoJSONFormat | null;
+    initialMetadata: GameEditableMetadata | null;
+    initialResources: Array<Resource>;
 }
 export default class Edit extends React.Component<IPropEdit, IStateEdit>{
     constructor(props: IPropEdit){
@@ -31,6 +34,7 @@ export default class Edit extends React.Component<IPropEdit, IStateEdit>{
             loading: false,
             initialGame: null,
             initialMetadata: null,
+            initialResources: [],
         };
     }
     componentDidMount(){
@@ -40,13 +44,14 @@ export default class Edit extends React.Component<IPropEdit, IStateEdit>{
         .then(({game,metadata})=>{
             this.setState({
                 loading: false,
-                initialGame: game,
-                initialMetadata: metadata
+                initialGame: masao.gameToFormat(game),
+                initialMetadata: metadata,
+                initialResources: game.resources,
             });
         })
         .catch(errorStore.emit);
     }
-    protected handleSave({game, metadata}: {game: Game; metadata: GameMetadata;}){
+    protected handleSave({game, metadata, resources}: {game: MasaoJSONFormat; metadata: GameEditableMetadata; resources: Array<Resource>}){
         const {
             id,
         } = this.props;
@@ -55,6 +60,7 @@ export default class Edit extends React.Component<IPropEdit, IStateEdit>{
             id,
             game: JSON.stringify(game),
             metadata: JSON.stringify(metadata),
+            resources: JSON.stringify(resources),
         })
         .then(()=>{
             pageAction.load(`/play/${id}`);
@@ -71,6 +77,7 @@ export default class Edit extends React.Component<IPropEdit, IStateEdit>{
                 loading,
                 initialGame: game,
                 initialMetadata: metadata,
+                initialResources: resources,
             },
         } = this;
         if(loading===true){
@@ -80,7 +87,7 @@ export default class Edit extends React.Component<IPropEdit, IStateEdit>{
             return null;
         }
         return <div className="game-edit">
-            <MasaoEdit config={config} session={session} game={game} metadata={metadata} saveButton="保存" onSave={this.handleSave.bind(this)} />
+            <MasaoEdit config={config} session={session} game={game} metadata={metadata} resources={resources} saveButton="保存" onSave={this.handleSave.bind(this)} />
         </div>;
     }
 }

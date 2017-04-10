@@ -1,9 +1,14 @@
 // data types
+import {
+    format,
+} from 'masao';
 
 // MasaoSpace上のバージョン分類
 export type MasaoCategory = '2.8' | 'fx' | 'kani2';
 
 export type ResourceKind = 'pattern' | 'title' | 'ending' | 'gameover' | 'mapchip' | 'chizu' | 'haikei' | 'se' | 'bgm' | 'other';
+
+export type MasaoJSONFormat = format.MasaoJSONFormat;
 
 //一般に見せられるユーザー情報
 export interface UserOpenData{
@@ -84,6 +89,7 @@ export interface Game{
     version: MasaoCategory;
     resources: Array<Resource>;
     script: string | null;
+    'advanced-map'?: format.MasaoJSONFormat['advanced-map'];
 }
 export type GameData = Game;
 

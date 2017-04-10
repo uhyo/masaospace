@@ -97,15 +97,7 @@ gulp.task('static-sound',function(){
     .pipe(gulp.dest("dist/sounds/"));
 });
 
-gulp.task('masao-editor-static',function(){
-    return gulp.src(["masao-editor/images/*"],{
-        base:"masao-editor/images"
-    })
-    .pipe(changed("dist/images/"))
-    .pipe(gulp.dest("dist/images/"));
-});
-
-gulp.task('static',['static-image','static-sound','masao-editor-static']);
+gulp.task('static',['static-image','static-sound']);
 
 
 gulp.task('css',function(){

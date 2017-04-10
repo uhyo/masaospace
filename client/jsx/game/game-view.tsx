@@ -93,6 +93,9 @@ export default class GameView extends React.PureComponent<IPropGameView, {}>{
                 options.userJSCallback = userJSCallback;
             }
         }
+        if (game['advanced-map'] != null){
+            options['advance-map'] = game['advanced-map'];
+        }
 
         if(game.version==="2.8"){
             //2.8だ

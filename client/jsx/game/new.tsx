@@ -8,8 +8,9 @@ import errorStore from '../../stores/error';
 
 import {
     Session,
-    Game,
     GameMetadata,
+    Resource,
+    MasaoJSONFormat,
 } from '../data';
 export interface IPropNew{
     config: any;
@@ -17,14 +18,16 @@ export interface IPropNew{
 }
 
 export default class New extends React.Component<IPropNew, {}>{
-    protected handleSave({game, metadata}: {
-        game: Game;
+    protected handleSave({game, metadata, resources}: {
+        game: MasaoJSONFormat;
         metadata: GameMetadata;
+        resources: Array<Resource>;
     }){
         //正男を投稿
         api("/api/game/new", {
             game: JSON.stringify(game),
             metadata: JSON.stringify(metadata),
+            resources: JSON.stringify(resources),
         }).then((result)=>{
             //投稿結果ページに移動
             pageActions.load(`/play/${result.id}`);
