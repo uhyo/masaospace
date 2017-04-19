@@ -54,6 +54,7 @@
     "reflux": "^6.4.1",
     "reflux-promise": "^1.0.4",
     "st": "^1.2.0",
+    "tslib": "^1.6.0",
     "type-is": "^1.6.13",
     "uglifyify": "^3.0.4",
     "watchify": "^3.7.0"

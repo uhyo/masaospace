@@ -118,12 +118,8 @@ gulp.task('clean',function(cb){
 });
 
 gulp.task('batch-tsc',function(){
-    return gulp.src("batch/**/*.ts")
-    .pipe(typescript({
-        module:"commonjs",
-        target:"es5",
-        typescript:require('typescript')
-    }))
+    return gulp.src('batch/**/*.ts')
+    .pipe(gulpTs.createProject('tsconfig-server.json')())
     .js
     .pipe(gulp.dest("batch/"));
 });
@@ -134,7 +130,7 @@ gulp.task('watch',['watch-tsc-client','watch-webpack','css','watch-tsc-server'],
 });
 
 gulp.task('client',['webpack','css']);
-gulp.task('default',['tsc-server','css','watch-webpack','mc_canvas','static','batch-tsc']);
+gulp.task('default',['tsc-server','css','tsc-client','webpack','mc_canvas','static','batch-tsc']);
 
 
 // make

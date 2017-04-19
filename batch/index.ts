@@ -1,11 +1,10 @@
-///<reference path="../src/node.d.ts" />
-import fs=require('fs');
+// import fs=require('fs');
 import readline=require('readline');
 
 var db=require('../js/db');
 
 var ac=new db.Mongo();
-ac.connect((err)=>{
+ac.connect((err: any)=>{
     if(err)throw err;
     let db=ac.getClient();
     let pack=require('../package.json');

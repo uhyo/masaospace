@@ -2,6 +2,7 @@
   "compilerOptions":{
     "lib": ["dom", "es2015"],
     "alwaysStrict": true,
+    "importHelpers": true,
     "jsx":"React",
     "module": "es2015",
     "moduleResolution": "Node",
