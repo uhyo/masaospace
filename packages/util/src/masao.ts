@@ -222,6 +222,56 @@ export function removeInvalidParams(params: Record<string, string>): Record<stri
     return result;
 }
 
+// 余計なパラメータとマップデータも除去
+export function filterParams(params: Record<string, string>, filter: (key: string, value: string)=>boolean): Record<string, string>{
+    const result: Record<string, string> = {};
+    for(let i=0; i<paramKeys.length ;i++){
+        const key = paramKeys[i];
+        const value = params[key];
+        if (params[key]!=null && filter(key, value)){
+            result[key] = value;
+        }
+    }
+    return result;
+}
+
+// 最小のゲーム
+export function minimize(game: MasaoJSONFormat): MasaoJSONFormat{
+    const {
+        'masao-json-format-version': mjfv,
+        params,
+        version,
+        metadata,
+        script,
+        'advanced-map': advm,
+    } = game;
+
+    // advanced-mapを最小に
+    const advm2 = advm != null ?
+        format.sanitizeAdvancedMap(mjfv, advm, {
+            stageNumber: getLastStage(params),
+        }) :
+        void 0;
+
+    // paramsから余計なものを除去
+    const params2 = filterParams(params, (key, value)=>{
+        const data = param.data[key];
+        if (data.type!=='map' && data.type!=='layer' && data.type!=='resource' && value!==data.default){
+            return true;
+        }
+        return false;
+    });
+
+    return {
+        'masao-json-format-version': mjfv,
+        params: params2,
+        version,
+        metadata,
+        script,
+        'advanced-map': advm2,
+    };
+}
+
 /*
 // MasaoSpace的に妥当なバージョンか調べる
 export function validateVersion(version: string){

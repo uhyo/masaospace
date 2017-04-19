@@ -259,24 +259,8 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
         callback(new Error("ゲーム情報が不正です。(6)"), null);
         return;
     }
-    //リソース情報を除去
-    masao.removeResources(format.params);
-    // advanced-mapを最適化
-    const advm = format['advanced-map'];
-    if (advm != null){
-        let stageNumber: number;
-        if (format.params['stage_max']){
-            stageNumber = parseInt(format.params['stage_max']);
-        }else{
-            stageNumber = 4;
-        }
-        if (!stageNumber){
-            stageNumber = 4;
-        }
-        format['advanced-map'] = masao.format.sanitizeAdvancedMap(format['masao-json-format-version'], advm, {
-            stageNumber,
-        });
-    }
+    // データを最小化
+    const format2 = masao.minimize(format);
 
     //リソースがあるか確認する
     let resourceTargetFlag:boolean = false;
@@ -323,7 +307,7 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
             }
         }
         //ファイルはOKだ
-        const gameobj = masao.formatToGame(format, resources.map(({target, id})=>{
+        const gameobj = masao.formatToGame(format2, resources.map(({target, id})=>{
             return {
                 target,
                 id,
