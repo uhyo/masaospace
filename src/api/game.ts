@@ -64,17 +64,17 @@ export default class C{
                     });
                     return;
                 }
-                var id=parseInt(req.body.id);
+                const id=parseInt(req.body.id);
                 //updatedをセット（createdはeditGameで）
                 obj.metadata.id=id;
                 c.game.editGame(id, req.session!.user, obj.game, obj.metadata,(err: Error|null)=>{
                     if(err){
                         res.json({
-                            error: String(err)
+                            error: String(err),
                         });
                     }else{
                         res.json({
-                            success:true
+                            success:true,
                         });
                     }
                 });
@@ -230,7 +230,10 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
     //JSONを読む
     try{
         const formatobj = JSON.parse(req.body.game);
-        format = masao.format.load(formatobj);
+        format = masao.format.load(formatobj, {
+            // nestedErrors: true,
+            // logErrors: true,
+        });
         metadata = JSON.parse(req.body.metadata);
         resources = JSON.parse(req.body.resources);
     }catch(e){
@@ -320,19 +323,12 @@ function processMasao(req:express.Request,c:Controller,callback:Callback<{game:G
             }
         }
         //ファイルはOKだ
-        const gameobj:GameData = {
-            id: Number.NaN,
-            version: masao.versionCategory(format.version),
-            params: format.params,
-            resources: resources.map((obj)=>{
-                return {
-                    target: obj.target,
-                    id: obj.id,
-                };
-            }),
-            script: format.script || null,
-            'advanced-map': format['advanced-map'],
-        };
+        const gameobj = masao.formatToGame(format, resources.map(({target, id})=>{
+            return {
+                target,
+                id,
+            };
+        }));
         const metadataobj: GameMetadataUpdate = {
             id: Number.NaN,
             owner: req.session!.user,

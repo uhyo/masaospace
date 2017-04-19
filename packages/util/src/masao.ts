@@ -440,5 +440,6 @@ export function gameToFormat(game: Game): MasaoJSONFormat{
         version: categoryToVersion(game.version),
         params: game.params,
         script: game.script || void 0,
+        'advanced-map': game['advanced-map'],
     });
 }
