@@ -4,6 +4,7 @@ import * as React from 'react';
 import FileSelector from '../file/file-selector';
 import HorizontalMenu from '../commons/horizontal-menu';
 import GameView from './game-view';
+import Loading from '../commons/loading';
 
 import MasaoEditorCore from 'masao-editor-core';
 
@@ -31,6 +32,7 @@ interface IPropMasaoSelector{
 interface IStateMasaoSelector{
     mode: 'file' | 'editor';
 }
+
 export default class MasaoSelector extends React.Component<IPropMasaoSelector, IStateMasaoSelector>{
     constructor(props: IPropMasaoSelector){
         super(props);
@@ -200,6 +202,8 @@ export interface IPropFromEditor{
     defaultGame?: MasaoJSONFormat;
 }
 export interface IStateFromEditor{
+    editorComponent: typeof MasaoEditorCore | undefined;
+
     testplay: boolean;
     testgame: Game | null;
 }
@@ -207,16 +211,36 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
     constructor(props: IPropFromEditor){
         super(props);
         this.state = {
+            editorComponent: void 0,
             testplay: false,
             testgame: null,
         };
     }
+    componentDidMount(){
+        // FIXME
+        // TypeScriptがdynamic importを実装したら見直す
+        require.ensure(['masao-editor-core'], (require)=>{
+            const editorComponent = require<any>('masao-editor-core').default as typeof MasaoEditorCore;
+            this.setState({
+                editorComponent,
+            });
+        }, (error)=>{
+            errorStore.emit(error);
+        });
+    }
+
     render(){
-        let testplayArea = null;
         const {
+            editorComponent,
             testplay,
             testgame,
         } = this.state;
+
+        if (editorComponent == null){
+            return <Loading/>;
+        }
+
+        let testplayArea = null;
         if(testplay===true && testgame != null){
             const handleClose = ()=>{
                 this.setState({
@@ -258,10 +282,18 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
             }
         ];
 
+        const editor = React.createElement(editorComponent, {
+            // jsWarning: true,
+            filename_pattern,
+            filename_mapchip,
+            defaultGame,
+            externalCommands: externals,
+        });
+
         // FIXME
         return <div>
             {testplayArea}
-            <MasaoEditorCore /* jsWarning */ filename_pattern={filename_pattern} filename_mapchip={filename_mapchip} defaultGame={defaultGame} externalCommands={externals}/>
+            {editor}
         </div>;
     }
     protected handleSave(obj: MasaoJSONFormat){

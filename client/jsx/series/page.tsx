@@ -20,12 +20,24 @@ export default ({series, owner, metadatas}: IPropSeriesPage)=>{
         ...metadata,
         user: owner,
     }));
+    const {
+        screen_name,
+        name,
+        icon,
+        url,
+    } = owner;
     return <section className="series-page">
         <h1>シリーズ: {series.name}</h1>
         <div className="game-play-info">
             <div className="game-play-info-meta">
                 <p><Datetime date={new Date(series.created)}/> 作成</p>
-                <UserTile {...owner} label="作成者" fullWidth/>
+                <UserTile
+                    label="作成者"
+                    screen_name={screen_name}
+                    name={name}
+                    icon={icon}
+                    url={url}
+                    fullWidth/>
             </div>
             <div className="game-play-info-description">
                 <div className="game-play-info-message">

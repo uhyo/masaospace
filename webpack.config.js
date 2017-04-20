@@ -20,6 +20,7 @@ module.exports={
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'components.js',
+        publicPath: '/static/',
     },
     module: {
         loaders: [

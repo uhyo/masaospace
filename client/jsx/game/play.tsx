@@ -57,6 +57,7 @@ export default class Play extends React.Component<IPropPlay, IStatePlay>{
                 metadata,
                 series,
                 session,
+                owner,
             },
             state: {
                 audio_switch,
@@ -181,6 +182,12 @@ export default class Play extends React.Component<IPropPlay, IStatePlay>{
                 audio_switch: audio,
             });
         };
+        const {
+            screen_name,
+            name,
+            icon,
+            url,
+        } = owner;
         return <section>
             <h1>{metadata.title}</h1>
             <div className="game-play-container" ref="gamecontainer">{
@@ -192,7 +199,13 @@ export default class Play extends React.Component<IPropPlay, IStatePlay>{
                     <p><Datetime date={new Date(metadata.created)} /> 投稿</p>
                     <p>閲覧数 {metadata.playcount} {hiddenInfo}</p>
                     {ownertools}
-                    <UserTile {...this.props.owner} label="投稿者" fullWidth/>
+                    <UserTile
+                        label="投稿者"
+                        screen_name={screen_name}
+                        name={name}
+                        icon={icon}
+                        url={url}
+                        fullWidth/>
                 </div>
                 <div className="game-play-info-description">
                     <div className="game-play-info-message">
