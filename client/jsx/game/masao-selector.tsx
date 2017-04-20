@@ -40,6 +40,19 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
             mode: 'editor',
         };
     }
+    /**
+     * 編集後の最新のゲームをリクエスト
+     */
+    public requestCurrentGame(): MasaoJSONFormat | undefined{
+        const {
+            mode,
+        } = this.state;
+        if (mode === 'file'){
+            return void 0;
+        }
+        const fe = this.refs.fromeditor as FromEditor;
+        return fe.requestCurrentGame();
+    }
     render(){
         const {
             props: {
@@ -60,10 +73,21 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
         }];
         let main = null;
         if(mode === "file"){
-            main = <FromFile onSelect={onSelect} />;
+            let gameview = null;
+            if (defaultGame != null){
+                const game = masao.formatToGame(defaultGame);
+                gameview = <section className="game-masao-preview">
+                    <h1>正男プレビュー</h1>
+                    <GameView allowScripts game={game} />
+                </section>;
+            };
+            main = <div>
+                <FromFile onSelect={onSelect} />
+                {gameview}
+            </div>;
         }else if(mode==="editor"){
             //TODO
-            main = <FromEditor resources={resources} onSelect={onSelect} defaultGame={defaultGame}/>;
+            main = <FromEditor ref="fromeditor" resources={resources} onSelect={onSelect} defaultGame={defaultGame}/>;
         }
         const pageChange = (mode: 'file' | 'editor')=>{
             this.setState({
@@ -228,6 +252,17 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
             errorStore.emit(error);
         });
     }
+    componentWillUnmount(){
+        // 消える前に自分のデータをフィードバック
+        const {
+            onSelect,
+        } = this.props;
+        const c = this.refs['editor'] as MasaoEditorCore;
+        if (c != null && onSelect){
+            const game = c.getCurrentGame();
+            onSelect(game);
+        }
+    }
 
     render(){
         const {
@@ -269,10 +304,6 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
         }
         const externals = [
             {
-                label: "保存（投稿画面へ）",
-                request: this.handleSave.bind(this),
-            },
-            {
                 label: "ファイルに保存",
                 request: this.handleFileSave.bind(this),
             },
@@ -283,6 +314,7 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
         ];
 
         const editor = React.createElement(editorComponent, {
+            ref: 'editor',
             // jsWarning: true,
             filename_pattern,
             filename_mapchip,
@@ -313,5 +345,9 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
             testplay: true,
             testgame,
         });
+    }
+    public requestCurrentGame(): MasaoJSONFormat{
+        const e = this.refs.editor as MasaoEditorCore;
+        return e.getCurrentGame();
     }
 }

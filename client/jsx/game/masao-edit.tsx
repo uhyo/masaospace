@@ -4,7 +4,6 @@ import * as React from 'react';
 import MasaoSelector from './masao-selector';
 import GameMetadataForm from './game-metadata-form';
 import NeedLogin from '../commons/need-login';
-import GameView from './game-view';
 import HorizontalMenu from '../commons/horizontal-menu';
 import FileList from '../file/file-list';
 
@@ -89,8 +88,11 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
     }
     protected handleSubmit(e: React.SyntheticEvent<HTMLElement>){
         e.preventDefault();
+        // XXX Fluxの敗北
+        const selector = this.refs.selector as MasaoSelector;
+        const game = selector.requestCurrentGame() || this.state.game!;
         this.props.onSave({
-            game: this.state.game!,
+            game,
             metadata: this.state.metadata,
             resources: this.state.resources,
         });
@@ -101,18 +103,10 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
             resources,
         } = this.state;
         return <div>
-            <MasaoSelector resources={resources} onSelect={this.masaoSelected.bind(this)} defaultGame={game}/>
+            <MasaoSelector ref="selector" resources={resources} onSelect={this.masaoSelected.bind(this)} defaultGame={game}/>
             {this.files()}
-            {game!=null ? this.preview() : null}
             {game!=null ? this.form() : null}
         </div>;
-    }
-    protected preview(){
-        const game = masao.formatToGame(this.state.game!);
-        return <section className="game-masao-preview">
-            <h1>正男プレビュー</h1>
-            <GameView allowScripts game={game} />
-        </section>;
     }
     files(){
         const {
@@ -162,10 +156,9 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
             };
             submenu=<form className="form">
                 <p className="form-row">
-                    <select className="form-single" onChange={handleChange}>{
+                    <select className="form-single" onChange={handleChange} value={filesPage2 || void 0}>{
                         Object.keys(masao.resources).map((key)=>{
-                            const c = filesPage2 === key;
-                            return <option key={key} value={key} selected={c}>{
+                            return <option key={key} value={key}>{
                                 `${key} ${masao.resources[key]}`
                             }</option>;
                         })
