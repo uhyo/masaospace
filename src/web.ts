@@ -300,7 +300,8 @@ export class WebServer{
                 var localGame=masao.localizeGame(obj.game, config.get("service.domain"));
                 res.render("sandbox.ect",{
                     constructorName:  obj.game.version==="2.8" ? "CanvasMasao_v28" : "CanvasMasao",
-                    params: localGame,
+                    advancedMap: localGame['advanced-map'],
+                    params: localGame.params,
                     script: obj.game.script,
                     metadata: obj.metadata,
                     config: config

@@ -315,7 +315,7 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
 
         const editor = React.createElement(editorComponent, {
             ref: 'editor',
-            // jsWarning: true,
+            jsWarning: true,
             filename_pattern,
             filename_mapchip,
             defaultGame,

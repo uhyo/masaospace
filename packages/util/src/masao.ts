@@ -286,7 +286,11 @@ export function validateResourceKind(kind: string): kind is ResourceKind{
 
 //サーバー側のゲームオブジェクトを実際のcanvas正男用オブジェクトに直したりする
 //game: GameDataオブジェクト, domain: データを読み込む元のドメイン
-export function localizeGame(game: Game, domain?: string | null){
+export interface LocalGame{
+    params: Record<string, string>;
+    'advanced-map': format.AdvancedMap | undefined;
+}
+export function localizeGame(game: Game, domain?: string | null): LocalGame{
     if(domain==null){
         domain="";
     }else{
@@ -429,7 +433,10 @@ export function localizeGame(game: Game, domain?: string | null){
             p[usedResources[i].target] = domain+"/uploaded/"+usedResources[i].id;
         }
     }
-    return p;
+    return {
+        params: p,
+        'advanced-map': game['advanced-map'],
+    };
 }
 
 //正男のステージがステージ何まであるか調べる

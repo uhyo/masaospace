@@ -36,6 +36,7 @@
     <script>
       (function(){
         var game = new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game", {
+          'advance-map': <%- if @advancedMap? then JSON.stringify(@advancedMap) else 'void 0' %>,
           userJSCallback: ("userJSCallback" in this ? userJSCallback : null)
         });
         if(location.search!=="?audio_enabled"){
