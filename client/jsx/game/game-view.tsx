@@ -99,9 +99,10 @@ export default class GameView extends React.PureComponent<IPropGameView, {}>{
 
         if(game.version==="2.8"){
             //2.8だ
-            this.game=new CanvasMasao_v28.Game(p,this.gameid, options);
+            this.game=new CanvasMasao_v28.Game(p.params,this.gameid, options);
         }else{
-            this.game=new CanvasMasao.Game(p,this.gameid,options);
+            console.log('aoooo', p.params);
+            this.game=new CanvasMasao.Game(p.params,this.gameid,options);
         }
         if(audio_enabled !== true){
             if(this.game.__mc && this.game.__mc.soundOff){
