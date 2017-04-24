@@ -1,6 +1,7 @@
 import * as React from 'react';
 //masao edit component
 
+import errorStore from '../../stores/error';
 import MasaoSelector from './masao-selector';
 import GameMetadataForm from './game-metadata-form';
 import NeedLogin from '../commons/need-login';
@@ -90,7 +91,11 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
         e.preventDefault();
         // XXX Fluxの敗北
         const selector = this.refs.selector as MasaoSelector;
-        const game = selector.requestCurrentGame() || this.state.game!;
+        const game = selector.requestCurrentGame() || this.state.game;
+        if (game == null){
+            errorStore.emit('ゲームを選択してください。');
+            return;
+        }
         this.props.onSave({
             game,
             metadata: this.state.metadata,
@@ -105,7 +110,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
         return <div>
             <MasaoSelector ref="selector" resources={resources} onSelect={this.masaoSelected.bind(this)} defaultGame={game}/>
             {this.files()}
-            {game!=null ? this.form() : null}
+            {this.form()}
         </div>;
     }
     files(){
@@ -216,10 +221,9 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
     //入力が完了してたら送信できる
     isSubmitDisabled(){
         const {
-            game,
             metadata,
         } = this.state;
-        if(game == null || metadata == null){
+        if(metadata == null){
             return true;
         }
 
