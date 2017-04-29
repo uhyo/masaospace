@@ -1,15 +1,11 @@
 var path=require('path');
 var util=require('util');
 var gulp=require('gulp');
-var gulputil=require('gulp-util');
 var gulpif=require('gulp-if');
-var duration=require('gulp-duration');
 var browserify=require('browserify');
 var source=require('vinyl-source-stream');
 var reactify=require('reactify');
 var babelify=require('babelify');
-var uglifyify=require('uglifyify');
-var watchify=require('watchify');
 var uglify=require('gulp-uglify');
 var globule=require('globule');
 var del=require('del');
