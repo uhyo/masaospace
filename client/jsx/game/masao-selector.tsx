@@ -28,6 +28,8 @@ interface IPropMasaoSelector{
     resources: Array<Resource>;
     onSelect?(game: MasaoJSONFormat): void;
     defaultGame?: MasaoJSONFormat;
+    // Editorに渡すID (backup用)
+    editorId: string;
 }
 interface IStateMasaoSelector{
     mode: 'file' | 'editor';
@@ -59,6 +61,7 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
                 resources,
                 onSelect,
                 defaultGame,
+                editorId,
             },
             state: {
                 mode,
@@ -87,7 +90,7 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
             </div>;
         }else if(mode==="editor"){
             //TODO
-            main = <FromEditor ref="fromeditor" resources={resources} onSelect={onSelect} defaultGame={defaultGame}/>;
+            main = <FromEditor ref="fromeditor" resources={resources} onSelect={onSelect} defaultGame={defaultGame} editorId={editorId} />;
         }
         const pageChange = (mode: 'file' | 'editor')=>{
             this.setState({
@@ -224,6 +227,7 @@ export interface IPropFromEditor{
     resources: Array<Resource>;
     onSelect?(game: MasaoJSONFormat, metadata?: Partial<GameMetadata>): void;
     defaultGame?: MasaoJSONFormat;
+    editorId: string;
 }
 export interface IStateFromEditor{
     editorComponent: typeof MasaoEditorCore | undefined;
@@ -265,6 +269,9 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
     }
 
     render(){
+        const {
+            editorId,
+        } = this.props;
         const {
             editorComponent,
             testplay,
@@ -316,6 +323,7 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
         const editor = React.createElement(editorComponent, {
             ref: 'editor',
             jsWarning: true,
+            backupId: editorId,
             filename_pattern,
             filename_mapchip,
             defaultGame,

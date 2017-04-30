@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import GameEdit from './masao-edit';
+import MasaoEdit from './masao-edit';
 
 import api from '../../actions/api';
 import * as pageActions from '../../actions/page';
@@ -36,7 +36,7 @@ export default class New extends React.Component<IPropNew, {}>{
     render(){
         return <section>
             <h1>新しい正男を投稿</h1>
-            <GameEdit config={this.props.config} session={this.props.session} saveButton="投稿する" onSave={this.handleSave} />
+            <MasaoEdit config={this.props.config} session={this.props.session} saveButton="投稿する" onSave={this.handleSave} editorId="new" />
         </section>;
     }
 }

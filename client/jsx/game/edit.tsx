@@ -72,6 +72,7 @@ export default class Edit extends React.Component<IPropEdit, IStateEdit>{
             props: {
                 config,
                 session,
+                id,
             },
             state: {
                 loading,
@@ -86,8 +87,9 @@ export default class Edit extends React.Component<IPropEdit, IStateEdit>{
         if(game==null || metadata==null){
             return null;
         }
+        const editorId = `edit_${id}`;
         return <div className="game-edit">
-            <MasaoEdit config={config} session={session} game={game} metadata={metadata} resources={resources} saveButton="保存" onSave={this.handleSave.bind(this)} />
+            <MasaoEdit config={config} session={session} game={game} metadata={metadata} resources={resources} saveButton="保存" onSave={this.handleSave.bind(this)} editorId={editorId} />
         </div>;
     }
 }

@@ -26,6 +26,7 @@ interface IPropMasaoEdit{
     metadata?: GameEditableMetadata;
     resources?: Array<Resource>;
     saveButton: string;
+    editorId: string;
     onSave(obj: {
         game: masao.format.MasaoJSONFormat;
         metadata: GameEditableMetadata;
@@ -104,11 +105,14 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
     }
     render(){
         const {
+            editorId,
+        } = this.props;
+        const {
             game,
             resources,
         } = this.state;
         return <div>
-            <MasaoSelector ref="selector" resources={resources} onSelect={this.masaoSelected.bind(this)} defaultGame={game}/>
+            <MasaoSelector ref="selector" resources={resources} onSelect={this.masaoSelected.bind(this)} editorId={editorId} defaultGame={game}/>
             {this.files()}
             {this.form()}
         </div>;
