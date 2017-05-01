@@ -332,7 +332,7 @@ class GameTools extends React.Component<IPropGameTools, IStateGameTools>{
                     <a href={`/play/${metadata.id}`} className="nop" onClick={handleCode}>ウェブページに埋め込む...</a>
                 </div>
                 <div className="game-play-tools-audio">
-                    {audio}
+                    {au}
                 </div>
                 <div className="game-play-tools-social">
                     <span className="game-play-tools-social-label">共有：</span>
