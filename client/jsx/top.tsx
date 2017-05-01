@@ -43,9 +43,9 @@ export default ({config, session, data: {popularTags}}: IPropTop)=>{
         <div className="information">
             <p>最近の更新：</p>
             <ul>
-                <li>2015-09-10: 正男エディタで正男を作成・編集できるようになりました。</li>
                 <li>2015-10-06: スコアランキングに対応しました。</li>
                 <li>2016-03-24: スクリプト正男を投稿可能にしました。</li>
+                <li>2016-04-30: 第3版拡張マップデータを用いた正男に対応しました。</li>
             </ul>
         </div>
         {tags}
