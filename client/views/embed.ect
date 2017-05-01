@@ -65,7 +65,9 @@
       </div>
     </div>
     <script>
-      new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game");
+      new <%- @constructorName %>.Game(<%- JSON.stringify(@params) %>,"game", {
+        'advance-map': <%- if typeof this['advanced-map'] == 'undefined' then 'void 0' else JSON.stringify(this['advanced-map']) %>,
+      });
     </script>
   </body>
 </html>

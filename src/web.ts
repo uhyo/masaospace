@@ -268,12 +268,13 @@ export class WebServer{
                     return;
                 }
                 //正男をローカライズ
-                var localGame=masao.localizeGame(obj.game);
+                const localGame=masao.localizeGame(obj.game);
                 res.render("embed.ect",{
                     constructorName:  obj.game.version==="2.8" ? "CanvasMasao_v28" : "CanvasMasao",
-                    params: localGame,
+                    params: localGame.params,
                     metadata: obj.metadata,
-                    config: config
+                    config: config,
+                    'advanced-map': localGame['advanced-map'],
                 });
             });
         });

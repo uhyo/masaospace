@@ -433,8 +433,13 @@ export function localizeGame(game: Game, domain?: string | null): LocalGame{
             p[usedResources[i].target] = domain+"/uploaded/"+usedResources[i].id;
         }
     }
+    const params = param.addDefaults(p, {
+        version: game.version,
+        nomaps: true,
+        noresources: true,
+    });
     return {
-        params: param.addDefaults(p, game.version),
+        params,
         'advanced-map': game['advanced-map'],
     };
 }
