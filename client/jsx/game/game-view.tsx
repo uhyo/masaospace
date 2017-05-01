@@ -97,12 +97,13 @@ export default class GameView extends React.PureComponent<IPropGameView, {}>{
             options['advance-map'] = game['advanced-map'];
         }
 
+        const params = p.params;
+
         if(game.version==="2.8"){
             //2.8だ
-            this.game=new CanvasMasao_v28.Game(p.params,this.gameid, options);
+            this.game=new CanvasMasao_v28.Game(params,this.gameid, options);
         }else{
-            console.log('aoooo', p.params);
-            this.game=new CanvasMasao.Game(p.params,this.gameid,options);
+            this.game=new CanvasMasao.Game(params,this.gameid,options);
         }
         if(audio_enabled !== true){
             if(this.game.__mc && this.game.__mc.soundOff){

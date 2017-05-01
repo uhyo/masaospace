@@ -434,7 +434,7 @@ export function localizeGame(game: Game, domain?: string | null): LocalGame{
         }
     }
     return {
-        params: p,
+        params: param.addDefaults(p, game.version),
         'advanced-map': game['advanced-map'],
     };
 }
