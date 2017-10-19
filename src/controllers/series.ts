@@ -1,10 +1,10 @@
 ///<reference path="../node.d.ts" />
 import {Series,SeriesQuery} from '../data';
-import domain=require('domain');
+import * as domain from 'domain';
 
-import db=require('../db');
-import config=require('config');
-import logger=require('../logger');
+import * as db from '../db';
+import * as config from 'config';
+import * as logger from '../logger';
 
 const redis_nextid_key:string = "series:nextid";
 
@@ -78,7 +78,8 @@ export default class SeriesController{
                 return;
             }
             var r=this.db.redis.getClient();
-            r.incr(redis_nextid_key, (err: any,result: number)=>{
+            // XXX type definition of incr is bad!
+            r.incr(redis_nextid_key, ((err: any,result: number)=>{
                 //シリーズIDを発行した
                 if(err){
                     logger.error(err);
@@ -99,7 +100,7 @@ export default class SeriesController{
                     //OK
                     callback(null,newid);
                 });
-            });
+            }) as any);
         });
     }
     //シリーズを更新する

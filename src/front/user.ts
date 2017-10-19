@@ -77,7 +77,8 @@ export default function(c:Controller,r:Router):void{
                     reject(err);
                     return;
                 }
-                if(user==null){
+                // XXX user.id == null のチェックは必要?
+                if(user==null || user.id == null){
                     resolve({
                         status: 404,
                         title: null,
@@ -86,13 +87,14 @@ export default function(c:Controller,r:Router):void{
                     return;
                 }
                 const d = user.getData();
+                const page: PageData = {
+                    page: 'user.page',
+                    userid: user.id,
+                    data: d,
+                };
                 resolve({
                     title: d.name,
-                    page: {
-                        page:"user.page",
-                        userid: user.id,
-                        data: d,
-                    },
+                    page,
                 });
             });
         });

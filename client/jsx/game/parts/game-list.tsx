@@ -10,7 +10,7 @@ export interface IPropGameList{
     games: Array<GameOpenMetadataWithOwnerData>;
     zero?: string;
 }
-export default class GameList extends React.Component<IPropGameList, void>{
+export default class GameList extends React.Component<IPropGameList, {}>{
     render(){
         const {
             games,

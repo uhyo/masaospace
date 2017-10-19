@@ -321,7 +321,7 @@ export class WebServer{
             if(func==null){
                 /* 404 */
                 res.status(404);
-                func = (()=>{
+                func = ((_: any)=>{
                     return Promise.resolve({
                         status: 404,
                         title: 'Not Found',

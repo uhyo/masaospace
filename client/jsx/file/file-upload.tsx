@@ -54,7 +54,7 @@ export default class FileUpload extends React.Component<IPropFileUpload, IStateF
                 uploadtext="アップロード完了";
             }
             const defaultData = {
-                type: mime.lookup(file.name),
+                type: mime.getType(file.name),
                 name: file.name,
                 usage: this.props.usage,
                 description: ""

@@ -76,7 +76,7 @@ export default class MasaoEdit extends React.Component<IPropMasaoEdit, IStateMas
             game,
             metadata: {
                 ...m,
-                metadata_title,
+                ...metadata_title,
             },
         });
     }

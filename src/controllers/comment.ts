@@ -1,9 +1,9 @@
 ///<reference path="../node.d.ts" />
-import domain=require('domain');
+import * as domain from 'domain';
 
-import db=require('../db');
-import config=require('config');
-import logger=require('../logger');
+import * as db from '../db';
+import * as config from 'config';
+import * as logger from '../logger';
 
 import {Comment, CommentQuery, CommentWithUserData} from '../data';
 
@@ -62,7 +62,8 @@ export default class CommentController{
                 return;
             }
             var r=this.db.redis.getClient();
-            r.incr(redis_nextid_key, (err: any, result: number)=>{
+            // XXX https://github.com/DefinitelyTyped/DefinitelyTyped/pull/20625
+            r.incr(redis_nextid_key, ((err: any, result: number)=>{
                 if(err){
                     logger.error(err);
                     callback(err, null);
@@ -83,7 +84,7 @@ export default class CommentController{
                     //入った
                     callback(null,newid);
                 });
-            });
+            }) as any);
         });
     }
     //コメントを探す

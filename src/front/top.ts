@@ -19,7 +19,7 @@ export default function(c:Controller,r: Router):void{
                     page: {
                         page: 'top',
                         data: {
-                            popularTags: tags,
+                            popularTags: tags || [],
                         },
                     },
                 });

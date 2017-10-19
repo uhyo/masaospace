@@ -251,7 +251,8 @@ export default class GameController{
                 }
                 var r=this.db.redis.getClient();
                 //ゲームIDを発行
-                r.incr(redis_nextid_key,(err: any,result: number)=>{
+                // XXX https://github.com/DefinitelyTyped/DefinitelyTyped/pull/20625
+                r.incr(redis_nextid_key,((err: any,result: number)=>{
                     if(err){
                         logger.error(err);
                         callback(err,null);
@@ -305,7 +306,7 @@ export default class GameController{
                             callback(null,newid);
                         });
                     });
-                });
+                }) as any);
             });
         });
     }
@@ -505,7 +506,8 @@ export default class GameController{
         var r=this.db.redis.getClient();
         //ゲームの閲覧数
         var key:string=redis_playcount_prefix+id;
-        r.incr(key,(err: any,result: number)=>{
+        // XXX https://github.com/DefinitelyTyped/DefinitelyTyped/pull/20625
+        r.incr(key,((err: any,result: number)=>{
             if(err){
                 logger.error(err);
                 callback(err,null);
@@ -568,7 +570,7 @@ export default class GameController{
             }else{
                 callback(null,result);
             }
-        });
+        }) as any);
         //タグのランキングを増やす（12時間くぎりで）
         if(Array.isArray(metadata.tags)){
             key = redis_tagscore_prefix+((new Date()).getHours()<12 ? "0" : "1");
@@ -633,8 +635,8 @@ export default class GameController{
             callback(null,tags.map(obj=>obj.tag));
         };
 
-        r.zrevrange([redis_tagscore_prefix+"0",0,num-1,"WITHSCORES"],next);
-        r.zrevrange([redis_tagscore_prefix+"1",0,num-1,"WITHSCORES"],next);
+        r.zrevrange(redis_tagscore_prefix+"0",0,num-1,"WITHSCORES",next);
+        r.zrevrange(redis_tagscore_prefix+"1",0,num-1,"WITHSCORES",next);
     }
 
     //MongoDBのコレクションを得る

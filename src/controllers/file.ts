@@ -2,14 +2,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import mkdirp=require('mkdirp');
-import mime=require('mime');
-import md5file=require('md5-file');
+import * as mkdirp from 'mkdirp';
+import * as mime from 'mime';
+import * as md5file from 'md5-file';
 
-import config=require('config');
-import logger=require('../logger');
+import * as config from 'config';
+import * as logger from '../logger';
 
-import db=require('../db');
+import * as db from '../db';
 
 import {File,FileData,FileQuery} from '../data';
 
@@ -59,8 +59,8 @@ export default class FileController{
     }
     addFile(f:FileData,filepath:string,callback:Callback<File>):void{
         //ファイルタイプが問題ないか判定
-        let typ_norm = mime.lookup(mime.extension(f.type)); //タイプをmime正規化
-        if(typ_norm !== mime.lookup(f.name)){
+        let typ_norm = mime.getType(mime.getExtension(f.type)); //タイプをmime正規化
+        if(typ_norm !== mime.getType(f.name)){
             //ファイル名とタイプが一致しない
             callback(new Error("ファイル名とMIMEタイプが一致しません。"), null);
             return;

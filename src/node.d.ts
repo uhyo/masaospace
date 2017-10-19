@@ -63,24 +63,13 @@ declare module "random-string"{
         special?:boolean;
     }):string;
 }
-declare module "mkdirp"{
-    export = mkdirp;
-    function mkdirp(dir:string,opts:number|{
-        mode:number;
-    },cb:Cont):void;
-    function mkdirp(dir:string,cb:Cont):void;
-}
 declare module "mime"{
-    export function lookup(path:string):string;
+    export function getType(path:string):string;
     export var default_type:string;
-    export function extension(type:string):string;
+    export function getExtension(type:string):string;
     export function define(obj:{
         [mime:string]:Array<string>;
     }):void;
-    export function load(filepath:string):void;
-    export module charsets{
-        export function lookup(type:string):string;
-    }
 }
 declare module "st"{
     export = st;
@@ -193,6 +182,7 @@ declare module "md5-file"{
     export = _m;
     function _m(path:string):string;
     function _m(path:string,callback?:(error:any,result:string)=>void):void;
+    namespace _m {}
 }
 declare module "type-is"{
     export = _m;
