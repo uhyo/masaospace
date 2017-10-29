@@ -161,7 +161,7 @@ export default class FileList extends React.Component<IPropFileList, IStateFileL
         }
 
         const handleSelectQuery = ()=>{
-            const usage = getValue(this, 'usage') as ResourceKind;
+            const usage = (getValue(this, 'usage') as ResourceKind) || undefined;
             if (this.state.query.usage !== usage){
                 this.setState({
                     query: {
