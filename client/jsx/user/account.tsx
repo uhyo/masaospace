@@ -616,6 +616,15 @@ interface IStateFileDelForm{
     alternativeFile: File | null;
 }
 class FileDelForm extends React.Component<IPropFileDelForm, IStateFileDelForm>{
+    constructor(props: IPropFileDelForm){
+        super(props);
+        this.state = {
+            mode: 'start',
+            used: 0,
+            alternativeFile: null,
+        };
+        this.handleDel = this.handleDel.bind(this);
+    }
     render(){
         const {
             props: {
