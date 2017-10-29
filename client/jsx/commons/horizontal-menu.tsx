@@ -10,7 +10,7 @@ export interface IPropHorizontalMenu{
     page: string;
     onChange?(id: string): void;
 }
-export default ({contents, page, onChange}: IPropHorizontalMenu)=>{
+export default function HorizontalMenu({contents, page, onChange}: IPropHorizontalMenu){
     const clickHandler = (id: string)=>{
         return (e: React.MouseEvent<HTMLElement>)=>{
             e.preventDefault();
@@ -25,4 +25,4 @@ export default ({contents, page, onChange}: IPropHorizontalMenu)=>{
             return <li key={id} className={className} onClick={clickHandler(id)}>{name}</li>;
         })
     }</ul>;
-};
+}

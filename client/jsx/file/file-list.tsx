@@ -50,7 +50,7 @@ export interface IStateFileList{
     file_upload: boolean;
 }
 
-export default class PropFileList extends React.Component<IPropFileList, IStateFileList>{
+export default class FileList extends React.Component<IPropFileList, IStateFileList>{
     constructor(props: IPropFileList){
         super(props);
 
@@ -162,17 +162,21 @@ export default class PropFileList extends React.Component<IPropFileList, IStateF
 
         const handleSelectQuery = ()=>{
             const usage = getValue(this, 'usage') as ResourceKind;
-            this.setState({
-                query: {
-                    ...query,
-                    usage,
-                },
-            });
+            if (this.state.query.usage !== usage){
+                this.setState({
+                    query: {
+                        ...query,
+                        usage,
+                    },
+                }, ()=>{
+                    this.load();
+                });
+            }
         };
         return <section className="file-list-container">
             <h1 className="legend">ファイルリスト</h1>
             <p className="file-list-query">
-                検索条件：<select ref="usage" onChange={handleSelectQuery}>
+                検索条件：<select ref="usage" onChange={handleSelectQuery} value={this.state.query.usage}>
                     <option value="">全て</option>
                     {
                         Object.keys(resourceKinds).map((key: ResourceKind)=>{
