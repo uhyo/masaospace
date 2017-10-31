@@ -334,14 +334,12 @@ export default class C{
                     if(err){
                         throw err;
                     }
-                    console.log('らいてぃーん', req.body);
                     user.writeData({
                         name:req.body.name,
                         profile:req.body.profile,
                         icon:req.body.icon || null,
                         url:req.body.url
                     });
-                    console.log('らいとん');
                     c.user.user.saveUser(user,(err)=>{
                         if(err){
                             logger.error(err);
