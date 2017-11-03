@@ -6,7 +6,7 @@ var browserify=require('browserify');
 var source=require('vinyl-source-stream');
 var reactify=require('reactify');
 var babelify=require('babelify');
-var uglify=require('gulp-uglify');
+var uglifyComposer=require('gulp-uglify/composer');
 var globule=require('globule');
 var del=require('del');
 var changed=require('gulp-changed');
@@ -18,6 +18,9 @@ var concat=require('gulp-concat');
 const gulpTs = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
 const webpack = require('webpack');
+
+// Uglifier
+const uglify = uglifyComposer(require('uglify-es'), console);
 
 // TypeScript projects
 const clientTsProject = gulpTs.createProject('tsconfig-client.json');
