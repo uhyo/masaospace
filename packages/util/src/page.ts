@@ -20,8 +20,18 @@ export interface View{
     // HTTP status code
     status?: number;
     title: string | null;
+    social: SocialData | null;
     page: PageData | null;
 }
+/**
+ * Cards for SNS.
+ */
+export interface SocialData{
+    image: string | null;
+    description: string | null;
+}
+
+
 export interface RouteHandler{
     (obj: any): Promise<View>;
 }

@@ -16,6 +16,7 @@ export default function(c:Controller,r: Router):void{
                 }
                 resolve({
                     title: '',
+                    social: null,
                     page: {
                         page: 'top',
                         data: {

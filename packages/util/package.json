@@ -19,7 +19,7 @@
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
     "npm-run-all": "^4.0.2",
-    "typescript": "^2.2.2"
+    "typescript": "^2.6.1"
   },
   "dependencies": {
     "masao": "^0.1.0"

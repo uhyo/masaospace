@@ -1,6 +1,7 @@
 ///<reference path="./node.d.ts" />
 const randomString = require('random-string');
 import * as cron from 'cron';
+import * as config from 'config';
 
 import {
     Request,
@@ -55,6 +56,13 @@ export function secondToString(secs:number):string{
     var hours:number, minutes:number, seconds:number;
     hours=Math.floor(secs/3600), minutes=Math.floor((secs%3600)/60), seconds=secs%60;
     return `${hours ? hours+"時間" : ""}${minutes ? minutes+"分" : ""}${seconds ? seconds+"秒" : ""}`;
+}
+
+/**
+ * ファイルIDを渡されたらそれをabstract URLにする
+ */
+export function abstractFileURL(fileid: string): string{
+    return `${config.get('service.url')}uploaded/${fileid}`;
 }
 
 

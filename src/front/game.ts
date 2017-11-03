@@ -45,6 +45,7 @@ export default function(c: Controller, r: Router):void{
                         resolve({
                             status: 404,
                             title: null,
+                            social: null,
                             page: null,
                         });
                     }else{
@@ -58,6 +59,7 @@ export default function(c: Controller, r: Router):void{
                         //非公開は見れない
                         resolve({
                             title: null,
+                            social: null,
                             page: {
                                 page: 'game.hidden',
                                 id,
@@ -67,6 +69,10 @@ export default function(c: Controller, r: Router):void{
                     }else{
                         resolve({
                             title: metadata.title,
+                            social: {
+                                image: null,
+                                description: metadata.description,
+                            },
                             page: {
                                 page: 'game.play',
                                 game,
@@ -155,6 +161,7 @@ export default function(c: Controller, r: Router):void{
                     resolve({
                         status: 404,
                         title: null,
+                        social: null,
                         page: null,
                     });
                     return;
@@ -175,6 +182,10 @@ export default function(c: Controller, r: Router):void{
                         //結果そろった
                         resolve({
                             title: `シリーズ: ${s.name}`,
+                            social: {
+                                image: null,
+                                description: s.description,
+                            },
                             page: {
                                 page:"series.page",
                                 series: s,
@@ -225,6 +236,7 @@ export default function(c: Controller, r: Router):void{
         //検索条件をアレする
         return Promise.resolve({
             title: "検索結果",
+            social: null,
             page: {
                 page: "game.list",
                 owner: obj.owner,
@@ -238,6 +250,7 @@ export default function(c: Controller, r: Router):void{
         //新しいゲームを投稿
         return Promise.resolve({
             title: "新しい正男を投稿",
+            social: null,
             page: {
                 page: "game.new",
             } as PageData,
@@ -246,6 +259,7 @@ export default function(c: Controller, r: Router):void{
     r.add("/game/edit/:number",(obj)=>{
         return Promise.resolve({
             title: "正男を編集",
+            social: null,
             page: {
                 page: "game.edit",
                 id: parseInt(obj[":number"]),

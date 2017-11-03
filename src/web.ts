@@ -30,6 +30,7 @@ import * as validator from './validator';
 import {
     masao,
     RouteHandler,
+    SocialData,
 } from '@uhyo/masaospace-util';
 
 import Controller from './controllers/index';
@@ -354,6 +355,7 @@ export class WebServer{
                 };
                 res.render("index.ect",{
                     title: pageTitle(view.title),
+                    social: socialData(view.social),
                     initial: initialData,
                     // content: ReactDOMServer.renderToString(React.createElement(Root,initialData))
                     content: '',
@@ -398,4 +400,16 @@ function pageTitle(title:string | null):string{
     }else{
         return config.get("service.name");
     }
+}
+
+/**
+ * Generate default social page.
+ */
+function socialData(data: SocialData | null): SocialData {
+    const image = data ? data.image : null;
+    const description = data ? data.description : null;
+    return {
+        image,
+        description,
+    };
 }

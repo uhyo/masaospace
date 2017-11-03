@@ -7,7 +7,11 @@ import {
 } from './data';
 import {
     PageData,
+    View,
 } from '@uhyo/masaospace-util';
+import {
+    abstractFileURL,
+} from '../util';
 
 export default function(c:Controller,r:Router):void{
     //about user
@@ -16,6 +20,7 @@ export default function(c:Controller,r:Router):void{
     r.add("/entry/page",()=>{
         return Promise.resolve({
             title: "新規登録",
+            social: null,
             page: {
                 page: "user.entry",
             } as PageData,
@@ -28,6 +33,7 @@ export default function(c:Controller,r:Router):void{
     r.add("/entry/ticket/:userid/:ticket", (obj)=>{
         return Promise.resolve({
             title: "パスワード設定",
+            social: null,
             page: {
                 page: "user.ticket",
                 screen_name: obj[":userid"],
@@ -40,6 +46,7 @@ export default function(c:Controller,r:Router):void{
     r.add("/entry/reset",()=>{
         return Promise.resolve({
             title: "パスワード再発行",
+            social: null,
             page: {
                 page:"user.reset",
             } as PageData,
@@ -50,6 +57,7 @@ export default function(c:Controller,r:Router):void{
     r.add("/my",()=>{
         return Promise.resolve({
             title: "マイページ",
+            social: null,
             page: {
                 page:"user.my",
             } as PageData,
@@ -58,6 +66,7 @@ export default function(c:Controller,r:Router):void{
     r.add("/my/ticket/:ticket",(obj)=>{
         return Promise.resolve({
             title: "各種手続",
+            social: null,
             page: {
                 page: "user.ticket",
                 ticket: obj[":ticket"],
@@ -82,6 +91,7 @@ export default function(c:Controller,r:Router):void{
                     resolve({
                         status: 404,
                         title: null,
+                        social: null,
                         page: null,
                     });
                     return;
@@ -94,8 +104,12 @@ export default function(c:Controller,r:Router):void{
                 };
                 resolve({
                     title: d.name,
+                    social: {
+                        image: d.icon != null ? abstractFileURL(d.icon) : null,
+                        description: d.profile,
+                    },
                     page,
-                });
+                } as View);
             });
         });
     });
@@ -103,6 +117,7 @@ export default function(c:Controller,r:Router):void{
     r.add("/my/account",()=>{
         return Promise.resolve({
             title:"アカウント設定",
+            social: null,
             page: {
                 page:"user.account",
             } as PageData,
