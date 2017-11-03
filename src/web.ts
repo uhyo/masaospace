@@ -406,7 +406,7 @@ function pageTitle(title:string | null):string{
  * Generate default social page.
  */
 function socialData(data: SocialData | null): SocialData {
-    const image = data ? data.image : null;
+    const image = data ? data.image : `${config.get('service.url')}icon-with-logo.png`;
     const description = data ? data.description : null;
     return {
         image,

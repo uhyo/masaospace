@@ -59,7 +59,7 @@ webserver:
 
 # service
 service:
-  name: MasaoSpace
+  name: "masao.space"
   url: "http://localhost:8080/"
   mail: "mail@localhost"
   # host name of service
