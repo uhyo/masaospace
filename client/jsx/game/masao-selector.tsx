@@ -270,7 +270,7 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
 
     render(){
         const {
-            editorId,
+            // editorId,
         } = this.props;
         const {
             editorComponent,
@@ -323,14 +323,15 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor>{
         const editor = React.createElement(editorComponent, {
             ref: 'editor',
             jsWarning: true,
-            backupId: editorId,
+            // FIXME temporally disable backup.
+            // backupId: editorId,
+            backupId: undefined,
             filename_pattern,
             filename_mapchip,
             defaultGame,
             externalCommands: externals,
         });
 
-        // FIXME
         return <div>
             {testplayArea}
             {editor}
