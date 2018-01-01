@@ -33,6 +33,10 @@ interface IPropMasaoSelector{
 }
 interface IStateMasaoSelector{
     mode: 'file' | 'editor';
+    /**
+     * 現在のゲームのキャッシュ（プレビュー用）
+     */
+    gamePreview: Game | undefined;
 }
 
 export default class MasaoSelector extends React.Component<IPropMasaoSelector, IStateMasaoSelector>{
@@ -40,6 +44,7 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
         super(props);
         this.state = {
             mode: 'editor',
+            gamePreview: props.defaultGame != null ? masao.formatToGame(props.defaultGame) : undefined,
         };
     }
     /**
@@ -55,7 +60,19 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
         const fe = this.refs.fromeditor as FromEditor;
         return fe.requestCurrentGame();
     }
-    render(){
+    public componentWillReceiveProps({defaultGame}: IPropMasaoSelector): void{
+        if (this.props.defaultGame !== defaultGame){
+            // Update game preview.
+            const gamePreview =
+                defaultGame != null ?
+                masao.formatToGame(defaultGame) :
+                undefined;
+            this.setState({
+                gamePreview,
+            });
+        }
+    }
+    public render(){
         const {
             props: {
                 resources,
@@ -65,6 +82,7 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
             },
             state: {
                 mode,
+                gamePreview,
             },
         } = this;
         const menu = [{
@@ -77,11 +95,10 @@ export default class MasaoSelector extends React.Component<IPropMasaoSelector, I
         let main = null;
         if(mode === "file"){
             let gameview = null;
-            if (defaultGame != null){
-                const game = masao.formatToGame(defaultGame);
+            if (gamePreview != null){
                 gameview = <section className="game-masao-preview">
                     <h1>正男プレビュー</h1>
-                    <GameView allowScripts game={game} />
+                    <GameView allowScripts game={gamePreview} />
                 </section>;
             };
             main = <div>
