@@ -65,6 +65,17 @@ export function abstractFileURL(fileid: string): string{
     return `${config.get('service.url')}uploaded/${fileid}`;
 }
 
+/**
+ * entriesの形のIteratorからオブジェクトを作る
+ */
+export function objectFromIterable<K extends string, T>(iter: Iterable<[K, T]>): Record<K, T> {
+    const result = {} as Record<K, T>;
+    for (const [k, v] of iter) {
+        result[k] = v;
+    }
+    return result;
+}
+
 
 // api middleware
 export module apim{

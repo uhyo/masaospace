@@ -13,8 +13,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
+    "strict": true,
     "removeComments": true,
-    "target":"es5"
+    "target":"es2015"
   },
   "include":[
     "client/**/*.ts",

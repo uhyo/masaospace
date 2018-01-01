@@ -13,7 +13,7 @@
     "strictNullChecks": true,
     "removeComments": true,
     "module":"commonjs",
-    "target":"es5",
+    "target":"es2015",
     "outDir": "dist-server/"
   },
   "include": [

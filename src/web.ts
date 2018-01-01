@@ -4,7 +4,9 @@ import * as config from 'config';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as url from 'url';
+import {
+    URL,
+} from 'url';
 import * as express from 'express';
 
 import * as bodyParser from 'body-parser';
@@ -20,7 +22,10 @@ const ect = require('ect');
 // import * as ReactDOMServer from 'react-dom/server';
 
 import {Session} from './data';
-import {writeUserInfo} from './util';
+import {
+    writeUserInfo,
+    objectFromIterable,
+} from './util';
 
 import {makeFrontRouter} from './front/index';
 
@@ -215,9 +220,9 @@ export class WebServer{
                 });
                 return;
             }
-            var u=url.parse(req.body.path,true);
-            //?があるかも
-            var re=r.route(u.pathname || '');
+            // pathnameとsearchParamsに分離
+            const u = new URL(req.body.path, 'http://foo.invalid');
+            const re = r.route(u.pathname || '');
             if(re==null){
                 res.json({
                     error: "page does not exist"
@@ -226,7 +231,7 @@ export class WebServer{
             }
             re.result({
                 session: req.session,
-                ... u.query,
+                ... objectFromIterable(u.searchParams),
                 ... re.params,
             }).then((view)=>{
                 if(view.status){
