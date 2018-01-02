@@ -444,6 +444,32 @@ ul.horizontal-menu {
     }
   }
 }
+// pager
+.pager {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+.pager-button, .pager-current {
+  width: 2.3em;
+  height: 1.5em;
+  margin: 0 0.4rem;
+  padding: 0.4em;
+  border: none;
+  white-space: nowrap;
+
+  background-color: #e0e0e0;
+
+  font-size: 1.15em;
+  line-height: 0.8em;
+  text-align: center;
+}
+.pager-current {
+  background: transparent;
+}
+.pager-button[disabled] {
+  color: #999999;
+}
 
 
 //portable styles

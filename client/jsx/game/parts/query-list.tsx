@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import api from '../../../actions/api';
 import Loading from '../../commons/loading';
+import Pager from '../../commons/pager';
 import GameList from './game-list';
 
 import {
@@ -54,10 +55,32 @@ export default class QueryList extends React.Component<IPropQueryList, IStateQue
         });
     }
     render(){
-        if(this.state.loading){
+        const {
+            props: {
+                limit,
+            },
+            state: {
+                games,
+                loading,
+                page,
+            },
+        } = this;
+        if(loading){
             //ローディング状態
             return <Loading/>;
         }
-        return <GameList games={this.state.games} zero="正男が見つかりませんでした。" />;
+        // pagerに渡す最大ページ番号
+        const max = limit == null ? page+1 : games.length < limit ? page+1 : undefined;
+        // ページ番号が写った
+        const pageChange = (page: number)=>{
+            this.setState({
+                page: page-1,
+            });
+        };
+
+        return <div>
+            <GameList games={games} zero="正男が見つかりませんでした。" />
+            <Pager current={page+1} min={1} max={max} onChange={pageChange} />
+        </div>;
     }
 }
