@@ -31,28 +31,7 @@ export default class QueryList extends React.Component<IPropQueryList, IStateQue
         };
     }
     componentDidMount(){
-        const {
-            props: {
-                query,
-                limit,
-            },
-            state: {
-                page,
-            },
-        } = this;
-        const lim = limit || 30;
-        api("/api/game/find",{
-            owner: query.owner,
-            tag: query.tag,
-
-            skip: page * lim,
-            limit: lim,
-        }).then((result)=>{
-            this.setState({
-                loading: false,
-                games: result.metadatas,
-            });
-        });
+        this.fetch(this.state.page);
     }
     render(){
         const {
@@ -71,16 +50,39 @@ export default class QueryList extends React.Component<IPropQueryList, IStateQue
         }
         // pagerに渡す最大ページ番号
         const max = limit == null ? page+1 : games.length < limit ? page+1 : undefined;
-        // ページ番号が写った
+        // ページ番号が移った
         const pageChange = (page: number)=>{
-            this.setState({
-                page: page-1,
-            });
+            this.fetch(page-1);
         };
 
         return <div>
             <GameList games={games} zero="正男が見つかりませんでした。" />
             <Pager current={page+1} min={1} max={max} onChange={pageChange} />
         </div>;
+    }
+    /**
+     * Fetch a game list.
+     * Also it can change the current page.
+     */
+    protected fetch(page: number): void{
+        const {
+            props: {
+                query,
+                limit,
+            },
+        } = this;
+        const lim = limit || 30;
+        api("/api/game/find", {
+            owner: query.owner,
+            tag: query.tag,
+            skip: page * lim,
+            limit: lim,
+        }).then((result)=>{
+            this.setState({
+                loading: false,
+                page,
+                games: result.metadatas,
+            });
+        });
     }
 }

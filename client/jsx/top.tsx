@@ -51,7 +51,7 @@ export default ({config, session, data: {popularTags}}: IPropTop)=>{
         {tags}
         <section>
             <h1>最近投稿された正男</h1>
-            <QueryList query={{}} limit={5} />
+            <QueryList query={{}} limit={24} />
         </section>
     </div>;
 };

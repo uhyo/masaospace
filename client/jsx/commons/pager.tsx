@@ -60,7 +60,7 @@ export default ({
                 {`${current+1} \u27eb`}
             </button>;
     } else {
-        prevButton =
+        nextButton =
             <button
                 className="pager-button"
                 disabled={true}>
