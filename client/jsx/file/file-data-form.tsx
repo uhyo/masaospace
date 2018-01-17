@@ -1,10 +1,6 @@
 import * as React from 'react';
 
 import {
-    getValue,
-} from '../../scripts/react-util';
-
-import {
     masao,
     ResourceKind,
 } from '../data';
@@ -41,6 +37,22 @@ export interface IStateFileDataForm{
     description: string;
 }
 export default class FileDataForm extends React.Component<IPropFileDataForm, IStateFileDataForm>{
+    /**
+     * input for filename.
+     */
+    protected filenameInput: HTMLInputElement | null;
+    /**
+     * input for type.
+     */
+    protected typeInput: HTMLInputElement | null;
+    /**
+     * input for usage.
+     */
+    protected usageInput: HTMLSelectElement | null;
+    /**
+     * input for description.
+     */
+    protected descriptionInput: HTMLTextAreaElement | null;
     constructor(props: IPropFileDataForm){
         super(props);
 
@@ -50,7 +62,28 @@ export default class FileDataForm extends React.Component<IPropFileDataForm, ISt
     }
     componentWillReceiveProps(nextProps: IPropFileDataForm){
         if(this.props !== nextProps){
-            this.setState(this.getStateFromProps(nextProps));
+            const sts = this.getStateFromProps(nextProps);
+            this.resetForm(sts);
+            this.setState(sts);
+        }
+    }
+    protected resetForm({
+        type,
+        name,
+        usage,
+        description,
+    }: IStateFileDataForm): void {
+        if (this.filenameInput){
+            this.filenameInput.value = name;
+        }
+        if (this.typeInput){
+            this.typeInput.value = type;
+        }
+        if (this.usageInput){
+            this.usageInput.value = usage;
+        }
+        if (this.descriptionInput){
+            this.descriptionInput.value = description;
         }
     }
     protected getStateFromProps(props: IPropFileDataForm): IStateFileDataForm{
@@ -110,23 +143,22 @@ export default class FileDataForm extends React.Component<IPropFileDataForm, ISt
                 <p>
                     <label className="form-row">
                         <span>ファイル名</span>
-                        <input type="text" ref="name" required maxLength={config.name.maxLength} defaultValue={defaultFile ? defaultFile.name : ''} />
+                        <input type="text" ref={(input)=> this.filenameInput = input} required maxLength={config.name.maxLength} defaultValue={defaultFile ? defaultFile.name : ''} />
                     </label>
                 </p>
                 <p>
                     <label className="form-row">
                         <span>種類</span>
-                        <input type="text" ref="type" readOnly value={defaultFile ? defaultFile.type : ''} />
+                        <input type="text" ref={(input)=> this.typeInput = input} readOnly defaultValue={defaultFile ? defaultFile.type : ''} />
                     </label>
                 </p>
                 <p>
                     <label className="form-row">
                         <span>用途</span>
-                        <select ref="usage">
+                        <select ref={(input)=> this.usageInput = input} defaultValue={defaultFile ? defaultFile.usage : ''}>
                             {
                                 usages.map(([value,name])=>{
-                                    const checked = defaultFile ? defaultFile.usage === value : false;
-                                    return <option key={value} value={value} defaultChecked={checked}>{name}</option>;
+                                    return <option key={value} value={value}>{name}</option>;
                                 })
                             }
                         </select>
@@ -135,7 +167,7 @@ export default class FileDataForm extends React.Component<IPropFileDataForm, ISt
                 <p>
                     <label className="form-row">
                         <span>説明</span>
-                        <textarea ref="description" required maxLength={config.description.maxLength} defaultValue={defaultFile ? defaultFile.description : ''} />
+                        <textarea ref={(input)=> this.descriptionInput = input} required maxLength={config.description.maxLength} defaultValue={defaultFile ? defaultFile.description : ''} />
                     </label>
                 </p>
                 <p>
@@ -151,10 +183,10 @@ export default class FileDataForm extends React.Component<IPropFileDataForm, ISt
         e.preventDefault();
         if(onSubmit){
             onSubmit({
-                type: getValue(this, 'type'),
-                name: getValue(this, 'name'),
-                usage: getValue(this, 'usage'),
-                description: getValue(this, 'description'),
+                type: this.typeInput ? this.typeInput.value : '',
+                name: this.filenameInput ? this.filenameInput.value : '',
+                usage: this.usageInput ? this.usageInput.value : '',
+                description: this.descriptionInput ? this.descriptionInput.value : '',
             });
         }
     }
