@@ -4,6 +4,9 @@ import * as bytes from 'bytes';
 import {
     getValue,
 } from '../../scripts/react-util';
+import {
+    stringKeys,
+} from '../../scripts/keys';
 
 import api from '../../actions/api';
 
@@ -179,7 +182,7 @@ export default class FileList extends React.Component<IPropFileList, IStateFileL
                 検索条件：<select ref="usage" onChange={handleSelectQuery} value={this.state.query.usage}>
                     <option value="">全て</option>
                     {
-                        Object.keys(resourceKinds).map((key: ResourceKind)=>{
+                        stringKeys(resourceKinds).map((key: ResourceKind)=>{
                             return <option value={key} key={key}>{resourceKinds[key]}</option>;
                         })
                     }
