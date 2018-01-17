@@ -76,7 +76,7 @@ export default class FileList extends React.Component<IPropFileList, IStateFileL
             }, ()=>{
                 this.load();
             });
-        }else{
+        }else if (nextProps.currentFile != null){
             this.setState({
                 file_upload: false,
             });
@@ -208,6 +208,10 @@ export default class FileList extends React.Component<IPropFileList, IStateFileL
                             className+=" file-list-current";
                         }
                         const handleClick = ()=>{
+                            if (onChange){
+                                // 新しいファイルボタンを押したので既存のファイルは無くす
+                                onChange(null);
+                            }
                             this.setState({
                                 file_upload: true,
                             });
