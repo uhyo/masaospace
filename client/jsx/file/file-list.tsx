@@ -199,6 +199,9 @@ export default class FileList extends React.Component<IPropFileList, IStateFileL
                             if (onChange){
                                 onChange(null);
                             }
+                            this.setState({
+                                file_upload: false,
+                            });
                         };
                         return <div key={i} className={className} onClick={handleClick}>デフォルトの画像を使用する</div>;
                     }else if(file==="file"){
