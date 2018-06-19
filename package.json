@@ -38,7 +38,7 @@
     "multer": "^1.2.0",
     "my-autolink": "0.0.2",
     "my-router": "^2.0.0-rc1",
-    "my-user-mongo": "^0.2.1",
+    "my-user-mongo": "^0.2.3",
     "my-validator": "^0.1.0",
     "native-promise-only": "^0.8.1",
     "node-sass": "^4.8.3",
