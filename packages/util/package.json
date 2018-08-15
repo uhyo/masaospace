@@ -16,8 +16,8 @@
   "author": "uhyo",
   "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.24.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "npm-run-all": "^4.0.2",
     "typescript": "^2.6.1"
   },
