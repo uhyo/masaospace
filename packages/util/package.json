@@ -22,6 +22,6 @@
     "typescript": "^2.6.1"
   },
   "dependencies": {
-    "masao": "^0.1.0"
+    "masao": "^0.1.9"
   }
 }
