@@ -135,7 +135,7 @@ class FromFile extends React.Component<IPropFromFile, {}>{
         if("undefined"===typeof TextDecoder){
             // read as UTF-8
             fr.onload=()=>{
-                this.fileRead(file.name, fr.result);
+                this.fileRead(file.name, fr.result as string);
             };
             fr.readAsText(file);
             return;
