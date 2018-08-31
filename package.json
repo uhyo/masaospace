@@ -52,7 +52,7 @@
     "st": "^1.2.2",
     "tslib": "^1.9.0",
     "type-is": "^1.6.16",
-    "uglify-es": "^3.3.10"
+    "uglify-es": "^3.3.9"
   },
   "devDependencies": {
     "@types/bytes": "^2.5.1",
