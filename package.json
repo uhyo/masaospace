@@ -86,7 +86,7 @@
     "postcss-css-variables": "^0.8.0",
     "postcss-loader": "^2.1.2",
     "postcss-nested": "^3.0.0",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.4.2",
     "source-map-loader": "^0.2.3",
     "style-loader": "^0.19.1",
     "typescript": "^3.0.3",
