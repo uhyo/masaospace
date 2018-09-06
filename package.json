@@ -36,7 +36,6 @@
     "mkdirp": "^0.5.1",
     "mongodb": "^2.2.35",
     "multer": "^1.2.0",
-    "my-autolink": "0.0.2",
     "my-router": "^2.0.0-rc1",
     "my-user-mongo": "^0.2.3",
     "my-validator": "^0.1.0",
@@ -45,14 +44,10 @@
     "nodemailer": "^4.6.3",
     "query-string": "^5.1.1",
     "random-string": "^0.2.0",
-    "react": "^16.4.2",
     "redis": "^2.8.0",
-    "reflux": "^6.4.1",
-    "reflux-promise": "^1.0.4",
     "st": "^1.2.2",
     "tslib": "^1.9.0",
-    "type-is": "^1.6.16",
-    "uglify-es": "^3.3.9"
+    "type-is": "^1.6.16"
   },
   "devDependencies": {
     "@types/bytes": "^2.5.1",
@@ -86,13 +81,18 @@
     "postcss-css-variables": "^0.8.0",
     "postcss-loader": "^2.1.2",
     "postcss-nested": "^3.0.0",
+    "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "reflux": "^6.4.1",
+    "reflux-promise": "^1.0.4",
     "source-map-loader": "^0.2.3",
     "style-loader": "^0.19.1",
     "typescript": "^3.0.3",
     "uglifyjs-webpack-plugin": "^1.2.4",
+    "uglify-es": "^3.3.9",
     "url-loader": "^0.6.2",
     "vinyl-source-stream": "^2.0.0",
+    "my-autolink": "0.0.2",
     "webpack": "^3.11.0"
   }
 }
