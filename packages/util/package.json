@@ -11,14 +11,24 @@
     "build": "npm-run-all -s build:tsc build:babel",
     "watch:tsc": "tsc --watch",
     "watch:babel": "babel dist-module --watch --out-dir dist",
-    "watch": "npm-run-all -p watch:*"
+    "watch": "npm-run-all -p watch:*",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{json,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "author": "uhyo",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "husky": "^1.1.0",
+    "lint-staged": "^7.3.0",
     "npm-run-all": "^4.1.3",
+    "prettier": "^1.14.3",
     "typescript": "^3.1.1"
   },
   "dependencies": {
