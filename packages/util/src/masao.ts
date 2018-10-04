@@ -264,7 +264,8 @@ export function minimize(game: MasaoJSONFormat): MasaoJSONFormat {
     params2 = param.cutUnadvancedData(params2);
   } else {
     // 通常のマップのときは最小化
-    params2 = param.minimizeMapData(params2);
+    const category = versionCategory(game.version);
+    params2 = param.minimizeMapData(params2, category !== '2.8');
   }
   // デフォルトも除去
   params2 = param.cutDefaults(params2);
