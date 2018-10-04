@@ -44,8 +44,8 @@ export default class C {
         c.game.newGame(
           obj.game,
           obj.metadata,
-          (err: Error | null, newid: number) => {
-            if (err) {
+          (err: Error | null, newid: number | null) => {
+            if (err != null || newid == null) {
               res.json({
                 error: String(err),
               });
