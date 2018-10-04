@@ -1,3 +1,3 @@
-declare module "native-promise-only" {
-    export = Promise;
+declare module 'native-promise-only' {
+  export = Promise;
 }

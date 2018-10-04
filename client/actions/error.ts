@@ -1,1 +1,1 @@
-var Reflux=require('reflux');
+var Reflux = require('reflux');
