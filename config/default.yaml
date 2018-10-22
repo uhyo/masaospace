@@ -23,7 +23,7 @@ redis:
 # file access
 file:
   # path to store user-uploaded files
-  path: /home/no/masaopost/data
+  path: /service-masao-space/uploaded-files
   # temporary directory
   temporary: /tmp
   # file id length

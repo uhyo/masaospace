@@ -1,0 +1,26 @@
+# docker compose file for running masao.space with related db services
+version: '3'
+services:
+  mongod:
+    image: mongo
+    container_name: mongod
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: masaospace
+    volumes:
+      - "./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro"
+  redis:
+    image: "redis:4"
+    container_name: redis
+    restart: unless-stopped
+  masaospace:
+    build: ..
+    container_name: masaospaceapp
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./local.yaml:/service-masao-space/config/local.yaml:ro"
+    depends_on:
+      - mongod
+      - redis
+

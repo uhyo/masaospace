@@ -1,0 +1,4 @@
+mongodb:
+  host: mongod
+redis:
+  host: redis
