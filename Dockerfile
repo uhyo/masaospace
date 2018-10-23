@@ -18,6 +18,8 @@ COPY packages/util/dist/ ./packages/util/dist/
 COPY client/views ./client/views/
 COPY dist/ ./dist/
 COPY dist-server/ ./dist-server/
+
 USER node
+EXPOSE 8080
 CMD ["npm", "start"]
 
