@@ -57,6 +57,16 @@ webserver:
   # external static files distribution
   externalstatic: false
 
+# smtp config
+smtp:
+  # host of mail server
+  host: "localhost"
+  # port of mail server
+  port: 587
+  # whether initialize connection on TLS.
+  secure: false
+
+
 # service
 service:
   name: "masao.space"

@@ -15,7 +15,9 @@ export default class MailController {
   init(callback: Cont): void {
     this.transporter = nodemailer.createTransport({
       //SMTP transport
-      host: 'localhost',
+      host: config.get('smtp.host'),
+      port: config.get('smtp.port'),
+      secure: config.get('smtp.secure'),
       tls: {
         rejectUnauthorized: false,
       },
