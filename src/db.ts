@@ -2,6 +2,7 @@ import * as mongodb from 'mongodb';
 import * as redis from 'redis';
 
 import * as config from 'config';
+import * as logger from './logger';
 
 export import Collection = mongodb.Collection;
 export import ObjectID = mongodb.ObjectID;
@@ -109,6 +110,9 @@ export class Redis {
       config.get('redis.port'),
       config.get('redis.host'),
     );
+    this.client.on('error', (error: any) => {
+      logger.error(error);
+    });
     this.client.select(config.get('redis.db'), (error: any) => {
       this.connected = true;
       callback(error);

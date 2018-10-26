@@ -577,7 +577,7 @@ export default class GameController {
     var id = metadata.id;
     var r = this.db.redis.getClient();
     //ゲームの閲覧数
-    var key: string = redis_playcount_prefix + id;
+    const key: string = redis_playcount_prefix + id;
     // XXX https://github.com/DefinitelyTyped/DefinitelyTyped/pull/20625
     r.incr(key, ((err: any, result: number) => {
       if (err) {
@@ -614,7 +614,7 @@ export default class GameController {
               if (result < doc.playcount) {
                 //あった
                 r.set(key, doc.playcount + 1);
-                callback(null, doc.playcount + 1);
+                callback(err, doc.playcount + 1);
               } else {
                 callback(null, result);
               }
@@ -653,7 +653,8 @@ export default class GameController {
     }) as any);
     //タグのランキングを増やす（12時間くぎりで）
     if (Array.isArray(metadata.tags)) {
-      key = redis_tagscore_prefix + (new Date().getHours() < 12 ? '0' : '1');
+      const key =
+        redis_tagscore_prefix + (new Date().getHours() < 12 ? '0' : '1');
       for (var i = 0; i < metadata.tags.length; i++) {
         r.zincrby(key, 1, metadata.tags[i], (err: any) => {
           if (err) {
