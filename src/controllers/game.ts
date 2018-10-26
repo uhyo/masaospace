@@ -621,8 +621,8 @@ export default class GameController {
             },
           );
         });
-      } else if (result % 100 === 0) {
-        //100単位で保存
+      } else if (result % 15 === 0) {
+        //15単位で保存
         callback(null, result);
         this.getMetadataCollection((err, coll) => {
           if (err || coll == null) {
