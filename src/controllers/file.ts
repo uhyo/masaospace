@@ -1,10 +1,10 @@
 // file uploading module
-import * as fs from 'fs';
 import * as path from 'path';
 
 import * as mkdirp from 'mkdirp';
 import * as mime from 'mime';
 import * as md5file from 'md5-file';
+import * as fs from 'fs-extra';
 
 import * as config from 'config';
 import * as logger from '../logger';
@@ -108,7 +108,7 @@ export default class FileController {
           created: f.created,
         };
         var newpath = path.join(config.get('file.path'), id);
-        fs.rename(filepath, newpath, err => {
+        fs.move(filepath, newpath, err => {
           if (err) {
             logger.error(err);
             fs.unlink(filepath, err2 => {

@@ -1,10 +1,11 @@
 # Dockerfile for running masao.space
 FROM node:8
 MAINTAINER uhyo
-# store uploaded files as volume.
-VOLUME /service-masao-space/uploaded-files
-RUN chown node:node /service-masao-space/uploaded-files
 WORKDIR /service-masao-space
+# store uploaded files as volume.
+RUN mkdir /service-masao-space/uploaded-files
+RUN chown node:node /service-masao-space/uploaded-files
+VOLUME /service-masao-space/uploaded-files
 
 # first, prepare sub module.
 COPY packages/util/package.json ./packages/util/
