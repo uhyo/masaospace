@@ -60,9 +60,12 @@ export default ({ config, session, data: { popularTags } }: IPropTop) => {
       <div className="information">
         <p>最近の更新：</p>
         <ul>
-          <li>2015-10-06: スコアランキングに対応しました。</li>
           <li>2016-03-24: スクリプト正男を投稿可能にしました。</li>
           <li>2016-04-30: 第3版拡張マップデータを用いた正男に対応しました。</li>
+          <li>
+            2019-01-17:
+            ファイルをアップロードできなくなっていた問題を修正しました。一部のレイアウト崩れを修正しました。
+          </li>
         </ul>
       </div>
       {tags}
