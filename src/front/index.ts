@@ -19,6 +19,7 @@ export interface RouteObject {
 export function makeFrontRouter(c: Controller): Router<RouteHandler> {
   var r = new Router<RouteHandler>({
     patterns: {
+      ':id': /^[a-zA-Z0-9]+$/,
       ':number': /^\d+$/,
     },
   });

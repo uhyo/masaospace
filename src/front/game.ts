@@ -146,6 +146,55 @@ export default function(c: Controller, r: Router): void {
       });
     });
   });
+  // プレイログプレイヤー
+  r.add('/playlog/:id', obj => {
+    return new Promise((resolve, reject) => {
+      const id: string = obj[':id'];
+      c.playlog.findPlaylogs(
+        {
+          id,
+        },
+        (err, docs) => {
+          if (err || !docs) {
+            reject(err);
+            return;
+          }
+          const p = docs[0];
+          if (p == null) {
+            resolve({
+              status: 404,
+              title: null,
+              social: null,
+              page: null,
+            });
+            return;
+          }
+          c.game.getGame(p.game, false, (err, result) => {
+            if (err || !result) {
+              reject(err);
+              return;
+            }
+            resolve({
+              title: `プレイログ「${result.metadata.title}」`,
+              social: {
+                image: null,
+                description: null,
+              },
+              page: {
+                page: 'game.playlog',
+                game: result.game,
+                metadata: result.metadata,
+                playlog: {
+                  id: p.id,
+                },
+              },
+            });
+          });
+        },
+      );
+    });
+  });
+
   /////ついでにシリーズ
   r.add('/series/:number', obj => {
     return new Promise((resolve, reject) => {
