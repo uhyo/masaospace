@@ -1,5 +1,13 @@
 //node declaration
 
+declare module 'domain' {
+  interface Domain {
+    intercept<T extends any[], R>(
+      callback: (...args: { [K in keyof T]: Exclude<T[K], null> }) => R,
+    ): (err: Error | null, ...args: T) => R;
+  }
+}
+
 declare module 'extend' {
   function _m(target: any, ...objects: any[]): any;
   function _m(deep: boolean, target: any, ...objects: any[]): any;
@@ -192,9 +200,7 @@ declare module 'md5-file' {
     path: string,
     callback?: (error: any, result: string) => void,
   ): void;
-  namespace _m {
-
-  }
+  namespace _m {}
 }
 declare module 'type-is' {
   export = _m;

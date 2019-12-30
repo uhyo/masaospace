@@ -1,4 +1,3 @@
-///<reference path="../node.d.ts" />
 import * as domain from 'domain';
 
 import * as db from '../db';
@@ -22,7 +21,7 @@ export default class CommentController {
     });
     //indexes
     this.getCollection(
-      d.intercept(coll => {
+      d.intercept<[db.Collection<Comment> | null], void>(coll => {
         coll.createIndex(
           {
             id: 1,
@@ -149,14 +148,14 @@ export default class CommentController {
     });
     //次のコメント番号をとっておく
     this.getCollection(
-      d.intercept(coll => {
+      d.intercept<[db.Collection<Comment> | null], void>(coll => {
         coll.findOne(
           {},
           {
             sort: [['id', 'desc']],
             fields: { id: 1 },
           },
-          d.intercept(doc => {
+          d.intercept<[Comment | null], void>((doc: Comment | null) => {
             var nextid: number;
             //次のコメントIDを決定
             if (doc == null) {
@@ -179,7 +178,7 @@ export default class CommentController {
     );
   }
   //コレクションを得る
-  private getCollection(callback: Callback<db.Collection>): void {
+  private getCollection(callback: Callback<db.Collection<Comment>>): void {
     this.db.mongo.collection(
       config.get('mongodb.collection.comment'),
       (err, col) => {

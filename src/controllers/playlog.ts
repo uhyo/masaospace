@@ -19,7 +19,7 @@ export default class PlaylogController {
     });
     //indexes
     this.getCollection(
-      d.intercept(coll => {
+      d.intercept<[db.Collection<any> | null], void>(coll => {
         coll.createIndex(
           {
             id: 1,

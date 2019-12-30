@@ -18,7 +18,7 @@ export default class SeriesController {
     });
     //indexes
     this.getCollection(
-      d.intercept(coll => {
+      d.intercept<[db.Collection<any> | null], void>(coll => {
         coll.createIndex(
           {
             id: 1,
@@ -60,14 +60,14 @@ export default class SeriesController {
     });
     //次のコメント番号をとっておく
     this.getCollection(
-      d.intercept(coll => {
+      d.intercept<[db.Collection<any> | null], void>(coll => {
         coll.findOne(
           {},
           {
             sort: [['id', 'desc']],
             fields: { id: 1 },
           },
-          d.intercept(doc => {
+          d.intercept<[Series | null], void>((doc: Series | null) => {
             var nextid: number;
             //次のシリーズIDを決定
             if (doc == null) {

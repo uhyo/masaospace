@@ -9,11 +9,11 @@ import { outUserData } from '../util';
 import { UserOpenData } from '../data';
 
 //docsの各docにuserデータを付加してあげる
-export function addUserData(
+export function addUserData<T>(
   db: db.DBAccess,
-  docs: Array<any>,
-  userfield: string,
-  callback: Callback<Array<{ user: UserOpenData }>>,
+  docs: Array<T>,
+  userfield: { [K in keyof T]: T[K] extends string ? K : never }[keyof T],
+  callback: Callback<Array<T & { user: UserOpenData }>>,
 ): void {
   db.mongo.collection(config.get('mongodb.collection.user'), (err, coll) => {
     if (err || coll == null) {
@@ -22,7 +22,9 @@ export function addUserData(
       return;
     }
     //idを列挙する
-    var ids: Array<string> = docs.map(obj => obj[userfield]);
+    var ids: Array<string> = docs.map(
+      obj => (obj[userfield] as unknown) as string,
+    );
     //ユーザーを探す
     coll
       .find({
@@ -45,7 +47,9 @@ export function addUserData(
         }
         //docsに付加する
         var docs2: Array<any> = docs.map(obj => {
-          return extend(obj, { user: dict[obj[userfield]] });
+          return extend(obj, {
+            user: dict[(obj[userfield] as unknown) as string],
+          });
         });
         //OK
         callback(null, docs2);

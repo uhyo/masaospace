@@ -34,7 +34,7 @@ export default class GameController {
 
     //indexes
     this.getGameCollection(
-      d.intercept(coll => {
+      d.intercept<[db.Collection<any> | null], void>(coll => {
         coll.createIndex(
           {
             id: 1,
@@ -51,13 +51,13 @@ export default class GameController {
               d.intercept(() => {
                 //gamedata index
                 this.getMetadataCollection(
-                  d.intercept(coll => {
+                  d.intercept<[db.Collection<any> | null], void>(coll => {
                     coll.createIndex(
                       {
                         id: 1,
                       },
                       {
-                        unique: 1,
+                        unique: true,
                       },
                       d.intercept(() => {
                         coll.createIndex(
@@ -90,7 +90,10 @@ export default class GameController {
                                       {},
                                       d.intercept(() => {
                                         this.getPastCollection(
-                                          d.intercept(coll => {
+                                          d.intercept<
+                                            [db.Collection<any> | null],
+                                            void
+                                          >(coll => {
                                             //gamepast index
                                             coll.createIndex(
                                               {
@@ -386,13 +389,13 @@ export default class GameController {
           return;
         }
         //まず今までのやつをとっておく
-        collg.findOne({ id }, (err, gamedoc: GameData) => {
+        collg.findOne({ id }, (err, gamedoc: GameData | null) => {
           if (err) {
             logger.error(err);
             callback(err);
             return;
           }
-          collm.findOne({ id }, (err, metadatadoc: GameMetadata) => {
+          collm.findOne({ id }, (err, metadatadoc: GameMetadata | null) => {
             if (err) {
               logger.error(err);
               callback(err);
