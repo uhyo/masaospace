@@ -292,16 +292,16 @@ class FromEditor extends React.Component<IPropFromEditor, IStateFromEditor> {
   componentDidMount() {
     // FIXME
     // TypeScriptがdynamic importを実装したら見直す
-    require.ensure(
+    (require as any).ensure(
       ['masao-editor-core'],
-      require => {
-        const editorComponent = require<any>('masao-editor-core')
+      (require: any) => {
+        const editorComponent = require('masao-editor-core')
           .default as typeof MasaoEditorCore;
         this.setState({
           editorComponent,
         });
       },
-      error => {
+      (error: any) => {
         errorStore.emit(error);
       },
     );
