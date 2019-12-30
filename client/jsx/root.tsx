@@ -22,6 +22,7 @@ import SeriesPage from './series/page';
 import NotFound from './notfound';
 
 import { RefluxComponent } from '../scripts/reflux-util';
+import { PlaylogPage } from './game/playlog';
 export interface IDefnRoot {
   page: PageState;
   session: SessionState;
@@ -106,6 +107,14 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}> {
             series={page.series}
             config={config}
             session={session}
+          />
+        );
+      case 'game.playlog':
+        return (
+          <PlaylogPage
+            game={page.game}
+            metadata={page.metadata}
+            playlogId={page.playlog.id}
           />
         );
       case 'game.list':
