@@ -85,6 +85,7 @@
     "gulp-typescript": "^5.0.1",
     "gulp-uglify": "^3.0.0",
     "husky": "^1.1.0",
+    "imagemin": "^7.0.1",
     "imagemin-gifsicle": "^6.0.1",
     "imagemin-optipng": "^7.1.0",
     "img-loader": "^3.0.1",

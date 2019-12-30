@@ -33,7 +33,7 @@ gulp.task('tsc-server', () => {
 gulp.task(
   'watch-tsc-server',
   gulp.series('tsc-server', () => {
-    gulp.watch('src/**/*.ts', ['tsc-server']);
+    gulp.watch('src/**/*.ts', gulp.task('tsc-server'));
   }),
 );
 
@@ -49,7 +49,7 @@ gulp.task('tsc-client', () => {
 gulp.task(
   'watch-tsc-client',
   gulp.series('tsc-client', () => {
-    gulp.watch(['client/**/*.ts', 'client/**/*.tsx'], ['tsc-client']);
+    gulp.watch(['client/**/*.ts', 'client/**/*.tsx'], gulp.task('tsc-client'));
   }),
 );
 
@@ -162,7 +162,10 @@ gulp.task(
     ),
     function() {
       //w
-      gulp.watch(['client/css/*.scss', 'masao-editor/css/*.scss'], ['css']);
+      gulp.watch(
+        ['client/css/*.scss', 'masao-editor/css/*.scss'],
+        gulp.task('css'),
+      );
     },
   ),
 );

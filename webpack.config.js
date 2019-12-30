@@ -15,6 +15,7 @@ const plugins =
 
 module.exports = {
   devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
+  mode: process.env.NODE_ENV || 'development',
   entry: './dist-client/entrypoint.js',
   output: {
     path: path.join(__dirname, 'dist'),
@@ -22,7 +23,7 @@ module.exports = {
     publicPath: '/static/',
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loader: 'source-map-loader',
@@ -35,10 +36,6 @@ module.exports = {
           'css-loader?modules&camelCase',
           'postcss-loader',
         ],
-      },
-      {
-        test: /\.json$/,
-        loaders: ['json-loader'],
       },
       {
         test: /\.(?:png|gif)$/,
