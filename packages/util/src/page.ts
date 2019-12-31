@@ -95,6 +95,7 @@ export interface GamePlayPage {
   metadata: GameOpenMetadata;
   owner: UserOpenDataWithId;
   series: Array<SeriesOfGame>;
+  defaultPlaylog?: string;
 }
 
 export interface GamePlaylogPage {

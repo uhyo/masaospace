@@ -2,8 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Game, GameOpenMetadata } from '../data';
 import * as React from 'react';
 import GameView from './game-view';
-import api from '../../actions/api';
-import errorStore from '../../stores/error';
+import { loadPlaylog } from './logic/loadPlaylog';
 
 export interface IPropPlaylog {
   game: Game;
@@ -24,9 +23,7 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
   const gameRef = React.useRef<any>();
 
   React.useEffect(() => {
-    api('/api/playlog/get', { id: playlogId }, void 0, true)
-      .then(setPlaylog)
-      .catch(errorStore.emit);
+    loadPlaylog(playlogId).then(setPlaylog);
   }, []);
 
   const onGetGame = React.useCallback((game: any) => {

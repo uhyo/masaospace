@@ -105,6 +105,7 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}> {
             metadata={page.metadata}
             owner={page.owner}
             series={page.series}
+            defaultPlaylogId={page.defaultPlaylog}
             config={config}
             session={session}
           />

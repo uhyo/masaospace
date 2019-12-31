@@ -21,6 +21,8 @@ export default function(c: Controller, r: Router): void {
   /////play
   r.add('/play/:number', obj => {
     return new Promise((resolve, reject) => {
+      // from query
+      const playlog: string | undefined = obj.playlog;
       const id = parseInt(obj[':number']);
 
       //results
@@ -80,6 +82,7 @@ export default function(c: Controller, r: Router): void {
                 metadata,
                 owner,
                 series,
+                defaultPlaylog: playlog,
               },
             });
           }

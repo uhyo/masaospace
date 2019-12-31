@@ -19,12 +19,14 @@ import {
   GameOpenMetadata,
   SeriesOfGame,
 } from '../data';
+import { loadPlaylog } from './logic/loadPlaylog';
 
 export interface IPropPlay {
   game: Game;
   metadata: GameOpenMetadata;
   owner: UserOpenDataWithId;
   series: Array<SeriesOfGame>;
+  defaultPlaylogId?: string;
   config: any;
   session: Session;
 }
@@ -53,6 +55,23 @@ export default class Play extends React.Component<IPropPlay, IStatePlay> {
 
     this.handlePlaylog = this.handlePlaylog.bind(this);
   }
+  componentDidMount() {
+    const { defaultPlaylogId } = this.props;
+
+    if (defaultPlaylogId) {
+      loadPlaylog(defaultPlaylogId).then(buffer => {
+        if (buffer) {
+          this.setState({
+            playlog_playing_data: {
+              playlogId: defaultPlaylogId,
+              buffer,
+            },
+          });
+        }
+      });
+    }
+  }
+
   render() {
     const {
       props: { config, game, metadata, series, session, owner },
