@@ -135,7 +135,7 @@ game:
     maxLength: 500
   tag:
     maxNumber: 10
-    maxLength: 20
+    maxLength: 50
   script:
     maxLength: 102400
 
