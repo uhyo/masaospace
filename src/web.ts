@@ -426,7 +426,8 @@ function pageTitle(title: string | null): string {
  */
 function socialData(data: SocialData | null): SocialData {
   const image =
-    (data && data.image) || `${config.get('service.url')}icon-with-logo.png`;
+    (data && data.image) ||
+    `${config.get('service.url')}static/images/favicon/icon-with-logo.png`;
   const description = data ? data.description : null;
   return {
     image,
