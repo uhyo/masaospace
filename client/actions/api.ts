@@ -51,7 +51,38 @@ export default function api(
 
   console.log('API call! ', path, params, requestBody);
 
-  var p = new Promise(function(resolve, reject) {
+  return waitForXHR(xhr, !!raw);
+}
+
+export function getApi<Raw extends boolean>(
+  path: string,
+  params: Partial<Record<string, string>> = {},
+  raw?: Raw,
+): Promise<Raw extends true ? ArrayBuffer : any> {
+  const ps = [];
+  for (const key in params) {
+    const val = params[key];
+    if (val != null) {
+      ps.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
+    }
+  }
+
+  const xhr = new XMLHttpRequest();
+  const reqPath = ps.length > 0 ? `${path}?${ps.join('&')}` : path;
+  xhr.open('GET', reqPath);
+  if (raw) {
+    xhr.responseType = 'arraybuffer';
+  }
+
+  xhr.send();
+
+  console.log('API call! GET', path, params);
+
+  return waitForXHR(xhr, !!raw);
+}
+
+function waitForXHR<R>(xhr: XMLHttpRequest, raw: boolean) {
+  return new Promise<R>(function(resolve, reject) {
     xhr.addEventListener('load', () => {
       if (xhr.status !== 200) {
         console.error(xhr.status, xhr.responseText);
@@ -80,5 +111,4 @@ export default function api(
       resolve(obj);
     });
   });
-  return p;
 }

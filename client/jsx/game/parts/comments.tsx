@@ -1,7 +1,7 @@
 import * as React from 'react';
 //comments list
 
-import api from '../../../actions/api';
+import { getApi } from '../../../actions/api';
 
 import errorStore from '../../../stores/error';
 
@@ -86,12 +86,11 @@ export default class Comments extends React.Component<IPropComments, {}> {
     return (e: React.SyntheticEvent<HTMLElement>) => {
       e.preventDefault();
       //ログをもらう
-      api(
+      getApi(
         '/api/playlog/get',
         {
           id: playlogId,
         },
-        void 0,
         true,
       )
         .then(buffer => {

@@ -53,8 +53,8 @@ class C {
     });
     //プレイログをだす
     //IN id: プレイログのID
-    router.post('/get', (req, res) => {
-      let id = req.body.id;
+    router.get('/get', (req, res) => {
+      let id = req.query.id;
       if ('string' !== typeof id) {
         res.sendStatus(404);
         return;
