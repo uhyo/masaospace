@@ -30,6 +30,14 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
     gameRef.current = game;
   }, []);
 
+  const { clientWidth, clientHeight } = React.useMemo(
+    () => ({
+      clientWidth: document.documentElement.clientWidth,
+      clientHeight: document.documentElement.clientHeight,
+    }),
+    [document.documentElement],
+  );
+
   const onControlClick = () => {
     if (playlog) {
       if (status === 'playing') {
@@ -60,55 +68,84 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
   if (game.script != null) {
     return <div>この正男はプレイログを再生できません。</div>;
   }
-  return (
-    <div className="game-playlog-wrapper">
-      <div className="game-playlog-game">
-        <GameView
-          game={game}
-          audio_enabled={audio}
-          playlog={status === 'init' ? undefined : playlog}
-          onGetGame={onGetGame}
-        />
-      </div>
-      <div
-        className={
-          'game-playlog-controls' +
-          (status === 'paused' ? ' game-playlog-controls-paused' : '')
+
+  const aspectRatio = clientWidth / clientHeight;
+  const areaWidth = Math.min(clientWidth, (512 / 320) * clientHeight);
+  const areaHeight = Math.min(clientHeight, (clientWidth / 512) * 320);
+  const containerStyle: React.CSSProperties =
+    aspectRatio >= 512 / 320
+      ? {
+          // canvasよりも横長
+          width: `${areaWidth}px`,
+          height: '100%',
         }
-      >
-        <div className="game-playlog-centered" onClick={onControlClick}>
-          {!playlog ? (
-            <FontAwesomeIcon icon="spinner" size="4x" pulse />
-          ) : status !== 'playing' ? (
-            <FontAwesomeIcon icon={['far', 'play-circle']} size="4x" />
-          ) : null}
+      : {
+          width: '100%',
+          height: `${areaHeight}px`,
+        };
+
+  const gameStyle: React.CSSProperties = {
+    transform: areaWidth === 512 ? undefined : `scale(${areaWidth / 512})`,
+  };
+  console.log(gameStyle);
+
+  return (
+    <div
+      className="game-playlog-wrapper"
+      style={{
+        width: `${clientWidth}px`,
+        height: `${clientHeight}px`,
+      }}
+    >
+      <div className="game-playlog-container" style={containerStyle}>
+        <div className="game-playlog-game" style={gameStyle}>
+          <GameView
+            game={game}
+            audio_enabled={audio}
+            playlog={status === 'init' ? undefined : playlog}
+            onGetGame={onGetGame}
+          />
         </div>
-        <div className="game-playlog-bottom-controls">
-          <div>
-            <button
-              className="game-playlog-bottom-control-icon"
-              onClick={onRestart}
-            >
-              <FontAwesomeIcon icon="redo-alt" size="2x" />
-            </button>
+        <div
+          className={
+            'game-playlog-controls' +
+            (status === 'paused' ? ' game-playlog-controls-paused' : '')
+          }
+        >
+          <div className="game-playlog-centered" onClick={onControlClick}>
+            {!playlog ? (
+              <FontAwesomeIcon icon="spinner" size="4x" pulse />
+            ) : status !== 'playing' ? (
+              <FontAwesomeIcon icon={['far', 'play-circle']} size="4x" />
+            ) : null}
           </div>
-          <div>
-            <button
-              className="game-playlog-bottom-control-icon"
-              onClick={toggleAudio}
-            >
-              <FontAwesomeIcon
-                icon={audio ? 'volume-up' : 'volume-mute'}
-                size="2x"
-              />
-            </button>
-            <a
-              className="game-playlog-bottom-control-icon"
-              href={`/play/${metadata.id}`}
-              target="_blank"
-            >
-              <FontAwesomeIcon icon="gamepad" size="2x" />
-            </a>
+          <div className="game-playlog-bottom-controls">
+            <div>
+              <button
+                className="game-playlog-bottom-control-icon"
+                onClick={onRestart}
+              >
+                <FontAwesomeIcon icon="redo-alt" size="2x" />
+              </button>
+            </div>
+            <div>
+              <button
+                className="game-playlog-bottom-control-icon"
+                onClick={toggleAudio}
+              >
+                <FontAwesomeIcon
+                  icon={audio ? 'volume-up' : 'volume-mute'}
+                  size="2x"
+                />
+              </button>
+              <a
+                className="game-playlog-bottom-control-icon"
+                href={`/play/${metadata.id}`}
+                target="_blank"
+              >
+                <FontAwesomeIcon icon="gamepad" size="2x" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

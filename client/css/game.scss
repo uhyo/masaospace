@@ -322,10 +322,19 @@
 
 // playlog page
 .game-playlog-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-playlog-container {
   position: relative;
   width: 512px;
   height: 320px;
-  margin: 0 auto;
+  overflow: hidden;
 }
 
 .game-playlog-game {
@@ -335,14 +344,15 @@
   width: 512px;
   height: 320px;
   overflow: hidden;
+  transform-origin: 0 0;
 }
 
 .game-playlog-controls {
   position: absolute;
   left: 0;
   top: 0;
-  width: 512px;
-  height: 320px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   color: rgba(230, 230, 230, 0.8);
 
@@ -376,7 +386,7 @@
   position: absolute;
   left: 0;
   bottom: 16px;
-  width: 512px;
+  width: 100%;
 }
 
 .game-playlog-bottom-control-icon {
