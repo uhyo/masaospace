@@ -7,6 +7,8 @@ import * as pageAction from './actions/page';
 
 import handleEvents from './scripts/link';
 
+import '../client/css/index.scss';
+
 import './init-fontawesome';
 
 //init view

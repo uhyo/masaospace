@@ -43,6 +43,20 @@ module.exports = {
         ],
       },
       {
+        test: /\.scss$/,
+        loaders: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'css.[name].[contenthash].css',
+            },
+          },
+          'extract-loader',
+          'css-loader',
+          'sass-loader',
+        ],
+      },
+      {
         test: /\.(?:png|gif)$/,
         loaders: [
           'url-loader',

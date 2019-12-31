@@ -2,13 +2,9 @@ var path = require('path');
 var util = require('util');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
-var source = require('vinyl-source-stream');
 var uglifyComposer = require('gulp-uglify/composer');
-var globule = require('globule');
 var del = require('del');
 var changed = require('gulp-changed');
-var sass = require('gulp-sass');
-var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 var concat = require('gulp-concat');
 
@@ -123,14 +119,6 @@ gulp.task('static-sound', function() {
 
 gulp.task('static', gulp.series('static-image', 'static-sound'));
 
-gulp.task('css', function() {
-  return gulp
-    .src(['client/css/index.scss'])
-    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-    .pipe(rename('css.css'))
-    .pipe(gulp.dest('dist/'));
-});
-
 gulp.task('clean', function(cb) {
   del(
     [
@@ -153,26 +141,14 @@ gulp.task('batch-tsc', function() {
 
 gulp.task(
   'watch',
-  gulp.parallel(
-    'watch-tsc-client',
-    'watch-webpack',
-    'watch-tsc-server',
-    gulp.series('css', function() {
-      //w
-      gulp.watch(
-        ['client/css/*.scss', 'masao-editor/css/*.scss'],
-        gulp.task('css'),
-      );
-    }),
-  ),
+  gulp.parallel('watch-tsc-client', 'watch-webpack', 'watch-tsc-server'),
 );
 
-gulp.task('client', gulp.series('webpack', 'css'));
+gulp.task('client', gulp.task('webpack'));
 gulp.task(
   'default',
   gulp.series(
     'tsc-server',
-    'css',
     'tsc-client',
     'webpack',
     'mc_canvas',

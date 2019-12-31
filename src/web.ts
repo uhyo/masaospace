@@ -380,6 +380,7 @@ export class WebServer {
             // content: ReactDOMServer.renderToString(React.createElement(Root,initialData))
             content: '',
             jsFile: manifest['main.js'],
+            cssFile: manifest['index.scss'],
           });
         })
         .catch(err => {
