@@ -319,3 +319,78 @@
 .game-parts-playlog-list-checked {
   color: #00aa00;
 }
+
+// playlog page
+.game-playlog-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-playlog-container {
+  position: relative;
+  width: 512px;
+  height: 320px;
+  overflow: hidden;
+}
+
+.game-playlog-game {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 512px;
+  height: 320px;
+  overflow: hidden;
+  transform-origin: 0 0;
+}
+
+.game-playlog-controls {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: rgba(230, 230, 230, 0.8);
+
+  button,
+  a {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+  }
+}
+
+.game-playlog-controls-paused {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.game-playlog-centered {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-playlog-bottom-controls {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  position: absolute;
+  left: 0;
+  bottom: 16px;
+  width: 100%;
+}
+
+.game-playlog-bottom-control-icon {
+  display: inline-block;
+  margin: 0 8px;
+  cursor: pointer;
+}

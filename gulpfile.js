@@ -153,20 +153,17 @@ gulp.task('batch-tsc', function() {
 
 gulp.task(
   'watch',
-  gulp.series(
-    gulp.parallel(
-      'watch-tsc-client',
-      'watch-webpack',
-      'css',
-      'watch-tsc-server',
-    ),
-    function() {
+  gulp.parallel(
+    'watch-tsc-client',
+    'watch-webpack',
+    'watch-tsc-server',
+    gulp.series('css', function() {
       //w
       gulp.watch(
         ['client/css/*.scss', 'masao-editor/css/*.scss'],
         gulp.task('css'),
       );
-    },
+    }),
   ),
 );
 

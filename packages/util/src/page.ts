@@ -29,6 +29,7 @@ export interface View {
  */
 export interface SocialData {
   image: string | null;
+  player?: string;
   description: string | null;
 }
 
@@ -81,6 +82,7 @@ export interface UserAccountPage {
 export type GamePages =
   | GameNewPage
   | GamePlayPage
+  | GamePlaylogPage
   | GameListPage
   | GameEditPage
   | GameHiddenPage;
@@ -94,7 +96,18 @@ export interface GamePlayPage {
   metadata: GameOpenMetadata;
   owner: UserOpenDataWithId;
   series: Array<SeriesOfGame>;
+  defaultPlaylog?: string;
 }
+
+export interface GamePlaylogPage {
+  page: 'game.playlog';
+  game: Game;
+  metadata: GameOpenMetadata;
+  playlog: {
+    id: string;
+  };
+}
+
 export interface GameListPage {
   page: 'game.list';
   owner: string;

@@ -22,6 +22,7 @@ import SeriesPage from './series/page';
 import NotFound from './notfound';
 
 import { RefluxComponent } from '../scripts/reflux-util';
+import { PlaylogPage } from './game/playlog';
 export interface IDefnRoot {
   page: PageState;
   session: SessionState;
@@ -49,7 +50,7 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}> {
     const pageArea = this.getPage();
     return (
       <div className="root">
-        <Header session={session} />
+        {this.hideHeader() ? null : <Header session={session} />}
         {pageArea}
         <Footer />
       </div>
@@ -104,8 +105,17 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}> {
             metadata={page.metadata}
             owner={page.owner}
             series={page.series}
+            defaultPlaylogId={page.defaultPlaylog}
             config={config}
             session={session}
+          />
+        );
+      case 'game.playlog':
+        return (
+          <PlaylogPage
+            game={page.game}
+            metadata={page.metadata}
+            playlogId={page.playlog.id}
           />
         );
       case 'game.list':
@@ -127,5 +137,13 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}> {
         //"404"とか
         return <NotFound />;
     }
+  }
+  protected hideHeader(): boolean {
+    const {
+      state: {
+        page: { page },
+      },
+    } = this;
+    return page?.page === 'game.playlog';
   }
 }

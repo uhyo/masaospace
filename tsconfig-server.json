@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "es2015"],
+    "lib": ["dom", "es2019"],
     "alwaysStrict": true,
     "jsx": "React",
     "module": "commonjs",
@@ -14,7 +14,7 @@
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "removeComments": true,
-    "target": "es2015",
+    "target": "es2019",
     "outDir": "dist-server/"
   },
   "include": ["src/**/*.ts"]

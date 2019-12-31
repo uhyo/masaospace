@@ -13,7 +13,7 @@ import { Comment } from '../../data';
 
 export interface IPropComments {
   comments: Array<Comment>;
-  onPlay(playlog: any): void;
+  onPlay(playlog: { playlogId: string; buffer: ArrayBuffer }): void;
 }
 export default class Comments extends React.Component<IPropComments, {}> {
   render() {
@@ -37,7 +37,6 @@ export default class Comments extends React.Component<IPropComments, {}> {
                     <span className="comments-playlog-cleared">★</span>
                   ) : null}
                   スコア: {obj.score}
-
                   <span
                     className="clickable"
                     onClick={this.handlePlay(obj.playlog)}
@@ -83,20 +82,23 @@ export default class Comments extends React.Component<IPropComments, {}> {
     );
   }
   //プレイログを再生する関数を返す
-  protected handlePlay(playlogid: string) {
+  protected handlePlay(playlogId: string) {
     return (e: React.SyntheticEvent<HTMLElement>) => {
       e.preventDefault();
       //ログをもらう
       api(
         '/api/playlog/get',
         {
-          id: playlogid,
+          id: playlogId,
         },
         void 0,
         true,
       )
-        .then(buf => {
-          this.props.onPlay(buf);
+        .then(buffer => {
+          this.props.onPlay({
+            playlogId,
+            buffer,
+          });
         })
         .catch(errorStore.emit);
     };

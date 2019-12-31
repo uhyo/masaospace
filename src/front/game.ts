@@ -1,5 +1,6 @@
 import Controller from '../controllers/index';
 
+import * as config from 'config';
 import * as logger from '../logger';
 
 import { Router } from './data';
@@ -14,6 +15,7 @@ import {
 } from '@uhyo/masaospace-util';
 
 import { outUserData } from '../util';
+import { getTitleImageOfGame } from './util';
 
 export default function(c: Controller, r: Router): void {
   //about game
@@ -21,6 +23,8 @@ export default function(c: Controller, r: Router): void {
   /////play
   r.add('/play/:number', obj => {
     return new Promise((resolve, reject) => {
+      // from query
+      const playlog: string | undefined = obj.playlog;
       const id = parseInt(obj[':number']);
 
       //results
@@ -71,8 +75,11 @@ export default function(c: Controller, r: Router): void {
             resolve({
               title: metadata.title,
               social: {
-                image: null,
+                image: playlog ? getTitleImageOfGame(game) : null,
                 description: metadata.description,
+                player: playlog
+                  ? `${config.get('service.url')}playlog/${playlog}`
+                  : undefined,
               },
               page: {
                 page: 'game.play',
@@ -80,6 +87,7 @@ export default function(c: Controller, r: Router): void {
                 metadata,
                 owner,
                 series,
+                defaultPlaylog: playlog,
               },
             });
           }
@@ -146,6 +154,56 @@ export default function(c: Controller, r: Router): void {
       });
     });
   });
+  // プレイログプレイヤー
+  r.add('/playlog/:id', obj => {
+    return new Promise((resolve, reject) => {
+      const id: string = obj[':id'];
+      c.playlog.findPlaylogs(
+        {
+          id,
+        },
+        (err, docs) => {
+          if (err || !docs) {
+            reject(err);
+            return;
+          }
+          const p = docs[0];
+          if (p == null) {
+            resolve({
+              status: 404,
+              title: null,
+              social: null,
+              page: null,
+            });
+            return;
+          }
+          c.game.getGame(p.game, false, (err, result) => {
+            if (err || !result) {
+              reject(err);
+              return;
+            }
+            resolve({
+              title: `プレイログ「${result.metadata.title}」`,
+              social: {
+                image: null,
+                description: null,
+                player: `${config.get('service.url')}playlog/${p.id}`,
+              },
+              page: {
+                page: 'game.playlog',
+                game: result.game,
+                metadata: result.metadata,
+                playlog: {
+                  id: p.id,
+                },
+              },
+            });
+          });
+        },
+      );
+    });
+  });
+
   /////ついでにシリーズ
   r.add('/series/:number', obj => {
     return new Promise((resolve, reject) => {

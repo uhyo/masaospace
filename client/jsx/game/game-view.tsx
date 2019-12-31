@@ -12,8 +12,10 @@ interface IPropGameView {
   game: Game;
   audio_enabled?: boolean;
   playlogCallback?(playlog: any): void;
-  playlog?: any;
+  playlog?: ArrayBuffer;
   allowScripts?: boolean;
+  userJSCallback?: Function;
+  onGetGame?(game: any): void;
 }
 export default class GameView extends React.PureComponent<IPropGameView, {}> {
   private game: any;
@@ -45,7 +47,13 @@ export default class GameView extends React.PureComponent<IPropGameView, {}> {
     }
   }
   protected setGame(game: Game, allowScripts?: boolean) {
-    const { playlog, playlogCallback, audio_enabled } = this.props;
+    const {
+      playlog,
+      playlogCallback,
+      audio_enabled,
+      userJSCallback,
+      onGetGame,
+    } = this.props;
     if (this.gameid == null) {
       this.gameid = Math.random()
         .toString(36)
@@ -79,7 +87,7 @@ export default class GameView extends React.PureComponent<IPropGameView, {}> {
     }
     if (allowScripts === true && game.script != null) {
       //JavaScriptを許可(scriptがuserJSCallbackを定義する)
-      const userJSCallback = eval(
+      const scriptUserJSCallback = eval(
         `(function(){
                     ${game.script}
                     if("undefined"!==typeof userJSCallback){
@@ -87,10 +95,20 @@ export default class GameView extends React.PureComponent<IPropGameView, {}> {
                     }
                 })()`,
       );
-      if ('function' === typeof userJSCallback) {
-        options.userJSCallback = userJSCallback;
+      if ('function' === typeof scriptUserJSCallback) {
+        options.userJSCallback = scriptUserJSCallback;
       }
     }
+    if (userJSCallback) {
+      const old = options.userJSCallback;
+      options.userJSCallback = old
+        ? (...args: any) => {
+            old(...args);
+            userJSCallback(...args);
+          }
+        : userJSCallback;
+    }
+
     if (game['advanced-map'] != null) {
       options['advance-map'] = game['advanced-map'];
     }
@@ -102,12 +120,14 @@ export default class GameView extends React.PureComponent<IPropGameView, {}> {
       this.game = new CanvasMasao_v28.Game(params, this.gameid, options);
     } else {
       this.game = new CanvasMasao.Game(params, this.gameid, options);
-    }
-    if (audio_enabled !== true) {
+
+      if (audio_enabled !== true) {
+      }
       if (this.game.__mc && this.game.__mc.soundOff) {
         this.game.__mc.soundOff();
       }
     }
+    onGetGame?.(this.game);
   }
   endGame() {
     if (this.game == null) {
@@ -115,6 +135,7 @@ export default class GameView extends React.PureComponent<IPropGameView, {}> {
     }
     this.game.kill();
     this.game = null;
+    this.props.onGetGame?.(null);
   }
   render() {
     return <div ref="main" className="game-view" />;

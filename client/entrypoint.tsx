@@ -7,6 +7,8 @@ import * as pageAction from './actions/page';
 
 import handleEvents from './scripts/link';
 
+import './init-fontawesome';
+
 //init view
 const app = document.getElementById('app');
 console.log(document.getElementById('initial-data')!.getAttribute('data-data'));

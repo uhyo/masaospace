@@ -16,7 +16,7 @@ export interface IPropGameComment {
   playlogs: Array<any>;
   config: any;
   session: Session;
-  onPlay(): void;
+  onPlay(playlog: { playlogId: string; buffer: ArrayBuffer }): void;
 }
 export interface IStateGameComment {
   mode: 'new' | 'score';
@@ -168,7 +168,7 @@ export default class GameComment extends React.Component<
     }
     return (
       <div className="game-play-comments-select">
-        {['new', 'score'].map((m: 'new' | 'score') => {
+        {(['new', 'score'] as const).map(m => {
           let cl = 'game-play-comments-select-box';
           if (mode === m) {
             cl += ' game-play-comments-select-current';
