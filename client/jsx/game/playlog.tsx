@@ -20,6 +20,7 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
   const [status, setStatus] = React.useState<'init' | 'playing' | 'paused'>(
     'init',
   );
+  const gameRef = React.useRef<any>();
 
   React.useEffect(() => {
     api('/api/playlog/get', { id: playlogId }, void 0, true)
@@ -27,9 +28,21 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
       .catch(errorStore.emit);
   }, []);
 
+  const onGetGame = React.useCallback((game: any) => {
+    gameRef.current = game;
+  }, []);
+
   const onControlClick = () => {
     if (playlog) {
-      setStatus(current => (current === 'playing' ? 'paused' : 'playing'));
+      if (status === 'playing') {
+        if (gameRef.current) {
+          setStatus('paused');
+          gameRef.current.loopInstance.stop();
+        }
+      } else {
+        setStatus('playing');
+        gameRef.current?.loopInstance.resume();
+      }
     }
   };
 
@@ -44,6 +57,7 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
           game={game}
           audio_enabled
           playlog={status === 'init' ? undefined : playlog}
+          onGetGame={onGetGame}
         />
       </div>
       <div className="game-playlog-controls">
