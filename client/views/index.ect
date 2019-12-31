@@ -12,6 +12,6 @@
   <body>
     <div id="app"><%- @content %></div>
     <script type="text/plain" id="initial-data" data-data="<%= JSON.stringify @initial %>"></script>
-    <script type="text/javascript" src="/static/components.js"></script>
+    <script type="text/javascript" src="<%= @jsFile %>"></script>
   </body>
 </html>

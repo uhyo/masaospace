@@ -348,7 +348,7 @@ export class WebServer {
         }) as RouteHandler;
       }
       func(params)
-        .then(view => {
+        .then(async view => {
           if (view.status) {
             //statusを返す
             if (view.status === 404) {
@@ -372,12 +372,14 @@ export class WebServer {
             csrfToken: req.csrfToken(),
             session: makeClientSession(session),
           };
+          const manifest = await getManifest();
           res.render('index.ect', {
             title: pageTitle(view.title),
             social: socialData(view.social),
             initial: initialData,
             // content: ReactDOMServer.renderToString(React.createElement(Root,initialData))
             content: '',
+            jsFile: manifest['main.js'],
           });
         })
         .catch(err => {
@@ -434,4 +436,31 @@ function socialData(data: SocialData | null): SocialData {
     description,
     player: data?.player,
   };
+}
+
+/**
+ * Get manifest data.
+ */
+let manifestCache: any = null;
+function getManifest() {
+  if (manifestCache) {
+    return Promise.resolve(manifestCache);
+  }
+  return new Promise((resolve, reject) => {
+    fs.readFile(
+      path.join(__dirname, '../dist/manifest.json'),
+      {
+        encoding: 'utf8',
+      },
+      (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        const result = JSON.parse(data);
+        manifestCache = result;
+        resolve(result);
+      },
+    );
+  });
 }

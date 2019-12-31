@@ -2,6 +2,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 const plugins =
   process.env.NODE_ENV === 'production'
@@ -10,8 +11,9 @@ const plugins =
           'process.env.NODE_ENV': JSON.stringify('production'),
         }),
         new UglifyJSPlugin(),
+        new ManifestPlugin(),
       ]
-    : [];
+    : [new ManifestPlugin()];
 
 module.exports = {
   devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
@@ -19,7 +21,10 @@ module.exports = {
   entry: './dist-client/entrypoint.js',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'components.js',
+    filename:
+      process.env.NODE_ENV === 'production'
+        ? 'components.[contenthash].js'
+        : 'components.js',
     publicPath: '/static/',
   },
   module: {
