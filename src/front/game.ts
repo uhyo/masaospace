@@ -1,5 +1,6 @@
 import Controller from '../controllers/index';
 
+import * as config from 'config';
 import * as logger from '../logger';
 
 import { Router } from './data';
@@ -14,6 +15,7 @@ import {
 } from '@uhyo/masaospace-util';
 
 import { outUserData } from '../util';
+import { getTitleImageOfGame } from './util';
 
 export default function(c: Controller, r: Router): void {
   //about game
@@ -73,8 +75,11 @@ export default function(c: Controller, r: Router): void {
             resolve({
               title: metadata.title,
               social: {
-                image: null,
+                image: playlog ? getTitleImageOfGame(game) : null,
                 description: metadata.description,
+                player: playlog
+                  ? `${config.get('service.url')}playlog/${playlog}`
+                  : undefined,
               },
               page: {
                 page: 'game.play',
@@ -182,6 +187,7 @@ export default function(c: Controller, r: Router): void {
               social: {
                 image: null,
                 description: null,
+                player: `${config.get('service.url')}playlog/${p.id}`,
               },
               page: {
                 page: 'game.playlog',

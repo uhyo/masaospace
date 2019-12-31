@@ -431,5 +431,6 @@ function socialData(data: SocialData | null): SocialData {
   return {
     image,
     description,
+    player: data?.player,
   };
 }

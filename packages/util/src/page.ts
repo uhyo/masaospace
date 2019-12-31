@@ -29,6 +29,7 @@ export interface View {
  */
 export interface SocialData {
   image: string | null;
+  player?: string;
   description: string | null;
 }
 
