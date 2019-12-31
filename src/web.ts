@@ -381,6 +381,7 @@ export class WebServer {
             content: '',
             jsFile: manifest['main.js'],
             cssFile: manifest['index.scss'],
+            masaoFile: '/static/' + manifest['CanvasMasao.min.js'],
           });
         })
         .catch(err => {
@@ -458,9 +459,27 @@ function getManifest() {
           reject(err);
           return;
         }
-        const result = JSON.parse(data);
-        manifestCache = result;
-        resolve(result);
+        const result1 = JSON.parse(data);
+
+        fs.readFile(
+          path.join(__dirname, '../dist/manifest_mc_canvas.json'),
+          {
+            encoding: 'utf8',
+          },
+          (err, data) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            const result2 = JSON.parse(data);
+
+            manifestCache = {
+              ...result1,
+              ...result2,
+            };
+            resolve(manifestCache);
+          },
+        );
       },
     );
   });

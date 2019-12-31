@@ -1,5 +1,4 @@
 var path = require('path');
-var util = require('util');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var uglifyComposer = require('gulp-uglify/composer');
@@ -7,6 +6,7 @@ var del = require('del');
 var changed = require('gulp-changed');
 var replace = require('gulp-replace');
 var concat = require('gulp-concat');
+const hash = require('gulp-hash');
 
 const gulpTs = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
@@ -49,8 +49,8 @@ gulp.task(
   }),
 );
 
-gulp.task('webpack', () => {
-  return makeWebpack(false);
+gulp.task('webpack', cb => {
+  return makeWebpack(cb, false);
 });
 
 gulp.task('watch-webpack', () => {
@@ -95,6 +95,14 @@ gulp.task(
         'dist/InputPlayer.js',
       ])
       .pipe(concat('CanvasMasao.min.js'))
+      .pipe(hash())
+      .pipe(gulp.dest('dist/'))
+      .pipe(
+        hash.manifest('manifest_mc_canvas.json', {
+          deleteOld: true,
+          sourceDir: path.join(__dirname, 'dist'),
+        }),
+      )
       .pipe(gulp.dest('dist/'));
   }),
 );
@@ -158,7 +166,7 @@ gulp.task(
 );
 
 // make
-function makeWebpack(watch) {
+function makeWebpack(cb, watch) {
   const compiler = webpack(require('./webpack.config.js'));
 
   const handleStats = (stats, watch) => {
@@ -184,6 +192,7 @@ function makeWebpack(watch) {
         return;
       }
       handleStats(stats, false);
+      cb();
     });
   }
 }
