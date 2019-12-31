@@ -12,7 +12,7 @@ interface IPropGameView {
   game: Game;
   audio_enabled?: boolean;
   playlogCallback?(playlog: any): void;
-  playlog?: any;
+  playlog?: ArrayBuffer;
   allowScripts?: boolean;
   userJSCallback?: Function;
   onGetGame?(game: any): void;

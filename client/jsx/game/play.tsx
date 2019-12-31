@@ -35,7 +35,10 @@ export interface IStatePlay {
   playlog_score: any; //スコアがいちばん
   playlog_clear: any; //進みがいちばん
   // 今プレイ中のプレイログ
-  playlog_playing_data: any;
+  playlog_playing_data: {
+    playlogId?: string;
+    buffer: ArrayBuffer;
+  } | null;
 }
 export default class Play extends React.Component<IPropPlay, IStatePlay> {
   constructor(props: IPropPlay) {
@@ -52,7 +55,7 @@ export default class Play extends React.Component<IPropPlay, IStatePlay> {
   }
   render() {
     const {
-      props: { game, metadata, series, session, owner },
+      props: { config, game, metadata, series, session, owner },
       state: {
         audio_switch,
         playlog_switch,
@@ -144,8 +147,8 @@ export default class Play extends React.Component<IPropPlay, IStatePlay> {
           ? [playlog_clear, playlog_score]
           : [playlog_score]
         : playlog_clear != null
-          ? [playlog_clear]
-          : [];
+        ? [playlog_clear]
+        : [];
     if (playlogs.length > 0 || playlog_playing_data != null) {
       let stopper = null;
       if (playlog_playing_data != null) {
@@ -155,11 +158,29 @@ export default class Play extends React.Component<IPropPlay, IStatePlay> {
             playlog_playing_data: null,
           });
         };
+        const twttrQ = queryString.stringify({
+          url: `${config.service.url}play/${metadata.id}?playlog=${playlog_playing_data.playlogId}`,
+          text: `「${metadata.title}」のプレイログ`,
+        });
         stopper = (
           <p>
+            プレイログ再生中{'　'}
             <span className="clickable" onClick={clickHandler}>
               再生を停止
             </span>
+            {playlog_playing_data.playlogId ? (
+              <>
+                {'　'}
+                プレイログを共有:
+                <a
+                  href={'https://twitter.com/share?' + twttrQ}
+                  target="_blank"
+                  title="Twitterでツイート"
+                >
+                  <span className="icon icon-twitter" />
+                </a>
+              </>
+            ) : null}
           </p>
         );
       }
@@ -171,10 +192,12 @@ export default class Play extends React.Component<IPropPlay, IStatePlay> {
               ? [playlog_clear, playlog_score]
               : [playlog_score]
             : playlog_clear != null
-              ? [playlog_clear]
-              : [];
+            ? [playlog_clear]
+            : [];
         const handlePlay = (obj: any) => {
-          this.handlePlay(obj.buffer);
+          this.handlePlay({
+            buffer: obj.buffer,
+          });
         };
 
         player = (
@@ -206,7 +229,7 @@ export default class Play extends React.Component<IPropPlay, IStatePlay> {
           game={game}
           audio_enabled={audio_switch}
           playlogCallback={playlogCallback}
-          playlog={playlog_playing_data}
+          playlog={playlog_playing_data?.buffer}
         />
       );
     } else {
@@ -304,13 +327,13 @@ export default class Play extends React.Component<IPropPlay, IStatePlay> {
     }
   }
   //再生要求
-  handlePlay(buffer: any) {
+  handlePlay(playlog: { playlogId?: string; buffer: ArrayBuffer }) {
     //表示する
     scrollIntoView(this.refs.gamecontainer, window, {
       onlyScrollIfNeeded: true,
     });
     this.setState({
-      playlog_playing_data: buffer,
+      playlog_playing_data: playlog,
     });
   }
 }
@@ -343,9 +366,7 @@ class GameTools extends React.Component<IPropGameTools, IStateGameTools> {
         <div className="game-play-tools-code">
           <p>正男を埋め込みたい箇所に以下のHTMLコードを貼り付けてください。</p>
           <pre>
-            <code>{`<iframe src="${config.service.url}embed/${
-              metadata.id
-            }" width="514" height="434" style="border:none"></iframe>`}</code>
+            <code>{`<iframe src="${config.service.url}embed/${metadata.id}" width="514" height="434" style="border:none"></iframe>`}</code>
           </pre>
         </div>
       );
