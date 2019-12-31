@@ -50,7 +50,7 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}> {
     const pageArea = this.getPage();
     return (
       <div className="root">
-        <Header session={session} />
+        {this.hideHeader() ? null : <Header session={session} />}
         {pageArea}
         <Footer />
       </div>
@@ -136,5 +136,13 @@ export default class Root extends RefluxComponent<IDefnRoot, IPropRoot, {}> {
         //"404"とか
         return <NotFound />;
     }
+  }
+  protected hideHeader(): boolean {
+    const {
+      state: {
+        page: { page },
+      },
+    } = this;
+    return page?.page === 'game.playlog';
   }
 }
