@@ -87,7 +87,6 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
   const gameStyle: React.CSSProperties = {
     transform: areaWidth === 512 ? undefined : `scale(${areaWidth / 512})`,
   };
-  console.log(gameStyle);
 
   return (
     <div
@@ -99,12 +98,16 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
     >
       <div className="game-playlog-container" style={containerStyle}>
         <div className="game-playlog-game" style={gameStyle}>
-          <GameView
-            game={game}
-            audio_enabled={audio}
-            playlog={status === 'init' ? undefined : playlog}
-            onGetGame={onGetGame}
-          />
+          {status === 'init' ? (
+            <img width="512" height="320" src={getTitleImage(game)} />
+          ) : (
+            <GameView
+              game={game}
+              audio_enabled={audio}
+              playlog={playlog}
+              onGetGame={onGetGame}
+            />
+          )}
         </div>
         <div
           className={
@@ -151,4 +154,13 @@ export const PlaylogPage: React.FC<IPropPlaylog> = ({
       </div>
     </div>
   );
+};
+
+const getTitleImage = (game: Game) => {
+  for (const r of game.resources) {
+    if (r.target === 'filename_title') {
+      return `/uploaded/${r.id}`;
+    }
+  }
+  return '/static/title.gif';
 };
