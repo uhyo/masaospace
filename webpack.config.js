@@ -49,6 +49,7 @@ module.exports = {
             loader: 'file-loader',
             options: {
               name: 'css.[name].[contenthash].css',
+              esModule: false,
             },
           },
           'extract-loader',
