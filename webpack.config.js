@@ -61,13 +61,8 @@ module.exports = {
         loaders: [
           'url-loader',
           {
-            loader: 'img-loader',
-            options: {
-              plugins: [
-                require('imagemin-gifsicle'),
-                require('imagemin-optipng'),
-              ],
-            },
+            loader: 'image-webpack-loader',
+            options: {},
           },
         ],
       },

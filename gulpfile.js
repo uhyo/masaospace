@@ -54,7 +54,7 @@ gulp.task('webpack', cb => {
 });
 
 gulp.task('watch-webpack', () => {
-  return makeWebpack(true);
+  return makeWebpack(null, true);
 });
 
 gulp.task('mc_canvas-static', function() {
