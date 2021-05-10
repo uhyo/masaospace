@@ -56,7 +56,7 @@
     "nodemailer": "^4.6.3",
     "query-string": "^5.1.1",
     "random-string": "^0.2.0",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "st": "^1.2.2",
     "tslib": "^1.10.0",
     "type-is": "^1.6.16"
